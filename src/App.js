@@ -18,7 +18,7 @@ import { BackTop } from "antd";
 import * as Setting from "./Setting";
 import { Switch, Route } from "react-router-dom";
 import TopicPage from "./TopicPage";
-import Header from "./Header";
+import PageHeader from "./Header";
 import Footer from "./Footer";
 import RightSigninBox from "./rightbar/RightSigninBox";
 import RightAccountBox from "./rightbar/RightAccountBox";
@@ -96,6 +96,7 @@ class App extends Component {
       nodeBackgroundRepeat: "",
       casdoor: null,
       OAuthObjects: [],
+      WindowWidth: window.innerWidth,
     };
 
     Setting.initServerUrl();
@@ -111,6 +112,7 @@ class App extends Component {
     this.getAccount();
     this.getFavoriteNum();
     this.initCasdoor();
+    window.addEventListener("resize", this.handleResize.bind(this));
   }
 
   onSignin() {
@@ -711,6 +713,10 @@ class App extends Component {
     else return Setting.getStatic("/static/css/night.css");
   }
 
+  handleResize() {
+    this.setState({ WindowWidth: window.innerWidth });
+  }
+
   render() {
     return (
       <div>
@@ -722,11 +728,12 @@ class App extends Component {
           href={this.getThemeLink()}
         />
         <BackTop />
-        <Header
+        <PageHeader
           account={this.state.account}
           onSignout={this.onSignout.bind(this)}
           changeMenuStatus={this.changeMenuStatus.bind(this)}
           showMenu={this.state.showMenu}
+          WindowWidth={this.state.WindowWidth}
         />
         <div
           id="Wrapper"
