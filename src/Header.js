@@ -23,7 +23,20 @@ import * as Auth from "./auth/Auth";
 import { ServerUrl } from "./Setting";
 import { authConfig } from "./auth/Auth";
 
-class Header extends React.Component {
+import { Layout, Menu, Dropdown, Avatar } from "antd";
+import {
+  createFromIconfontCN,
+  CaretDownOutlined,
+  PlusOutlined,
+  NotificationOutlined,
+} from "@ant-design/icons";
+import "./Header.css";
+
+const { Header } = Layout;
+const IconFont = createFromIconfontCN({
+  scriptUrl: "//at.alicdn.com/t/font_2717339_gxlfvkk0n8e.js",
+});
+class PageHeader extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -37,6 +50,39 @@ class Header extends React.Component {
 
   componentDidMount() {
     this.getNodes();
+  }
+
+  componentDidUpdate() {
+    // eslint-disable-next-line no-restricted-globals
+    const uri = location.pathname;
+    if (this.state.uri !== uri) {
+      this.updateMenuKey();
+    }
+  }
+
+  updateMenuKey() {
+    // eslint-disable-next-line no-restricted-globals
+    const uri = location.pathname;
+    this.setState({
+      uri: uri,
+    });
+    if (uri === "/") {
+      this.setState({ selectedMenuKey: 0 });
+    } else if (uri.includes("signup")) {
+      this.setState({ selectedMenuKey: 1 });
+    } else if (uri.includes("signin")) {
+      this.setState({ selectedMenuKey: 2 });
+    } else if (uri.includes("swagger")) {
+      this.setState({ selectedMenuKey: 3 });
+    } else if (uri.includes(this.props.account?.username)) {
+      this.setState({ selectedMenuKey: 4 });
+    } else if (uri.includes("records")) {
+      this.setState({ selectedMenuKey: 5 });
+    } else if (uri.includes("notes")) {
+      this.setState({ selectedMenuKey: 6 });
+    } else if (uri.includes("t")) {
+      this.setState({ selectedMenuKey: 7 });
+    }
   }
 
   getMatchNodes(nodes, curSearchVal, matchNodes) {
@@ -96,54 +142,57 @@ class Header extends React.Component {
     });
   }
 
-  renderItem() {
-    const isSignedIn =
-      this.props.account !== undefined && this.props.account !== null;
-    const username = this.props.account?.username;
-
-    if (!isSignedIn) {
+  renderAvatar() {
+    if (this.props.account?.avatar === "") {
       return (
-        <td width="570" align="right" style={{ paddingTop: "2px" }}>
-          <Link to="/" className="top">
-            {i18next.t("general:Home")}
-          </Link>
-          &nbsp;&nbsp;&nbsp;
-          <a href={`${ServerUrl}/swagger`} className="top">
-            {i18next.t("general:Swagger")}
-          </a>
-          &nbsp;&nbsp;&nbsp;
-          <a href={Auth.getSignupUrl()} className="top">
-            {i18next.t("general:Sign Up")}
-          </a>
-          &nbsp;&nbsp;&nbsp;
-          <a href={"/signin"} className="top">
-            {i18next.t("general:Sign In")}
-          </a>
-        </td>
+        <Avatar
+          style={{
+            backgroundColor: Setting.getUserAvatar(
+              this.props.account?.username
+            ),
+            verticalAlign: "middle",
+          }}
+          size="medium"
+        />
       );
     } else {
       return (
-        <td width="570" align="right" style={{ paddingTop: "2px" }}>
-          <Link to="/" className="top">
-            {i18next.t("general:Home")}
-          </Link>
-          &nbsp;&nbsp;&nbsp;
-          <a href={`${ServerUrl}/swagger`} className="top">
-            {i18next.t("general:Swagger")}
+        <Avatar
+          src={this.props.account?.avatar}
+          style={{ verticalAlign: "middle" }}
+          size="medium"
+        />
+      );
+    }
+  }
+
+  renderItemRight() {
+    const isSignedIn =
+      this.props.account !== undefined && this.props.account !== null;
+
+    const menu = (
+      <ul className="nav">
+        <li>
+          <a href={Auth.getSignupUrl()} className="top">
+            {i18next.t("general:Sign Up")}
           </a>
-          &nbsp;&nbsp;&nbsp;
-          <Link to={`/member/${username}`} className="top">
-            {username}
+        </li>
+        <li>
+          <a href={"/signin"} className="top">
+            {i18next.t("general:Sign In")}
+          </a>
+        </li>
+      </ul>
+    );
+    const account = (
+      <Menu style={{ fontSize: "20px" }}>
+        <Menu.Item>
+          <Link to={`/member/${this.props.account?.username}`} className="top">
+            {this.props.account?.username}
           </Link>
-          &nbsp;&nbsp;&nbsp;
-          <Link to="/notes" className="top">
-            {i18next.t("general:Note")}
-          </Link>
-          &nbsp;&nbsp;&nbsp;
-          <Link to="/t" className="top">
-            {i18next.t("general:Timeline")}
-          </Link>
-          &nbsp;&nbsp;&nbsp;
+        </Menu.Item>
+        <Menu.Divider />
+        <Menu.Item>
           <a
             target="_blank"
             className="top"
@@ -151,10 +200,13 @@ class Header extends React.Component {
           >
             {i18next.t("general:Setting")}
           </a>
-          {/*<Link to="/settings" className="top">*/}
-          {/*  {i18next.t("general:Setting")}*/}
-          {/*</Link>*/}
-          &nbsp;&nbsp;&nbsp;
+        </Menu.Item>
+        <Menu.Item>
+          <Link to="/notes" className="top">
+            {i18next.t("general:Note")}
+          </Link>
+        </Menu.Item>
+        <Menu.Item>
           {this.props.account?.isAdmin ? (
             <span>
               <Link to="/admin" className="top">
@@ -163,12 +215,87 @@ class Header extends React.Component {
               &nbsp;&nbsp;&nbsp;
             </span>
           ) : null}
+        </Menu.Item>
+        <Menu.Divider />
+        <Menu.Item>
           <a href="#;" onClick={this.signout.bind(this)} className="top">
             {i18next.t("general:Sign Out")}
           </a>
-        </td>
-      );
-    }
+        </Menu.Item>
+      </Menu>
+    );
+
+    const newTopic = (
+      <Menu>
+        <Menu.Item>
+          <Link to="/new" className={`${this.props.nodeId}`}>
+            {i18next.t("bar:Compose")}
+          </Link>
+        </Menu.Item>
+      </Menu>
+    );
+
+    const dropdown = (
+      <ul className="nav dropdown">
+        <li>
+          <Link to="/notifications" style={{ padding: "0 0 0 5px" }}>
+            <IconFont type="icon-notification" style={{ fontSize: "21px" }} />
+          </Link>
+        </li>
+        <li>
+          <Dropdown overlay={newTopic} trigger="click">
+            <div>
+              <IconFont type="icon-plus" style={{ fontSize: "17px" }} />
+              <CaretDownOutlined />
+            </div>
+          </Dropdown>
+        </li>
+        <li>
+          <Dropdown overlay={account} trigger="click">
+            <div>
+              {this.renderAvatar()}
+              <CaretDownOutlined />
+            </div>
+          </Dropdown>
+        </li>
+      </ul>
+    );
+    return isSignedIn ? dropdown : menu;
+  }
+
+  renderItemLeft() {
+    const width = this.props.WindowWidth;
+    const breakPoint = 745;
+    const leftMenuItems = (
+      <React.Fragment>
+        <li
+          key="1"
+          className={this.state.selectedMenuKey === 0 ? "selected" : ""}
+        >
+          <Link to="/">{i18next.t("general:Home")}</Link>
+        </li>
+        <li key="3">
+          <a href={`${ServerUrl}/swagger`}>{i18next.t("general:Swagger")}</a>
+        </li>
+        <li key="100">
+          <a href={Conf.WikiUrl}>{i18next.t("general:Wiki")}</a>
+        </li>
+      </React.Fragment>
+    );
+    const collapsed_menu = <ul className="nav-collapse">{leftMenuItems}</ul>;
+
+    const menu = <ul className="nav nav-left">{leftMenuItems}</ul>;
+
+    return width > breakPoint ? (
+      menu
+    ) : (
+      <Dropdown overlay={collapsed_menu} trigger="click" placement="topCenter">
+        <IconFont
+          style={{ fontSize: "17px", padding: "19px 19px" }}
+          type="icon-dropdown"
+        />
+      </Dropdown>
+    );
   }
 
   renderMobileHeader() {
@@ -396,8 +523,12 @@ class Header extends React.Component {
     if (Setting.PcBrowser) {
       return (
         <div id="Search">
-          <div id="qbar" className="">
+          <div style={{ display: "flex", alignItems: "center" }} className="">
+            <IconFont type="icon-search" />
             <input
+              value
+              placeholder={i18next.t("search:search")}
+              style={{ width: "160px", margin: "0 0 0 5px" }}
               type="text"
               maxLength="40"
               name="q"
@@ -487,30 +618,65 @@ class Header extends React.Component {
     if (!Setting.PcBrowser) {
       return this.renderMobileHeader();
     }
+    const width = this.props.WindowWidth;
+
+    const breakPointOne = 1360;
+    const breakPointRight = 1100;
+    const breakPointLeft = 865;
+    const breakPointMobile = 650;
+    let contentWidth = 0;
+
+    if (width > breakPointOne) {
+      contentWidth = 1270;
+    } else if (width > breakPointRight) {
+      contentWidth = 1070;
+    } else if (width > breakPointLeft) {
+      contentWidth = 785;
+    } else if (width > breakPointMobile) {
+      contentWidth = 580;
+    }
     return (
-      <div id="Top">
-        <div className="content">
-          <div style={{ paddingTop: "6px" }}>
-            <table cellPadding="0" cellSpacing="0" border="0" width="100%">
-              <tbody>
-                <tr>
-                  <td width="110" align="left">
-                    <Link to="/" name="top" title="way to explore">
-                      <div id="logo" />
-                    </Link>
-                  </td>
-                  <td width="auto" align="left">
-                    {this.renderSearch()}
-                  </td>
-                  {this.renderItem()}
-                </tr>
-              </tbody>
-            </table>
+      <Header
+        style={{
+          justifyContent: "center",
+          backgroundColor: "white",
+          display: "flex",
+          alignItems: "center",
+          position: "sticky",
+          top: "0",
+          padding: "0px",
+        }}
+      >
+        <div
+          className="container"
+          style={{
+            justifyContent: "space-between",
+            position: "relative",
+            display: "flex",
+            width: width > breakPointMobile ? [`${contentWidth}px`] : "100%",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", flex: "auto" }}>
+            <Link to="/" style={{ lineHeight: "initial" }}>
+              <div id="logo" style={{ marginRight: "10px" }} />
+            </Link>
+            {}
+            {this.renderItemLeft()}
+          </div>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            {width > breakPointRight ? (
+              this.renderSearch()
+            ) : (
+              <div style={{ display: "none" }} />
+            )}
+            <Menu mode="horizontal" style={{ fontSize: "16px" }}>
+              {this.renderItemRight()}
+            </Menu>
           </div>
         </div>
-      </div>
+      </Header>
     );
   }
 }
 
-export default withRouter(Header);
+export default withRouter(PageHeader);

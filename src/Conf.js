@@ -57,3 +57,5 @@ export const EnableNotificationAutoUpdate = false;
 export const NotificationAutoUpdatePeriod = 10; // second
 
 export const DefaultTopicPageReplyNum = 100;
+
+export const WikiUrl = "https://casdoor.org/docs/overview";
