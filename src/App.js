@@ -86,6 +86,18 @@ const SigninBox = React.lazy(() => import("./main/SigninBox"));
 class App extends Component {
   constructor(props) {
     super(props);
+    let initalBreakpoint = "";
+    if (window.innerWidth > 1360) {
+      initalBreakpoint = "stage1";
+    } else if (window.innerWidth > 1100) {
+      initalBreakpoint = "stage2";
+    } else if (window.innerWidth > 865) {
+      initalBreakpoint = "stage3";
+    } else if (window.innerWidth > 650) {
+      initalBreakpoint = "stage4";
+    } else if (window.innerWidth < 650) {
+      initalBreakpoint = "stage5";
+    }
     this.state = {
       classes: props,
       account: undefined,
@@ -96,7 +108,7 @@ class App extends Component {
       nodeBackgroundRepeat: "",
       casdoor: null,
       OAuthObjects: [],
-      WindowWidth: window.innerWidth,
+      BreakpointStage: initalBreakpoint,
     };
 
     Setting.initServerUrl();
@@ -714,7 +726,23 @@ class App extends Component {
   }
 
   handleResize() {
-    this.setState({ WindowWidth: window.innerWidth });
+    let width = window.innerWidth;
+    const breakPointOne = 1360;
+    const breakPointRight = 1100;
+    const breakPointLeft = 865;
+    const breakPointMobile = 650;
+
+    if (width > breakPointOne) {
+      this.setState({ BreakpointStage: "stage1" });
+    } else if (width > breakPointRight) {
+      this.setState({ BreakpointStage: "stage2" });
+    } else if (width > breakPointLeft) {
+      this.setState({ BreakpointStage: "stage3" });
+    } else if (width > breakPointMobile) {
+      this.setState({ BreakpointStage: "stage4" });
+    } else if (width < breakPointMobile) {
+      this.setState({ BreakpointStage: "stage5" });
+    }
   }
 
   render() {
@@ -733,7 +761,7 @@ class App extends Component {
           onSignout={this.onSignout.bind(this)}
           changeMenuStatus={this.changeMenuStatus.bind(this)}
           showMenu={this.state.showMenu}
-          WindowWidth={this.state.WindowWidth}
+          BreakpointStage={this.state.BreakpointStage}
         />
         <div
           id="Wrapper"
