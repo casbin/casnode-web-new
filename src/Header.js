@@ -24,19 +24,14 @@ import { ServerUrl } from "./Setting";
 import { authConfig } from "./auth/Auth";
 
 import { Layout, Menu, Dropdown, Avatar } from "antd";
-import {
-  createFromIconfontCN,
-  CaretDownOutlined,
-  PlusOutlined,
-  NotificationOutlined,
-} from "@ant-design/icons";
+import { createFromIconfontCN, CaretDownOutlined } from "@ant-design/icons";
 import "./Header.css";
 
 import Container from "./components/container";
 
 const { Header } = Layout;
 const IconFont = createFromIconfontCN({
-  scriptUrl: "//at.alicdn.com/t/font_2717339_gxlfvkk0n8e.js",
+  scriptUrl: "//at.alicdn.com/t/font_2717339_hu7ls0q10p.js",
 });
 class PageHeader extends React.Component {
   constructor(props) {

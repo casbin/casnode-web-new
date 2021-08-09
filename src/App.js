@@ -19,7 +19,7 @@ import * as Setting from "./Setting";
 import { Switch, Route } from "react-router-dom";
 import TopicPage from "./TopicPage";
 import PageHeader from "./Header";
-import Footer from "./Footer";
+import PageFooter from "./Footer";
 import RightSigninBox from "./rightbar/RightSigninBox";
 import RightAccountBox from "./rightbar/RightAccountBox";
 import SearchTag from "./main/SearchTag";
@@ -782,7 +782,7 @@ class App extends Component {
             {Setting.PcBrowser ? <div className="sep20" /> : null}
           </div>
         </div>
-        <Footer />
+        <PageFooter BreakpointStage={this.state.BreakpointStage} />
       </div>
     );
   }
