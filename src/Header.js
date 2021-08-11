@@ -622,7 +622,7 @@ class PageHeader extends React.Component {
           backgroundColor: "white",
           display: "flex",
           alignItems: "center",
-          position: "sticky",
+          position: "relative",
           top: "0",
           padding: "0px",
         }}

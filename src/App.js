@@ -220,19 +220,22 @@ class App extends Component {
           </div>
         </Route>
         <Route exact path="/signin">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
+          {/* <div id={pcBrowser ? "Main" : ""}> */}
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            {/* {pcBrowser ? <div className="sep20" /> : null} */}
             <LazyLoad>
               <SigninBox
                 onSignin={this.onSignin.bind(this)}
                 onSignout={this.onSignout.bind(this)}
                 Casdoor={this.state.casdoor}
+                BreakpointStage={this.state.BreakpointStage}
+                OAuthObjects={this.state.OAuthObjects}
               />
             </LazyLoad>
-            {pcBrowser ? null : <div className="sep5" />}
+            {/* {pcBrowser ? null : <div className="sep5" />}
             {pcBrowser ? null : (
               <RightSigninBox OAuthObjects={this.state.OAuthObjects} />
-            )}
+            )} */}
           </div>
         </Route>
         <Route exact path="/signout">
@@ -746,6 +749,7 @@ class App extends Component {
   }
 
   render() {
+    console.log(window.innerWidth);
     return (
       <div>
         <link
@@ -773,7 +777,7 @@ class App extends Component {
           className={this.state.nodeId}
           onClick={() => this.changeMenuStatus(false)}
         >
-          <div className="content">
+          <div>
             <div id="Leftbar" />
             {Setting.PcBrowser ? <CustomGithubCorner /> : null}
             {Setting.PcBrowser ? this.renderRightbar() : null}
