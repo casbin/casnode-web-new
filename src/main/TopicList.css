@@ -1,0 +1,74 @@
+.listBox {
+  display: flex;
+  min-height: 85px;
+  border-bottom: 1px solid #f4f4f4;
+  padding: 15px 25px;
+}
+
+.listBox:hover {
+  background-color: #f9f9f9;
+}
+
+.avatar {
+  padding-top: 6px;
+  margin-right: 8px;
+  min-width: 48px;
+}
+
+.content {
+  flex: 1 1;
+  text-align: left;
+  text-decoration: none;
+  margin: 0;
+  min-width: none;
+  max-width: none;
+}
+
+.title {
+  font-size: 18px;
+  margin-bottom: 0;
+  color: #404040;
+}
+.node {
+  margin-right: 4px;
+  color: #666666;
+}
+
+.info {
+  color: #adaaa8;
+  font-size: 15px;
+  margin-top: 0;
+}
+
+.user {
+  color: #797776;
+  text-decoration: underline;
+  text-decoration-color: rgba(74, 74, 74, 0.3686274509803922);
+}
+
+.count {
+  width: 100px;
+  text-align: right;
+  padding-top: 1.25rem;
+}
+
+.count a {
+  color: #666;
+  line-height: 11px;
+  font-size: 13px;
+  min-width: 32px;
+  text-align: center;
+  border-radius: 80px;
+  padding: 3px 8px;
+  display: inline-block;
+  text-decoration: none;
+  background: rgba(79, 147, 248, 0.24);
+}
+
+.count a:hover {
+  background: #f2f2f2;
+}
+
+.count a:visited {
+  background: #f2f2f2;
+}

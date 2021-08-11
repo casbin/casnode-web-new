@@ -780,7 +780,7 @@ class App extends Component {
           <div>
             <div id="Leftbar" />
             {Setting.PcBrowser ? <CustomGithubCorner /> : null}
-            {Setting.PcBrowser ? this.renderRightbar() : null}
+            {/* {Setting.PcBrowser ? this.renderRightbar() : null} */}
             {this.renderMain()}
             <div className="c" />
             {Setting.PcBrowser ? <div className="sep20" /> : null}
