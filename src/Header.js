@@ -32,6 +32,8 @@ import {
 } from "@ant-design/icons";
 import "./Header.css";
 
+import Container from "./components/container";
+
 const { Header } = Layout;
 const IconFont = createFromIconfontCN({
   scriptUrl: "//at.alicdn.com/t/font_2717339_gxlfvkk0n8e.js",
@@ -264,8 +266,6 @@ class PageHeader extends React.Component {
   }
 
   renderItemLeft() {
-    const width = this.props.WindowWidth;
-    const breakPoint = 745;
     const leftMenuItems = (
       <React.Fragment>
         <li
@@ -286,7 +286,8 @@ class PageHeader extends React.Component {
 
     const menu = <ul className="nav nav-left">{leftMenuItems}</ul>;
 
-    return width > breakPoint ? (
+    return this.props.BreakpointStage == "stage1" ||
+      this.props.BreakpointStage == "stage2" ? (
       menu
     ) : (
       <Dropdown overlay={collapsed_menu} trigger="click" placement="topCenter">
@@ -618,23 +619,7 @@ class PageHeader extends React.Component {
     if (!Setting.PcBrowser) {
       return this.renderMobileHeader();
     }
-    const width = this.props.WindowWidth;
 
-    const breakPointOne = 1360;
-    const breakPointRight = 1100;
-    const breakPointLeft = 865;
-    const breakPointMobile = 650;
-    let contentWidth = 0;
-
-    if (width > breakPointOne) {
-      contentWidth = 1270;
-    } else if (width > breakPointRight) {
-      contentWidth = 1070;
-    } else if (width > breakPointLeft) {
-      contentWidth = 785;
-    } else if (width > breakPointMobile) {
-      contentWidth = 580;
-    }
     return (
       <Header
         style={{
@@ -647,24 +632,15 @@ class PageHeader extends React.Component {
           padding: "0px",
         }}
       >
-        <div
-          className="container"
-          style={{
-            justifyContent: "space-between",
-            position: "relative",
-            display: "flex",
-            width: width > breakPointMobile ? [`${contentWidth}px`] : "100%",
-          }}
-        >
+        <Container BreakpointStage={this.props.BreakpointStage}>
           <div style={{ display: "flex", alignItems: "center", flex: "auto" }}>
             <Link to="/" style={{ lineHeight: "initial" }}>
               <div id="logo" style={{ marginRight: "10px" }} />
             </Link>
-            {}
             {this.renderItemLeft()}
           </div>
           <div style={{ display: "flex", alignItems: "center" }}>
-            {width > breakPointRight ? (
+            {this.props.BreakpointStage == "stage1" ? (
               this.renderSearch()
             ) : (
               <div style={{ display: "none" }} />
@@ -673,7 +649,7 @@ class PageHeader extends React.Component {
               {this.renderItemRight()}
             </Menu>
           </div>
-        </div>
+        </Container>
       </Header>
     );
   }
