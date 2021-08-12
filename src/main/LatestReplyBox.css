@@ -1,0 +1,19 @@
+.list {
+  list-style: none;
+  padding: 15px 25px;
+  text-align: left;
+  background-color: white;
+  border-bottom: 1px solid #f4f4f4;
+}
+
+.topicName:hover {
+  text-decoration: underline;
+}
+
+.title {
+  margin-bottom: 5px;
+}
+
+.body p {
+  margin: 0px;
+}

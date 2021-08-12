@@ -447,7 +447,6 @@ class MemberBox extends React.Component {
         ) : (
           <div className="sep5" />
         )}
-        <LatestReplyBox member={this.state.member} />
       </span>
     );
   }

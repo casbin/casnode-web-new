@@ -22,6 +22,11 @@ import TopicList from "./TopicList";
 import * as MemberBackend from "../backend/MemberBackend";
 import i18next from "i18next";
 
+import { Card, Tabs } from "antd";
+
+import "./AllCreatedTopicsBox.css";
+const { TabPane } = Tabs;
+
 class AllCreatedTopicsBox extends React.Component {
   constructor(props) {
     super(props);
@@ -255,7 +260,7 @@ class AllCreatedTopicsBox extends React.Component {
       memberAvatar = this.state.member.avatar;
     }
 
-    return (
+    const origin_return = (
       <div className="box">
         <div className="cell_tabs">
           <div className="fl">
@@ -322,6 +327,27 @@ class AllCreatedTopicsBox extends React.Component {
             </Link>
           </div>
         ) : null}
+      </div>
+    );
+
+    return (
+      <div className="card-container">
+        <Tabs type="card">
+          <TabPane tab={i18next.t("general:Personal Profile")} key="1">
+            <Card></Card>
+          </TabPane>
+          <TabPane tab={i18next.t("general:Topics")} key="2">
+            <TopicList
+              topics={this.state.topics}
+              showNodeName={true}
+              showAvatar={true}
+              timeStandard={"createdTime"}
+            />
+          </TabPane>
+          <TabPane tab={i18next.t("general:Replies")} key="3">
+            <LatestReplyBox member={this.state.member} />
+          </TabPane>
+        </Tabs>
       </div>
     );
   }
