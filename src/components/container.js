@@ -18,7 +18,7 @@ export default class Container extends React.Component {
       <div
         className="container"
         style={{
-          justifyContent: "space-between",
+          justifyContent: "center",
           position: "relative",
           display: "flex",
           width:

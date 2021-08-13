@@ -17,6 +17,9 @@ import { withRouter, Link } from "react-router-dom";
 import * as Auth from "../auth/Auth";
 import i18next from "i18next";
 import "./rightSignin.css";
+import { AuthConfig } from "../Conf";
+
+import { Card } from "antd";
 
 class RightSigninBox extends React.Component {
   constructor(props) {
@@ -83,53 +86,58 @@ class RightSigninBox extends React.Component {
   }
 
   render() {
-    if (
-      window.location.pathname === "/signin" &&
-      this.props.OAuthObjects !== undefined &&
-      this.props.OAuthObjects !== null &&
-      this.props.OAuthObjects.length !== 0
-    ) {
-      return (
-        <div className="box">
-          <div className="header">{i18next.t("bar:Other Sign In Methods")}</div>
-          {this.props.OAuthObjects.map((obj) => {
-            switch (obj.type) {
-              case "Google":
-                return this.renderGoogleSignin(obj.link);
-              case "GitHub":
-                return this.renderGithubSignin(obj.link);
-              case "WeChat":
-                return this.renderWechatSignin(obj.link);
-              case "QQ":
-                return this.renderQQSignin(obj.link);
-              default:
-                return null;
-            }
-          })}
-        </div>
-      );
-    }
+    // if (
+    //   window.location.pathname === "/signin" &&
+    //   this.props.OAuthObjects !== undefined &&
+    //   this.props.OAuthObjects !== null &&
+    //   this.props.OAuthObjects.length !== 0
+    // ) {
+    //   return (
+    //     <div className="box">
+    //       <div className="header">{i18next.t("bar:Other Sign In Methods")}</div>
+    //       {this.props.OAuthObjects.map((obj) => {
+    //         switch (obj.type) {
+    //           case "Google":
+    //             return this.renderGoogleSignin(obj.link);
+    //           case "GitHub":
+    //             return this.renderGithubSignin(obj.link);
+    //           case "WeChat":
+    //             return this.renderWechatSignin(obj.link);
+    //           case "QQ":
+    //             return this.renderQQSignin(obj.link);
+    //           default:
+    //             return null;
+    //         }
+    //       })}
+    //     </div>
+    //   );
+    // }
 
     return (
-      <div className="box">
+      // <div className="box">
+      <Card>
         <div className="cell">
           <strong>Casbin = way to authorization</strong>
           <div className="sep5" />
           <span className="fade">A place for Casbin developers and users</span>
         </div>
-        <div className="inner">
-          <div className="sep5" />
-          <div align="center">
-            <a href={Auth.getSignupUrl()} className="super normal button">
-              {i18next.t("bar:Sign Up Now")}
-            </a>
-            <div className="sep5" />
-            <div className="sep10" />
-            {i18next.t("bar:For Existing Member")} &nbsp;
-            <a href={Auth.getSigninUrl()}>{i18next.t("bar:Sign In")}</a>
-          </div>
-        </div>
-      </div>
+        <div className="sep5" />
+        <ul style={{ listStyle: "none", textAlign: "left", fontSize: "18px" }}>
+          <li>
+            <div style={{ padding: "10px 20px" }}>
+              <a href={Auth.getSignupUrl()}>{i18next.t("bar:Sign Up Now")}</a>
+            </div>
+          </li>
+          <li>
+            <div style={{ padding: "10px 20px" }}>
+              <a href={`${AuthConfig.serverUrl}/forget/${AuthConfig.appName}`}>
+                {i18next.t("general:Forgot Password")}
+              </a>
+            </div>
+          </li>
+        </ul>
+      </Card>
+      // </div>
     );
   }
 }

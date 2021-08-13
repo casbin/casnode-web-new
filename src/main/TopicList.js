@@ -19,6 +19,8 @@ import Avatar from "../Avatar";
 import "../node.css";
 import i18next from "i18next";
 import { Link } from "react-router-dom";
+
+import "./TopicList.css";
 const pangu = require("pangu");
 
 class TopicList extends React.Component {
@@ -70,156 +72,78 @@ class TopicList extends React.Component {
 
   renderTopic(topic) {
     const pcBrowser = Setting.PcBrowser;
-    const style = this.topStyle(
-      topic?.nodeTopTime,
-      topic?.tabTopTime,
-      topic?.homePageTopTime
-    );
 
     return (
-      <div
-        key={topic?.id}
-        className={`cell item ${this.props.nodeId}`}
-        style={style}
+      <Link
+        to={`/t/${topic?.id}`}
+        onClick={() => this.addTopicHitCount(topic?.id)}
+        className={`${this.props.nodeId}`}
       >
-        <table cellPadding="0" cellSpacing="0" border="0" width="100%">
-          <tbody>
-            <tr>
-              {this.props.showAvatar ? (
-                <td
-                  width={Setting.PcBrowser ? "48" : "24"}
-                  valign="top"
-                  align="center"
+        <div key={topic?.id} className="listBox">
+          <div className="avatar">
+            <Avatar
+              username={topic?.author}
+              avatar={topic?.avatar}
+              size={Setting.PcBrowser ? "" : "medium"}
+            />
+          </div>
+
+          <div className="content">
+            <div className="title">
+              <span className="node">
+                <Link to={`/go/${topic.nodeId}`}>{topic.nodeName}</Link>
+              </span>
+              {pangu.spacing(topic.title)}
+            </div>
+
+            <div className="info">
+              <span className="user">
+                <Link
+                  to={`/member/${topic.author}`}
+                  className={`${this.props.nodeId} member`}
                 >
-                  <Avatar
-                    username={topic?.author}
-                    avatar={topic?.avatar}
-                    size={Setting.PcBrowser ? "" : "small"}
-                  />
-                </td>
-              ) : null}
-              {this.props.showAvatar ? <td width="10" /> : null}
-              <td width="auto" valign="middle">
-                {!pcBrowser && this.props.showNodeName ? (
-                  <span className="small fade">
-                    <Link to={`/go/${topic.nodeId}`} className="node">
-                      {topic.nodeName}
-                    </Link>{" "}
-                    &nbsp;•&nbsp;{" "}
-                    <strong>
-                      <Link to={`/member/${topic.author}`} className="node">
-                        {topic.author}
-                      </Link>
-                    </strong>
+                  {topic.author}
+                </Link>
+              </span>{" "}
+              {pcBrowser ? (
+                <span>
+                  &nbsp;•&nbsp;{" "}
+                  <span className="time">
+                    {topic.lastReplyTime === "" ||
+                    this.props.timeStandard === "createdTime"
+                      ? Setting.getPrettyDate(topic.createdTime)
+                      : Setting.getPrettyDate(topic.lastReplyTime)}
                   </span>
-                ) : null}
-                {!pcBrowser && this.props.showNodeName ? (
-                  <div className="sep5" />
-                ) : null}
-                <span className="item_title">
-                  <Link
-                    to={`/t/${topic?.id}`}
-                    onClick={() => this.addTopicHitCount(topic?.id)}
-                    className={`topic-link b ${this.props.nodeId}`}
-                  >
-                    {pangu.spacing(topic.title)}
-                  </Link>
-                </span>
-                <div className="sep5" />
-                <span className={pcBrowser ? "topic_info" : "small fade"}>
-                  {pcBrowser ? (
-                    <span>
-                      <div className="votes" />
-                      {this.props.showNodeName ? (
-                        <span>
-                          <Link to={`/go/${topic.nodeId}`} className="node">
-                            {topic.nodeName}
-                          </Link>{" "}
-                          &nbsp;•&nbsp;{" "}
-                        </span>
-                      ) : null}
-                      <strong>
+                  {topic.lastReplyUser === "" ? null : (
+                    <div style={{ display: "inline" }}>
+                      {" "}
+                      &nbsp;•&nbsp; {i18next.t("topic:last reply from")}{" "}
+                      <span className="user">
                         <Link
-                          to={`/member/${topic.author}`}
+                          to={`/member/${topic.lastReplyUser}`}
                           className={`${this.props.nodeId} member`}
                         >
-                          {topic.author}
+                          {topic.lastReplyUser}
                         </Link>
-                      </strong>{" "}
-                      &nbsp;•&nbsp;{" "}
-                      {topic.lastReplyTime === "" ||
-                      this.props.timeStandard === "createdTime"
-                        ? Setting.getPrettyDate(topic.createdTime)
-                        : Setting.getPrettyDate(topic.lastReplyTime)}
-                      {topic.lastReplyUser === "" ? null : (
-                        <div style={{ display: "inline" }}>
-                          {" "}
-                          &nbsp;•&nbsp; {i18next.t(
-                            "topic:last reply from"
-                          )}{" "}
-                          <strong>
-                            <Link
-                              to={`/member/${topic.lastReplyUser}`}
-                              className={`${this.props.nodeId} member`}
-                            >
-                              {topic.lastReplyUser}
-                            </Link>
-                          </strong>
-                        </div>
-                      )}
-                    </span>
-                  ) : (
-                    <span>
-                      {this.props.showNodeName ? (
-                        <span>
-                          {topic.lastReplyTime === "" ||
-                          this.props.timeStandard === "createdTime"
-                            ? Setting.getPrettyDate(topic.createdTime)
-                            : Setting.getPrettyDate(topic.lastReplyTime)}
-                          {topic.lastReplyUser === "" ? null : (
-                            <div style={{ display: "inline" }}>
-                              {" "}
-                              &nbsp;•&nbsp; {i18next.t(
-                                "topic:last reply from"
-                              )}{" "}
-                              <strong>
-                                <Link
-                                  to={`/member/${topic.lastReplyUser}`}
-                                  className={`${this.props.nodeId} member`}
-                                >
-                                  {topic.lastReplyUser}
-                                </Link>
-                              </strong>
-                            </div>
-                          )}
-                        </span>
-                      ) : (
-                        <span>
-                          <strong>{topic.author}</strong> &nbsp;•&nbsp;{" "}
-                          {topic.contentLength} {i18next.t("topic:words")}{" "}
-                          &nbsp;•&nbsp; {topic.hitCount}{" "}
-                          {i18next.t("topic:hits")}
-                        </span>
-                      )}
-                    </span>
+                      </span>
+                    </div>
                   )}
                 </span>
-              </td>
-              <td width="70" align="right" valign="middle">
-                {topic.replyCount === 0 ? null : (
-                  <Link
-                    to={`/t/${topic?.id}`}
-                    onClick={() => this.addTopicHitCount(topic?.id)}
-                    className={`count_livid ${this.props.nodeId}`}
-                  >
-                    {topic.replyCount}
-                  </Link>
-                )}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+              ) : null}
+            </div>
+          </div>
+          <div className="count">
+            {topic.replyCount === 0 ? null : (
+              <Link
+                to={`/t/${topic?.id}`}
+                onClick={() => this.addTopicHitCount(topic?.id)}
+              >
+                {topic.replyCount}
+              </Link>
+            )}
+          </div>
+        </div>
+      </Link>
     );
   }
 

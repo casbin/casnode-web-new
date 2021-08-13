@@ -23,6 +23,13 @@ import { withRouter } from "react-router-dom";
 import i18next from "i18next";
 import { AuthConfig } from "../Conf";
 
+import { Button, Card, Alert } from "antd";
+
+import { authConfig } from "../auth/Auth";
+import Container from "../components/container";
+import * as Auth from "../auth/Auth";
+import "./SigninBox.css";
+import * as Conf from "../Conf";
 class SigninBox extends React.Component {
   constructor(props) {
     super(props);
@@ -110,26 +117,18 @@ class SigninBox extends React.Component {
     }
 
     return (
-      <div className="problem" onClick={this.clearMessage.bind(this)}>
-        {i18next.t(
+      <Alert
+        style={{ textAlign: "left" }}
+        message={i18next.t(
           "error:Please resolve the following issues before submitting"
         )}
-        <ul>
-          {problems.map((problem, i) => {
-            if (problem === "Please sign out before sign in") {
-              return (
-                <li>
-                  {i18next.t(`error:${this.state.message}`)} &nbsp;{" "}
-                  <a href="#;" onClick={() => this.signOut()}>
-                    {i18next.t("signout:Click to sign out")}
-                  </a>
-                </li>
-              );
-            }
-            return <li>{i18next.t(`error:${problem}`)}</li>;
-          })}
-        </ul>
-      </div>
+        description={problems.map((problem, i) => {
+          return "· " + i18next.t(`error:${problem}`);
+        })}
+        type="warning"
+        closable
+        showIcon
+      />
     );
   }
 
@@ -139,98 +138,231 @@ class SigninBox extends React.Component {
     }
 
     return (
-      <div className="message" onClick={this.clearMessage.bind(this)}>
-        <li className="fa fa-exclamation-triangle" />
-        &nbsp;{" "}
-        {i18next.t(
+      <Alert
+        style={{ textAlign: "left" }}
+        message={i18next.t(
           "error:We had a problem when you signed in, please try again"
         )}
+        type="error"
+        showIcon
+        closable
+      />
+    );
+  }
+
+  redirectTo(link) {
+    window.location.href = link;
+  }
+
+  renderWechatSignin(link) {
+    return (
+      <div className="cell" style={{ textAlign: "center" }}>
+        <div className="signin_method" onClick={() => this.redirectTo(link)}>
+          <div className="signin_method_icon signin_method_wechat" />
+          <div className="signin_method_label" style={{ width: 140 }}>
+            {i18next.t("signin:Sign in with WeChat")}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  renderGoogleSignin(link) {
+    return (
+      <div className="cell" style={{ textAlign: "center" }}>
+        <div className="signin_method" onClick={() => this.redirectTo(link)}>
+          <div className="signin_method_icon signin_method_google" />
+          <div className="signin_method_label" style={{ width: 140 }}>
+            {i18next.t("signin:Sign in with Google")}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  renderGithubSignin(link) {
+    return (
+      <div className="cell" style={{ textAlign: "center" }}>
+        <div className="signin_method" onClick={() => this.redirectTo(link)}>
+          <div className="signin_method_icon signin_method_github" />
+          <div className="signin_method_label" style={{ width: 140 }}>
+            {i18next.t("signin:Sign in with Github")}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  renderQQSignin(link) {
+    return (
+      <div className="cell" style={{ textAlign: "center" }}>
+        <div className="signin_method" onClick={() => this.redirectTo(link)}>
+          <div className="signin_method_icon signin_method_qq" />
+          <div className="signin_method_label" style={{ width: 140 }}>
+            {i18next.t("signin:Sign in with QQ")}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  renderProvider() {
+    if (
+      window.location.pathname === "/signin" &&
+      this.props.OAuthObjects !== undefined &&
+      this.props.OAuthObjects !== null &&
+      this.props.OAuthObjects.length !== 0
+    ) {
+      return (
+        <div>
+          <div className="title">{i18next.t("bar:Other Sign In Methods")}</div>
+          {this.props.OAuthObjects.map((obj) => {
+            switch (obj.type) {
+              case "Google":
+                return this.renderGoogleSignin(obj.link);
+              case "GitHub":
+                return this.renderGithubSignin(obj.link);
+              case "WeChat":
+                return this.renderWechatSignin(obj.link);
+              case "QQ":
+                return this.renderQQSignin(obj.link);
+              default:
+                return null;
+            }
+          })}
+        </div>
+      );
+    }
+  }
+
+  renderRightBar() {
+    if (
+      this.props.BreakpointStage == "stage4" ||
+      this.props.BreakpointStage == "stage5"
+    ) {
+      return null;
+    }
+    return (
+      <div>
+        <Card style={{ marginTop: "30px", marginLeft: "40px" }}>
+          <div className="cell">
+            <strong>{Conf.SiteSlogan}</strong>
+            <div className="sep5" />
+            <span className="fade">{Conf.SiteDescription}</span>
+          </div>
+          <div className="sep5" />
+          <ul
+            style={{ listStyle: "none", textAlign: "left", fontSize: "18px" }}
+          >
+            <li>
+              <div style={{ padding: "10px 0" }}>
+                <a href={Auth.getSignupUrl()}>{i18next.t("bar:Sign Up Now")}</a>
+              </div>
+            </li>
+            <li>
+              <div style={{ padding: "10px 0" }}>
+                <a
+                  href={`${AuthConfig.serverUrl}/forget/${AuthConfig.appName}`}
+                >
+                  {i18next.t("general:Forgot Password")}
+                </a>
+              </div>
+            </li>
+          </ul>
+        </Card>
       </div>
     );
   }
 
   render() {
     return (
-      <div className="box">
-        <Header item="Sign In" />
-        {this.renderProblem()}
-        {this.renderMessage()}
-        <div className="cell">
-          <form onSubmit={this.onSignin}>
-            <table cellPadding="5" cellSpacing="0" border="0" width="100%">
-              <tbody>
-                <tr>
-                  <td width="120" align="right">
-                    {i18next.t("general:Username")}
-                  </td>
-                  <td width="auto" align="left">
-                    <input
-                      type="text"
-                      value={this.state.form.information}
-                      onChange={(event) => {
-                        this.updateFormField("information", event.target.value);
-                      }}
-                      className="sl"
-                      name="username"
-                      autoFocus="autofocus"
-                      autoCorrect="off"
-                      spellCheck="false"
-                      autoCapitalize="off"
-                      placeholder={i18next.t(
-                        "general:Username, email address or phone number"
-                      )}
-                      style={{ width: Setting.PcBrowser ? "280px" : "100%" }}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <td width="120" align="right">
-                    {i18next.t("general:Password")}
-                  </td>
-                  <td width="auto" align="left">
-                    <input
-                      type="password"
-                      value={this.state.form.password}
-                      onChange={(event) => {
-                        this.updateFormField("password", event.target.value);
-                      }}
-                      className="sl"
-                      name="password"
-                      autoCorrect="off"
-                      spellCheck="false"
-                      autoCapitalize="off"
-                      style={{ width: Setting.PcBrowser ? "280px" : "100%" }}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <td width="120" align="right" />
-                  <td width="auto" align="left">
-                    <input type="hidden" value="83861" name="once" />
-                    <input
-                      type="submit"
-                      className="super normal button"
-                      value={i18next.t("general:Sign In")}
+      <Container BreakpointStage={this.props.BreakpointStage}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            width: "100%",
+            alignItems: "center",
+          }}
+        >
+          <div style={{ width: "100%", marginTop: "10px" }}>
+            {this.renderProblem()}
+            {this.renderMessage()}
+          </div>
+          <div
+            className={`${this.props.BreakpointStage}`}
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginBottom: "20px",
+            }}
+          >
+            <div style={{ flex: "1" }}>
+              <Card style={{ textAlign: "left", marginTop: "30px" }}>
+                <div>
+                  <div className="title">
+                    {i18next.t("general:Sign in")} {authConfig.appName}
+                  </div>
+
+                  <form onSubmit={this.onSignin}>
+                    <div>
+                      <input
+                        type="text"
+                        value={this.state.form.information}
+                        onChange={(event) => {
+                          this.updateFormField(
+                            "information",
+                            event.target.value
+                          );
+                        }}
+                        className="input"
+                        name="username"
+                        autoFocus="autofocus"
+                        autoCorrect="off"
+                        spellCheck="false"
+                        autoCapitalize="off"
+                        placeholder={i18next.t(
+                          "general:Username, email address or phone number"
+                        )}
+                      />
+                    </div>
+                    <div>
+                      <input
+                        type="password"
+                        value={this.state.form.password}
+                        onChange={(event) => {
+                          this.updateFormField("password", event.target.value);
+                        }}
+                        className="input"
+                        name="password"
+                        autoCorrect="off"
+                        spellCheck="false"
+                        autoCapitalize="off"
+                        placeholder={i18next.t("general:Password")}
+                      />
+                    </div>
+
+                    <Button
+                      htmlType="submit"
                       onClick={(event) => this.onSignin(event)}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <td width="120" align="right" />
-                  <td width="auto" align="left">
-                    <a
-                      href={`${AuthConfig.serverUrl}/forget/${AuthConfig.appName}`}
+                      block="true"
+                      type="primary"
+                      className="button"
                     >
-                      {i18next.t("general:Forgot Password")}
-                    </a>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <input type="hidden" value="/signup" name="next" />
-          </form>
+                      {i18next.t("general:Sign In")}
+                    </Button>
+
+                    <input type="hidden" value="/signup" name="next" />
+                  </form>
+                </div>
+              </Card>
+
+              <Card style={{ marginTop: "30px" }}>{this.renderProvider()}</Card>
+            </div>
+            {this.renderRightBar()}
+          </div>
         </div>
-      </div>
+      </Container>
     );
   }
 }

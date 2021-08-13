@@ -19,8 +19,19 @@ import * as BasicBackend from "./backend/BasicBackend";
 import { Link, withRouter } from "react-router-dom";
 import moment from "moment";
 import i18next from "i18next";
+import { Layout } from "antd";
 
-class Footer extends React.Component {
+import Container from "./components/container";
+import { createFromIconfontCN } from "@ant-design/icons";
+
+import "./Footer.css";
+
+const IconFont = createFromIconfontCN({
+  scriptUrl: "//at.alicdn.com/t/font_2717339_hu7ls0q10p.js",
+});
+const { Footer } = Layout;
+
+class PageFooter extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -103,104 +114,118 @@ class Footer extends React.Component {
     const jfkTime = moment().utcOffset(-4).format("HH:mm");
 
     return (
-      <div id="Bottom">
-        <div className="content">
-          <div className="inner">
-            <div className="sep10" />
-            <div className="fr">
-              <a href="https://www.digitalocean.com/" target="_blank">
-                <div id="logoFooter" />
-              </a>
-            </div>
-            {/*<div className="fr">*/}
-            {/*  <a href="https://casbin.org" target="_blank">*/}
-            {/*    <div className="footer-logo" />*/}
-            {/*  </a>*/}
-            {/*</div>*/}
-            <strong>
-              <Link to="/about" className="dark" target="_self">
+      <Footer
+        style={{
+          justifyContent: "center",
+          backgroundColor: "#f4f4f4",
+          display: "flex",
+          alignItems: "center",
+          position: "sticky",
+          padding: "0px",
+        }}
+      >
+        <Container BreakpointStage={this.props.BreakpointStage}>
+          <div className="fr" style={{ marginRight: "10px" }}>
+            <a href="https://www.digitalocean.com/" target="_blank">
+              <div id="logoFooter" />
+            </a>
+          </div>
+          {/*<div className="fr">*/}
+          {/*  <a href="https://casbin.org" target="_blank">*/}
+          {/*    <div className="footer-logo" />*/}
+          {/*  </a>*/}
+          {/*</div>*/}
+          <div style={{ flex: "1", alignItems: "center", fontSize: "18px" }}>
+            <div style={{ textAlign: "center" }}>
+              <Link to="/about" target="_self" className="titles">
                 {i18next.t("footer:About")}
-              </Link>{" "}
-              &nbsp; <span className="snow">·</span> &nbsp;{" "}
-              <Link to="/faq" className="dark" target="_self">
+              </Link>
+              <span className="slash">/</span>
+              <Link to="/faq" target="_self" className="titles">
                 FAQ
-              </Link>{" "}
-              &nbsp; <span className="snow">·</span> &nbsp;{" "}
-              <Link to="/api" className="dark" target="_self">
+              </Link>
+              <span className="slash">/</span>
+              <Link to="/api" target="_self" className="titles">
                 API
-              </Link>{" "}
-              &nbsp; <span className="snow">·</span> &nbsp;{" "}
-              <Link to="/mission" className="dark" target="_self">
+              </Link>
+              <span className="slash">/</span>
+              <Link to="/mission" target="_self" className="titles">
                 {i18next.t("footer:Mission")}
-              </Link>{" "}
-              &nbsp; <span className="snow">·</span> &nbsp;{" "}
-              <Link to="/advertise" className="dark" target="_self">
+              </Link>
+              <span className="slash">/</span>
+              <Link to="/advertise" target="_self" className="titles">
                 {i18next.t("footer:Advertise")}
-              </Link>{" "}
-              &nbsp; <span className="snow">·</span> &nbsp;{" "}
-              <Link to="/advertise/2019.html" className="dark" target="_self">
+              </Link>
+              <span className="slash">/</span>
+              <Link to="/advertise/2019.html" target="_self" className="titles">
                 {i18next.t("footer:Thanks")}
-              </Link>{" "}
-              &nbsp; <span className="snow">·</span> &nbsp;{" "}
-              <Link to="/tools" className="dark" target="_self">
+              </Link>
+              <span className="slash">/</span>
+              <Link to="/tools" target="_self" className="titles">
                 {i18next.t("footer:Tools")}
-              </Link>{" "}
-              &nbsp; <span className="snow">·</span> &nbsp; {this.state.online}{" "}
-              {i18next.t("footer:Online")}
-            </strong>{" "}
-            &nbsp;{" "}
-            <span className="fade">
-              {i18next.t("footer:Highest")} {this.state.highest}
-            </span>{" "}
-            &nbsp; <span className="snow">·</span> &nbsp;{" "}
-            <Link
-              to={{
-                pathname: "/select/language",
-                query: { previous: this.props.location.pathname },
-              }}
-              className="f11"
-            >
-              <img
-                src={Setting.getStatic("/static/img/language.png")}
-                width="16"
-                align="absmiddle"
-                id="ico-select-language"
-              />{" "}
-              &nbsp; {i18next.t("footer:Select Language")}
-            </Link>
-            &nbsp; <span className="snow">·</span> &nbsp;{" "}
-            <Link to="/select/editorType" className="f11">
-              <img
-                src={Setting.getStatic("/static/img/editType.png")}
-                width="16"
-                align="absmiddle"
-                id="ico-select-editorType"
-              />{" "}
-              &nbsp; {i18next.t("footer:Select Editor")}
-            </Link>
-            <div className="sep20" />
-            {i18next.t("footer:Community of Creators")}
-            <div className="sep5" />
-            World is powered by code
-            <div className="sep20" />
-            <span className="small fade">
-              VERSION:{" "}
+              </Link>
+            </div>
+
+            <div style={{ textAlign: "center" }}>
+              <span style={{ marginRight: "30px" }}>
+                {this.state.online} {i18next.t("footer:Online")}
+                <span style={{ marginLeft: "10px" }}>
+                  {i18next.t("footer:Highest")}
+                  {":"} {this.state.highest}
+                </span>
+              </span>
+              {i18next.t("footer:Community of Creators")}
+              <div style={{ color: "gray" }}>{Conf.FooterSlogan1}</div>
+            </div>
+            <div style={{ textAlign: "center", color: "gray" }}>
+              VERSION:
               <a
                 href={`${Conf.GithubRepo}/commit/${this.state.version}`}
                 target="_blank"
               >
                 {this.state.version.substring(0, 7)}
-              </a>{" "}
-              · {loadingTime}ms · UTC {utcTime} · PVG {pvgTime} · LAX {laxTime}{" "}
-              · JFK {jfkTime}
-              <br />♥ Do have faith in what you're doing.
-            </span>
-            <div className="sep10" />
+              </a>
+              · {loadingTime}ms · UTC {utcTime} · PVG {pvgTime} · LAX {laxTime}·
+              JFK {jfkTime}
+              <br />
+              {Conf.FooterSlogan2}
+            </div>
+            <div style={{ textAlign: "center", marginTop: "10px" }}>
+              <IconFont style={{ fontSize: "25px" }} type="icon-rss" />
+
+              <span style={{ marginLeft: "30px" }}>
+                <Link
+                  to={{
+                    pathname: "/select/language",
+                    query: { previous: this.props.location.pathname },
+                  }}
+                  className="f11"
+                >
+                  <img
+                    src={Setting.getStatic("/static/img/language.png")}
+                    width="16"
+                    align="absmiddle"
+                    id="ico-select-language"
+                  />{" "}
+                  {i18next.t("footer:Select Language")}
+                </Link>
+                &nbsp;
+                <Link to="/select/editorType" className="f11">
+                  <img
+                    src={Setting.getStatic("/static/img/editType.png")}
+                    width="16"
+                    align="absmiddle"
+                    id="ico-select-editorType"
+                  />{" "}
+                  {i18next.t("footer:Select Editor")}
+                </Link>
+              </span>
+            </div>
           </div>
-        </div>
-      </div>
+        </Container>
+      </Footer>
     );
   }
 }
 
-export default withRouter(Footer);
+export default withRouter(PageFooter);

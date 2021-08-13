@@ -1,0 +1,13 @@
+.titles {
+  color: black !important;
+}
+
+.titles:hover {
+  text-decoration: underline;
+  color: #185198;
+}
+
+.slash {
+  padding: 0 5px;
+  color: gray;
+}

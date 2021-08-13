@@ -18,6 +18,10 @@
   background-repeat: repeat-x;
 }
 
+#Wrapper {
+  background-color: #f4f4f4;
+}
+
 .nodejs.node_header {
   background-color: #aaaaaa;
 }

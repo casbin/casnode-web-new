@@ -59,3 +59,11 @@ export const NotificationAutoUpdatePeriod = 10; // second
 export const DefaultTopicPageReplyNum = 100;
 
 export const WikiUrl = "https://casdoor.org/docs/overview";
+
+export const FooterSlogan1 = "World is powered by code";
+
+export const FooterSlogan2 = "♥ Do have faith in what you're doing.";
+
+export const SiteSlogan = "Casbin = way to authorization";
+
+export const SiteDescription = "A place for Casbin developers and users";

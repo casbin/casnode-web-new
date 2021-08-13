@@ -19,6 +19,8 @@ import { withRouter, Link } from "react-router-dom";
 import PageColumn from "./PageColumn";
 import i18next from "i18next";
 
+import "./LatestReplyBox.css";
+
 const ReactMarkdown = require("react-markdown");
 const pangu = require("pangu");
 
@@ -118,57 +120,33 @@ class LatestReplyBox extends React.Component {
 
   renderReplies(reply) {
     return (
-      <div>
-        <div className="dock_area">
-          <table cellPadding="0" cellSpacing="0" border="0" width="100%">
-            <tbody>
-              <tr>
-                <td
-                  style={{
-                    padding: "10px 15px 8px 15px",
-                    fontSize: "12px",
-                    textAlign: "left",
-                  }}
-                >
-                  <div className="fr">
-                    <span className="fade">
-                      {Setting.getPrettyDate(reply.replyTime)}
-                    </span>
-                  </div>
-                  <span className="gray">
-                    {i18next.t("member:replied")}{" "}
-                    <Link to={`/member/${reply.author}`}> {reply.author} </Link>{" "}
-                    {i18next.t("member:'s topic")}{" "}
-                    <span className="chevron">›</span>{" "}
-                    <Link to={`/go/${reply.nodeId}`}> {reply.nodeName} </Link>
-                    <span className="chevron">›</span>{" "}
-                    <Link
-                      to={`/t/${reply.topicId}?from=${encodeURIComponent(
-                        window.location.href
-                      )}`}
-                    >
-                      {" "}
-                      {pangu.spacing(reply.topicTitle)}{" "}
-                    </Link>
-                  </span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+      <li className="list">
+        <div className="title">
+          <span className="topicName">
+            <Link
+              to={`/t/${reply.topicId}?from=${encodeURIComponent(
+                window.location.href
+              )}`}
+            >
+              {pangu.spacing(reply.topicTitle)}
+            </Link>
+          </span>{" "}
+          <span className="info">
+            {"at "}
+            {Setting.getPrettyDate(reply.replyTime)}
+          </span>
         </div>
-        <div className="inner">
-          <div className="reply_content">
-            <ReactMarkdown
-              renderers={{
-                image: Setting.renderImage,
-                link: Setting.renderLink,
-              }}
-              source={Setting.getFormattedContent(reply.replyContent, true)}
-              escapeHtml={false}
-            />
-          </div>
+        <div className="body">
+          <ReactMarkdown
+            renderers={{
+              image: Setting.renderImage,
+              link: Setting.renderLink,
+            }}
+            source={Setting.getFormattedContent(reply.replyContent, true)}
+            escapeHtml={false}
+          />
         </div>
-      </div>
+      </li>
     );
   }
 
@@ -206,22 +184,11 @@ class LatestReplyBox extends React.Component {
     }
 
     return (
-      <div className="box">
-        <div className="cell">
-          <span className="gray">{`${this.state.memberId}${i18next.t(
-            "member:'s latest replies"
-          )}`}</span>
-        </div>
+      <ul style={{ margin: "0" }}>
         {this.state.replies?.map((reply) => {
           return this.renderReplies(reply);
         })}
-        <div className="inner">
-          <span className="chevron">»</span>{" "}
-          <Link to={`/member/${this.state.memberId}/replies`}>{`${
-            this.state.memberId
-          }${i18next.t("member:'s more replies")}`}</Link>
-        </div>
-      </div>
+      </ul>
     );
   }
 }
