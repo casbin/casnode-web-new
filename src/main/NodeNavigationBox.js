@@ -17,6 +17,7 @@ import * as BasicBackend from "../backend/BasicBackend";
 import * as Setting from "../Setting";
 import { Link } from "react-router-dom";
 import i18next from "i18next";
+import { Card } from "antd";
 
 class NodeNavigationBox extends React.Component {
   constructor(props) {
@@ -41,11 +42,19 @@ class NodeNavigationBox extends React.Component {
 
   renderNode(node) {
     return (
-      <span key={node?.id}>
-        <Link to={`/go/${node?.id}`} style={{ fontSize: "14px" }}>
+      <span
+        key={node?.id}
+        style={{
+          marginBottom: "10px",
+          width: "100px",
+          display: "block",
+          float: "left",
+          textAlign: "left",
+        }}
+      >
+        <Link to={`/go/${node?.id}`} style={{ fontSize: "15px" }}>
           {node?.name}
         </Link>
-        &nbsp; &nbsp;
       </span>
     );
   }
@@ -56,35 +65,36 @@ class NodeNavigationBox extends React.Component {
     }
 
     return (
-      <div key={tab?.id} className="cell">
-        <table cellPadding="0" cellSpacing="0" border="0">
-          <tbody>
-            <tr>
-              <td align="right" width="80">
-                <span className="fade">{tab?.name}</span>
-              </td>
-              <td
-                style={{
-                  lineHeight: "200%",
-                  paddingLeft: "10px",
-                  wordBreak: "keep-all",
-                }}
-              >
-                {tab?.nodes.map((node) => {
-                  return this.renderNode(node);
-                })}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <div
+        key={tab?.id}
+        style={{ display: "flex", marginBottom: "10px", marginTop: "0" }}
+      >
+        <label
+          style={{
+            fontWeight: "400",
+            color: "#666",
+            textAlign: "right",
+            minWidth: "130px",
+            marginRight: "8px",
+            fontSize: "15px",
+          }}
+        >
+          {tab?.name}
+        </label>
+
+        <span style={{ flex: "1 1" }}>
+          {tab?.nodes.map((node) => {
+            return this.renderNode(node);
+          })}
+        </span>
       </div>
     );
   }
 
   render() {
     return (
-      <div className="box">
-        <div className="cell">
+      <Card>
+        {/* <div className="cell">
           <div className="fr">
             <Link to="/planes">{i18next.t("node:View all nodes")}</Link>
           </div>
@@ -92,11 +102,19 @@ class NodeNavigationBox extends React.Component {
             <strong>{Setting.getForumName()}</strong> /{" "}
             {i18next.t("node:Node navigation")}
           </span>
+        </div> */}
+        <div
+          style={{
+            marginRight: "-15px",
+            marginLeft: "-15px",
+            marginBottom: "-10px",
+          }}
+        >
+          {this.state.nodeNavigation?.map((tab) => {
+            return this.renderTab(tab);
+          })}
         </div>
-        {this.state.nodeNavigation?.map((tab) => {
-          return this.renderTab(tab);
-        })}
-      </div>
+      </Card>
     );
   }
 }
