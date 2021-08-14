@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { Content } from "antd/lib/layout/layout";
+
 export const AuthConfig = {
   // serverUrl: "https://door.casbin.com",
   serverUrl: "http://localhost:8000",
@@ -58,12 +60,41 @@ export const NotificationAutoUpdatePeriod = 10; // second
 
 export const DefaultTopicPageReplyNum = 100;
 
+//Wiki URL at header
 export const WikiUrl = "https://casdoor.org/docs/overview";
 
 export const FooterSlogan1 = "World is powered by code";
 
 export const FooterSlogan2 = "♥ Do have faith in what you're doing.";
 
+//Will display on sign in box
 export const SiteSlogan = "Casbin = way to authorization";
 
 export const SiteDescription = "A place for Casbin developers and users";
+
+export const CustomizeSideBarItems = [
+  {
+    title: "Casbin",
+    imageUrl: "https://casbin.org/img/store.png",
+    content: [
+      {
+        line: "test 1",
+      },
+      {
+        line: "test 2",
+      },
+    ],
+  },
+  {
+    title: "test",
+    imageUrl: null,
+    content: [
+      {
+        line: "test 1",
+      },
+      {
+        line: "test 2",
+      },
+    ],
+  },
+];

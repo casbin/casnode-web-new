@@ -212,11 +212,15 @@ class App extends Component {
             <RightCheckinBonusBox account={this.state.account} />
           )}
           {pcBrowser ? null : <div className="sep5" />}
-          <div id={pcBrowser ? "Main" : ""}>
+          {/* <div id={pcBrowser ? "Main" : ""}> */}
+          <div style={{ display: "flex", justifyContent: "center" }}>
             {pcBrowser ? <div className="sep20" /> : null}
-            <TopicPage account={this.state.account} />
+            <TopicPage
+              account={this.state.account}
+              BreakpointStage={this.state.BreakpointStage}
+            />
             {pcBrowser ? <div className="sep20" /> : <div className="sep5" />}
-            <NodeNavigationBox />
+            {/* <NodeNavigationBox /> */}
           </div>
         </Route>
         <Route exact path="/signin">
@@ -685,7 +689,7 @@ class App extends Component {
             <span>
               <RightCheckinBonusBox account={this.state.account} />
               <div className="sep20" />
-              <RightCommunityHealthBox />
+              {/* <RightCommunityHealthBox /> */}
               <div className="sep20" />
               <RightFavouriteBox />
               <div className="sep20" />
