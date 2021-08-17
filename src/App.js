@@ -346,14 +346,24 @@ class App extends Component {
           </div>
         </Route>
         <Route exact path="/go/:nodeId">
-          <LazyLoad>
-            <NodesBox
-              account={this.state.account}
-              getNodeBackground={this.getNodeBackground}
-              refreshAccount={this.getAccount.bind(this)}
-              refreshFavorites={this.getFavoriteNum.bind(this)}
-            />
-          </LazyLoad>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "column",
+            }}
+          >
+            <LazyLoad>
+              <NodesBox
+                account={this.state.account}
+                getNodeBackground={this.getNodeBackground}
+                refreshAccount={this.getAccount.bind(this)}
+                refreshFavorites={this.getFavoriteNum.bind(this)}
+                BreakpointStage={this.state.BreakpointStage}
+              />
+            </LazyLoad>
+          </div>
         </Route>
         <Route exact path="/go/:nodeId/:event">
           <LazyLoad>
@@ -773,11 +783,11 @@ class App extends Component {
         />
         <div
           id="Wrapper"
-          style={{
-            backgroundColor: `${this.state.nodeBackgroundColor}`,
-            backgroundImage: `url(${this.state.nodeBackgroundImage}), url(https://cdn.jsdelivr.net/gh/casbin/static/img/shadow_light.png)`,
-            backgroundRepeat: `${this.state.nodeBackgroundRepeat}, repeat-x`,
-          }}
+          // style={{
+          //   backgroundColor: `${this.state.nodeBackgroundColor}`,
+          //   backgroundImage: `url(${this.state.nodeBackgroundImage}), url(https://cdn.jsdelivr.net/gh/casbin/static/img/shadow_light.png)`,
+          //   backgroundRepeat: `${this.state.nodeBackgroundRepeat}, repeat-x`,
+          // }}
           className={this.state.nodeId}
           onClick={() => this.changeMenuStatus(false)}
         >

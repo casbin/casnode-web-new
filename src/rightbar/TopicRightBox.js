@@ -166,7 +166,7 @@ class TopicRightBox extends React.Component {
   }
   render() {
     return (
-      <div style={{ marginTop: "30px", marginLeft: "40px" }}>
+      <div style={{ marginLeft: "40px" }}>
         {this.renderAddNewTopic()}
         {this.renderPoster()}
         {this.renderStaticBox()}
