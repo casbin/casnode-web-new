@@ -326,46 +326,52 @@ class TopicPage extends React.Component {
 
     return (
       <Container BreakpointStage={this.props.BreakpointStage}>
-        <div style={{ marginTop: "30px" }}>
-          {Setting.PcBrowser ? null : this.renderAccountInfo()}
-          <div className="inner" id="Tabs">
-            {this.state.tabs.map((tab) => {
-              return this.renderTab(tab);
-            })}
+        <div style={{ marginTop: "30px", display: "flex", width: "100%" }}>
+          <div>
+            {Setting.PcBrowser ? null : this.renderAccountInfo()}
+            <div className="inner" id="Tabs">
+              {this.state.tabs.map((tab) => {
+                return this.renderTab(tab);
+              })}
+            </div>
+            <div
+              className="cell"
+              id="SecondaryTabs"
+              style={{ padding: "10px" }}
+            >
+              {this.props.account !== undefined &&
+              this.props.account !== null &&
+              this.state.tabInfo?.defaultNode !== "" ? (
+                <div className="fr">
+                  <Link to={`/new/${this.state.tabInfo?.defaultNode}`}>
+                    {this.state.tab === "all"
+                      ? i18next.t("topic:Post a Question")
+                      : i18next.t("topic:Create a Post")}
+                  </Link>
+                  &nbsp;
+                  <li className="fa fa-caret-right gray" />
+                </div>
+              ) : null}
+              {this.state.nodes.map((node) => {
+                return this.renderNode(node);
+              })}
+              &nbsp;
+            </div>
+            <TopicList
+              topics={this.state.topics}
+              showNodeName={true}
+              showAvatar={true}
+              topType={topType}
+            />
+            <div className="inner">
+              <span className="chevron">»</span> &nbsp;
+              <Link to="/recent">{i18next.t("topic:More Topics")}</Link>
+              <NodeNavigationBox />
+            </div>
           </div>
-          <div className="cell" id="SecondaryTabs" style={{ padding: "10px" }}>
-            {this.props.account !== undefined &&
-            this.props.account !== null &&
-            this.state.tabInfo?.defaultNode !== "" ? (
-              <div className="fr">
-                <Link to={`/new/${this.state.tabInfo?.defaultNode}`}>
-                  {this.state.tab === "all"
-                    ? i18next.t("topic:Post a Question")
-                    : i18next.t("topic:Create a Post")}
-                </Link>
-                &nbsp;
-                <li className="fa fa-caret-right gray" />
-              </div>
-            ) : null}
-            {this.state.nodes.map((node) => {
-              return this.renderNode(node);
-            })}
-            &nbsp;
+          <div>
+            <TopicRightBox />
           </div>
-          <TopicList
-            topics={this.state.topics}
-            showNodeName={true}
-            showAvatar={true}
-            topType={topType}
-          />
-          <div className="inner">
-            <span className="chevron">»</span> &nbsp;
-            <Link to="/recent">{i18next.t("topic:More Topics")}</Link>
-            <NodeNavigationBox />
-          </div>
-        </div>
-        <div>
-          <TopicRightBox />
         </div>
       </Container>
     );
