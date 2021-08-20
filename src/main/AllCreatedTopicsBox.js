@@ -199,6 +199,7 @@ class AllCreatedTopicsBox extends React.Component {
     );
   }
 
+  renderPersonalProfile() {}
   render() {
     const pcBrowser = Setting.PcBrowser;
 
@@ -259,76 +260,6 @@ class AllCreatedTopicsBox extends React.Component {
     } else {
       memberAvatar = this.state.member.avatar;
     }
-
-    const origin_return = (
-      <div className="box">
-        <div className="cell_tabs">
-          <div className="fl">
-            {memberAvatar === "" ? (
-              <img
-                src={Setting.getUserAvatar(this.state.memberId)}
-                width={24}
-                border={0}
-                style={{ borderRadius: "24px", marginTop: "-2px" }}
-              />
-            ) : (
-              <img
-                src={memberAvatar}
-                width={24}
-                border={0}
-                style={{ borderRadius: "24px", marginTop: "-2px" }}
-              />
-            )}
-          </div>
-          {!pcBrowser ? this.renderMobileTab() : null}
-          {pcBrowser ? (
-            this.state.tab === undefined ? (
-              <Link
-                to={`/member/${this.state.memberId}`}
-                className="cell_tab_current"
-              >
-                {" "}
-                {`${this.state.memberId}${i18next.t(
-                  "member:'s all created topics"
-                )}`}{" "}
-              </Link>
-            ) : (
-              <Link to={`/member/${this.state.memberId}`} className="cell_tab">
-                {" "}
-                {`${this.state.memberId}${i18next.t(
-                  "member:'s all created topics"
-                )}`}{" "}
-              </Link>
-            )
-          ) : null}
-          {!pcBrowser ? (
-            <div className="sep10" style={{ clear: "both" }} />
-          ) : null}
-          {pcBrowser
-            ? this.state.TAB_LIST.map((tab) => {
-                return this.renderTab(tab);
-              })
-            : null}
-        </div>
-        <TopicList
-          topics={this.state.topics}
-          showNodeName={true}
-          showAvatar={false}
-          timeStandard={"createdTime"}
-        />
-        {this.state.tab === undefined ? (
-          <div className="inner">
-            <span className="chevron">»</span>
-            <Link to={`/member/${this.state.memberId}/topics`}>
-              {" "}
-              {`${this.state.memberId}${i18next.t(
-                "member:'s more topics"
-              )}`}{" "}
-            </Link>
-          </div>
-        ) : null}
-      </div>
-    );
 
     return (
       <div className="card-container">
