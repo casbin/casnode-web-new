@@ -50,6 +50,11 @@
   transition: all 0.1s ease-in-out;
 }
 
+.nav-left li:active {
+  background-color: #f2f2f2;
+  transition: all 0.2s ease-in-out;
+}
+
 .ant-dropdown-menu-item {
   font-size: 18px;
   padding: 4px 50px;

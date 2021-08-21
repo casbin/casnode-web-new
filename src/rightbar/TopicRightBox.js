@@ -53,9 +53,11 @@ class TopicRightBox extends React.Component {
   renderAddNewTopic() {
     return (
       <Card style={{ marginBottom: "20px" }}>
-        <Button block="true" type="primary">
-          {i18next.t("general:New Topic")}
-        </Button>
+        <a href="/new">
+          <Button block="true" type="primary">
+            {i18next.t("general:New Topic")}
+          </Button>
+        </a>
       </Card>
     );
   }
@@ -164,9 +166,10 @@ class TopicRightBox extends React.Component {
       </li>
     );
   }
+
   render() {
     return (
-      <div style={{ marginLeft: "40px" }}>
+      <div>
         {this.renderAddNewTopic()}
         {this.renderPoster()}
         {this.renderStaticBox()}

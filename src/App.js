@@ -207,21 +207,20 @@ class App extends Component {
     return (
       <Switch>
         <Route exact path="/callback" component={AuthCallback} />
-        <Route exact path="/">
+        <Route exact path="/topics">
           {pcBrowser ? null : (
             <RightCheckinBonusBox account={this.state.account} />
           )}
           {pcBrowser ? null : <div className="sep5" />}
           {/* <div id={pcBrowser ? "Main" : ""}> */}
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <TopicPage
-              account={this.state.account}
-              BreakpointStage={this.state.BreakpointStage}
-            />
-            {pcBrowser ? <div className="sep20" /> : <div className="sep5" />}
-            {/* <NodeNavigationBox /> */}
-          </div>
+
+          {/* {pcBrowser ? <div className="sep20" /> : null} */}
+          <TopicPage
+            account={this.state.account}
+            BreakpointStage={this.state.BreakpointStage}
+          />
+          {/* {pcBrowser ? <div className="sep20" /> : <div className="sep5" />} */}
+          {/* <NodeNavigationBox /> */}
         </Route>
         <Route exact path="/signin">
           {/* <div id={pcBrowser ? "Main" : ""}> */}
