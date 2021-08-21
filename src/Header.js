@@ -63,7 +63,7 @@ class PageHeader extends React.Component {
     this.setState({
       uri: uri,
     });
-    if (uri === "/") {
+    if (uri === "/topics") {
       this.setState({ selectedMenuKey: 0 });
     } else if (uri.includes("signup")) {
       this.setState({ selectedMenuKey: 1 });
@@ -267,7 +267,7 @@ class PageHeader extends React.Component {
           key="1"
           className={this.state.selectedMenuKey === 0 ? "selected" : ""}
         >
-          <Link to="/">{i18next.t("general:Home")}</Link>
+          <Link to="/topics">{i18next.t("general:Topics")}</Link>
         </li>
         <li key="3">
           <a href={`${ServerUrl}/swagger`}>{i18next.t("general:Swagger")}</a>
