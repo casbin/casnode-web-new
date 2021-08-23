@@ -413,7 +413,7 @@ class TopicPage extends React.Component {
           justifyContent: "center",
           boxShadow: "0 1px 0 rgba(0,0,0,0.04)",
           minHeight: "40px",
-          borderTop: "1px solid #fcfcfc",
+          borderTop: "1px solid rgb(244,244,244)",
         }}
       >
         <Container BreakpointStage={this.props.BreakpointStage}>
@@ -541,7 +541,7 @@ class TopicPage extends React.Component {
               />
             </div>
             <div
-              style={{ marginLeft: "30px" }}
+              style={{ marginLeft: "20px" }}
               className={`${this.props.BreakpointStage}-rightBox`}
             >
               <TopicRightBox />
