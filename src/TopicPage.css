@@ -15,6 +15,10 @@
   padding: 8px;
 }
 
+.nav-sort li {
+  margin: 5px 0;
+}
+
 .nav-sort li :hover {
   border-bottom: 2px dotted #f2f2f2;
   color: #404040 !important;
@@ -70,12 +74,12 @@
 }
 
 .stage1-topic {
-  width: 920px;
+  width: 930px;
 }
 
 .stage2-topic,
 .stage3-topic {
-  width: 780px;
+  width: 790px;
 }
 
 .stage4-topic {
