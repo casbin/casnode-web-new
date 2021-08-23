@@ -149,7 +149,7 @@ class TopicList extends React.Component {
 
   render() {
     return (
-      <div className={`box ${this.props.nodeId}`}>
+      <div style={{ backgroundColor: "white" }}>
         {this.props.topics?.map((topic) => {
           return this.renderTopic(topic);
         })}

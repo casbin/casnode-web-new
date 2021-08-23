@@ -158,6 +158,16 @@ export function getHotTopic(limit) {
   }).then((res) => res.json());
 }
 
+export function GetSortedTopics(lps, hs, fcs, cts, limit, page) {
+  return fetch(
+    `${Setting.ServerUrl}/api/get-sorted-topics?lps=${lps}&hs=${hs}&fcs=${fcs}&cts=${cts}&limit=${limit}&page=${page}`,
+    {
+      method: "GET",
+      credentials: "include",
+    }
+  ).then((res) => res.json());
+}
+
 export function addTopicBrowseCount(id) {
   return fetch(`${Setting.ServerUrl}/api/add-topic-browse-record?id=${id}`, {
     method: "POST",

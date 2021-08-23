@@ -26,6 +26,10 @@ import ReactMarkdown from "react-markdown";
 import i18next from "i18next";
 import * as url from "url";
 import * as Auth from "../auth/Auth";
+import Container from "../components/container";
+import { Button, Card } from "antd";
+
+import TopicRightBox from "../rightbar/TopicRightBox";
 
 class NodeBox extends React.Component {
   constructor(props) {
@@ -317,164 +321,87 @@ class NodeBox extends React.Component {
 
     return (
       <div
-        className={`node_header ${this.state.nodeId}`}
-        style={{
-          backgroundImage: "url(" + this.state.nodeInfo?.headerImage + ")",
-        }}
+        style={
+          Setting.PcBrowser
+            ? {
+                width: "100%",
+                display: "flex",
+                justifyContent: "center",
+                backgroundColor: "white",
+                padding: "15px 20px",
+              }
+            : {
+                width: "100%",
+                display: "flex",
+                justifyContent: "center",
+                backgroundColor: "white",
+                padding: "10px 15px",
+              }
+        }
       >
-        <div className="node_avatar">
+        <Container BreakpointStage={this.props.BreakpointStage}>
           <div
             style={{
-              float: "left",
-              display: "inline-block",
-              marginRight: "10px",
-              marginBottom: "initial!important",
+              width: "100%",
+              display: "flex",
+              justifyContent: "space-between",
             }}
           >
-            <img
-              src={nodeInfo?.image}
-              border="0"
-              align="default"
-              width="72"
-              alt={nodeInfo?.nodeName}
-            />
-          </div>
-        </div>
-        <div className="node_info">
-          <div className="fr f12">
-            <span className="gray">
-              {this.state.nodeInfo?.moderators !== null &&
-              this.state.nodeInfo?.moderators.length !== 0 ? (
-                <span>
-                  {this.props.account?.isAdmin ? (
-                    <Link to={`/go/${this.state.nodeId}/moderators`}>
-                      {i18next.t("node:Moderator")}
-                    </Link>
-                  ) : (
-                    <span>{i18next.t("node:Moderator")}</span>
-                  )}
-                  {this.state.nodeInfo?.moderators.map((member) => {
-                    return (
-                      <span key={member}>
-                        {" "}
-                        <Link to={`/member/${member}`} target="_blank">
-                          {member}
-                        </Link>
-                      </span>
-                    );
-                  })}
+            <div className="info">
+              <div className="title">
+                <span style={{ fontSize: "30px", marginBottom: "8px" }}>
+                  {this.state.nodeInfo?.name}
                 </span>
-              ) : this.props.account?.isAdmin ? (
-                <Link
-                  to={
-                    this.props.account?.isAdmin
-                      ? `/go/${this.state.nodeId}/moderators`
-                      : null
-                  }
+                <span
+                  style={{
+                    fontSize: "18px",
+                    marginLeft: "12px",
+                    color: "#666",
+                  }}
                 >
-                  {i18next.t("node:No moderators")}
-                </Link>
-              ) : (
-                <span>{i18next.t("node:No moderators")}</span>
-              )}{" "}
-              &nbsp;
-            </span>
-            <span>{i18next.t("node:Total topics")}&nbsp;</span>
-            <strong>{this.state.topicNum}</strong>
-            {this.props.account !== null ? (
-              <span className="snow">&nbsp;•&nbsp;</span>
-            ) : null}
-            {this.props.account !== null ? (
-              this.state.favoritesStatus ? (
-                <a
+                  {i18next.t("node:Total topics")} {this.state.topicNum}
+                </span>
+              </div>
+              <div className="disc" style={{ textAlign: "left" }}>
+                {nodeInfo?.desc ? (
+                  <ReactMarkdown
+                    renderers={{
+                      image: Setting.renderImage,
+                      link: Setting.renderLink,
+                    }}
+                    source={nodeInfo?.desc}
+                    escapeHtml={false}
+                  />
+                ) : (
+                  <div>{"..."}</div>
+                )}
+              </div>
+            </div>
+            <span style={{ display: "flex", alignItems: "center" }}>
+              {this.state.favoritesStatus ? (
+                <Button
+                  size={Setting.PcBrowser ? "middle" : "small"}
                   onClick={() => {
                     this.deleteFavorite();
                   }}
                   href="#"
-                  className="node_header_link"
                 >
                   {i18next.t("fav:Cancel favorite")}
-                </a>
+                </Button>
               ) : (
-                <a
+                <Button
+                  size={Setting.PcBrowser ? "middle" : "small"}
                   onClick={() => {
                     this.addFavorite();
                   }}
-                  href="#"
-                  className="node_header_link"
+                  href="javascript:void(0);"
                 >
                   {i18next.t("fav:Add to favorite")}
-                </a>
-              )
-            ) : null}
-            <div>
-              {this.state.nodeInfo.mailingList === "" ? (
-                i18next.t("node:No mailing list yet")
-              ) : (
-                <a
-                  href={
-                    "https://groups.google.com/g/" +
-                    this.state.nodeInfo.mailingList.split("@")[0]
-                  }
-                >
-                  {this.state.nodeInfo.mailingList}
-                </a>
+                </Button>
               )}
-            </div>
+            </span>
           </div>
-          <Link to="/" className={`${this.state.nodeId}`}>
-            {Setting.getForumName()}
-          </Link>
-          <span className="chevron">&nbsp;›&nbsp;</span>
-          {nodeInfo?.name}
-          <div className="sep20" />
-          <div className="sep5" />
-          {this.props.account !== null ? (
-            <div className="fr" style={{ paddingLeft: "10px" }}>
-              <input
-                type="button"
-                className="super normal button"
-                value={i18next.t("node:new topic")}
-                onClick={() => {
-                  this.props.history.push(`/new/${nodeId}`);
-                }}
-              />
-            </div>
-          ) : null}
-          <span className="f12">
-            <ReactMarkdown
-              renderers={{
-                image: Setting.renderImage,
-                link: Setting.renderLink,
-              }}
-              source={nodeInfo?.desc}
-              escapeHtml={false}
-            />
-          </span>
-          <div className="sep10"></div>
-          <div className="node_header_tabs">
-            <Link
-              to={`/go/${nodeId}`}
-              className={
-                !this.props.match.params.event
-                  ? "node_header_tab_current"
-                  : "node_header_tab"
-              }
-            >
-              {i18next.t("node:All topics")}
-            </Link>
-            <Link
-              to={`/go/${nodeId}/links`}
-              className={
-                this.props.match.params.event
-                  ? "node_header_tab_current"
-                  : "node_header_tab"
-              }
-            >
-              {i18next.t("node:Related links")}
-            </Link>
-          </div>
-        </div>
+        </Container>
       </div>
     );
   }
@@ -490,10 +417,7 @@ class NodeBox extends React.Component {
     end = (page - 1) * limit + this.state.topics.length;
 
     return (
-      <div className={`box ${this.state.nodeId}`}>
-        {Setting.PcBrowser
-          ? this.renderDesktopHeader()
-          : this.renderMobileHeader()}
+      <div>
         {Setting.PcBrowser ? this.showPageColumn() : null}
         <TopicList
           nodeId={this.state.nodeId}
@@ -736,20 +660,37 @@ class NodeBox extends React.Component {
     }
 
     return (
-      <div id={pcBrowser ? "Main" : ""}>
-        {pcBrowser ? <div className="sep20" /> : null}
-        {this.renderNode()}
-        {pcBrowser ? <div className="sep20" /> : null}
-        {this.props.account !== undefined &&
-        this.props.account !== null &&
-        pcBrowser ? (
-          <NewNodeTopicBox
-            nodeId={this.state.nodeId}
-            account={this.props.account}
-            size={"small"}
-          />
-        ) : null}
-      </div>
+      <React.Fragment>
+        {/* {Setting.PcBrowser
+          ? this.renderDesktopHeader()
+          : this.renderMobileHeader()} */}
+        {this.renderDesktopHeader()}
+        <Container BreakpointStage={this.props.BreakpointStage}>
+          <div style={{ display: "flex", marginTop: "30px" }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                width: "100%",
+                alignItems: "center",
+              }}
+            >
+              {this.renderNode()}
+              {pcBrowser ? <div className="sep20" /> : null}
+              {this.props.account !== undefined &&
+              this.props.account !== null &&
+              pcBrowser ? (
+                <NewNodeTopicBox
+                  nodeId={this.state.nodeId}
+                  account={this.props.account}
+                  size={"small"}
+                />
+              ) : null}
+            </div>
+            <TopicRightBox />
+          </div>
+        </Container>
+      </React.Fragment>
     );
   }
 }

@@ -23,33 +23,36 @@ import { withRouter, Link } from "react-router-dom";
 import moment from "moment";
 import i18next from "i18next";
 import { scoreConverter } from "./main/Tools";
+import { CaretRightOutlined, CloseOutlined } from "@ant-design/icons";
 
 import TopicRightBox from "./rightbar/TopicRightBox.js";
 import Container from "./components/container";
 import NodeNavigationBox from "./main/NodeNavigationBox";
+import "./TopicPage.css";
+import { Card } from "antd";
+
 class TopicPage extends React.Component {
   constructor(props) {
     super(props);
-    const rootTabId = "all"; // should be set as the root tab id
-    const lastTabOpen = localStorage.getItem("casnode-lastUsedTab");
+    const defaultSort = "default";
+    const lastSortOpen = localStorage.getItem("casnode-lastUsedSort");
     this.state = {
       classes: props,
       topics: [],
       defaultHomePageNum: 50,
-      tab: lastTabOpen ? lastTabOpen : rootTabId,
-      tabs: [],
-      tabInfo: null,
       nodes: [],
+      sort: lastSortOpen ? lastSortOpen : defaultSort,
+      showAllNodesWindow: "",
     };
     const params = new URLSearchParams(this.props.location.search);
-    if (params.get("tab") !== null) {
-      this.state.tab = params.get("tab");
+    if (params.get("sort") !== null) {
+      this.state.sort = params.get("sort");
     }
   }
 
   componentDidMount() {
     this.getNodeInfo();
-    this.getTopics();
+    this.getTopics(this.state.sort);
     this.getUnreadNotificationNum();
   }
 
@@ -79,6 +82,20 @@ class TopicPage extends React.Component {
     );
   }
 
+  changeSort(sort) {
+    this.setState(
+      {
+        sort: sort,
+      },
+      () => {
+        window.history.pushState({}, 0, `?sort=${this.state.sort}`);
+        localStorage.setItem("casnode-lastUsedSort", sort);
+        this.getNodeInfo();
+        this.getTopics(sort);
+      }
+    );
+  }
+
   getNodeInfo() {
     let tab;
     TabBackend.getTabs().then((res) => {
@@ -98,24 +115,92 @@ class TopicPage extends React.Component {
     });
   }
 
-  getTopics() {
-    if (this.state.tab !== undefined) {
-      TopicBackend.getTopicsWithTab(
-        this.state.tab,
-        this.state.defaultHomePageNum,
-        1
-      ).then((res) => {
-        this.setState({
-          topics: res,
+  getTopics(sort) {
+    switch (sort) {
+      case "default": {
+        TopicBackend.getTopics(this.state.defaultHomePageNum, 1).then((res) => {
+          this.setState({
+            topics: res,
+          });
         });
-      });
-      return;
+        break;
+      }
+      case "lps": {
+        TopicBackend.GetSortedTopics(
+          "2",
+          "0",
+          "0",
+          "0",
+          this.state.defaultHomePageNum,
+          1
+        ).then((res) => {
+          this.setState({
+            topics: res,
+          });
+        });
+        break;
+      }
+      case "hs": {
+        TopicBackend.GetSortedTopics(
+          "0",
+          "2",
+          "0",
+          "0",
+          this.state.defaultHomePageNum,
+          1
+        ).then((res) => {
+          this.setState({
+            topics: res,
+          });
+        });
+        break;
+      }
+      case "fcs": {
+        TopicBackend.GetSortedTopics(
+          "0",
+          "0",
+          "2",
+          "0",
+          this.state.defaultHomePageNum,
+          1
+        ).then((res) => {
+          this.setState({
+            topics: res,
+          });
+        });
+        break;
+      }
+      case "cts": {
+        TopicBackend.GetSortedTopics(
+          "0",
+          "0",
+          "0",
+          "2",
+          this.state.defaultHomePageNum,
+          1
+        ).then((res) => {
+          this.setState({
+            topics: res,
+          });
+        });
+        break;
+      }
+      case "fcs": {
+        TopicBackend.GetSortedTopics(
+          "0",
+          "0",
+          "2",
+          "0",
+          this.state.defaultHomePageNum,
+          1
+        ).then((res) => {
+          this.setState({
+            topics: res,
+          });
+        });
+        break;
+      }
     }
-    TopicBackend.getTopics(this.state.defaultHomePageNum, 1).then((res) => {
-      this.setState({
-        topics: res,
-      });
-    });
   }
 
   newTopic() {
@@ -318,56 +403,152 @@ class TopicPage extends React.Component {
     );
   }
 
+  renderNav() {
+    return (
+      <div
+        style={{
+          width: "100%",
+          backgroundColor: "white",
+          display: "flex",
+          justifyContent: "center",
+          boxShadow: "0 1px 0 rgba(0,0,0,0.04)",
+          minHeight: "40px",
+          borderTop: "1px solid #fcfcfc",
+        }}
+      >
+        <Container BreakpointStage={this.props.BreakpointStage}>
+          <div style={{ width: "100%", display: "flex", justifyItems: "left" }}>
+            <ul className="nav-sort">
+              <li>
+                <a
+                  href="javascript:void(0)"
+                  className="node-nav-button"
+                  onClick={() => this.setState({ showAllNodesWindow: true })}
+                >
+                  {i18next.t("general:All nodes")}
+                  {"  "}
+                  <CaretRightOutlined style={{ fontSize: "10px" }} />
+                </a>
+              </li>
+              <li>
+                <a
+                  href="javascript:void(0)"
+                  onClick={() => this.changeSort("default")}
+                  className={
+                    this.state.sort === "default" ? "sort_current" : "sort"
+                  }
+                >
+                  {i18next.t("general:Default")}
+                </a>
+              </li>
+              <li>
+                <a
+                  href="javascript:void(0)"
+                  onClick={() => this.changeSort("hs")}
+                  className={this.state.sort === "hs" ? "sort_current" : "sort"}
+                >
+                  {i18next.t("general:Hottest")}
+                </a>
+              </li>
+              <li>
+                <a
+                  href="javascript:void(0)"
+                  onClick={() => this.changeSort("lps")}
+                  className={
+                    this.state.sort === "lps" ? "sort_current" : "sort"
+                  }
+                >
+                  {i18next.t("general:Latest Reply")}
+                </a>
+              </li>
+              <li>
+                <a
+                  href="javascript:void(0)"
+                  onClick={() => this.changeSort("cts")}
+                  className={
+                    this.state.sort === "cts" ? "sort_current" : "sort"
+                  }
+                >
+                  {i18next.t("general:Latest Post")}
+                </a>
+              </li>
+              <li>
+                <a
+                  href="javascript:void(0)"
+                  onClick={() => this.changeSort("fcs")}
+                  className={
+                    this.state.sort === "fcs" ? "sort_current" : "sort"
+                  }
+                >
+                  {i18next.t("general:Most liked")}
+                </a>
+              </li>
+            </ul>
+          </div>
+        </Container>
+      </div>
+    );
+  }
+
   render() {
     let topType = "homePage";
     if (this.state.tab !== undefined) {
       topType = "tab";
     }
-
     return (
-      <Container BreakpointStage={this.props.BreakpointStage}>
-        <div style={{ marginTop: "30px" }}>
-          {Setting.PcBrowser ? null : this.renderAccountInfo()}
-          <div className="inner" id="Tabs">
-            {this.state.tabs.map((tab) => {
-              return this.renderTab(tab);
-            })}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          flexDirection: "column",
+        }}
+      >
+        {this.renderNav()}
+        <Card
+          className={
+            this.state.showAllNodesWindow
+              ? "nodeNavBox-show"
+              : "nodeNavBox-hide"
+          }
+          title={`${i18next.t("general:All nodes")}`}
+          extra={
+            <CloseOutlined
+              onClick={() => this.setState({ showAllNodesWindow: false })}
+            />
+          }
+          style={{
+            width: 500,
+            boxShadow: "0 2px 15px rgba(0,0,0,.07)",
+            zIndex: "20",
+          }}
+          headStyle={{ borderBottom: "0", textAlign: "left", fontSize: "17px" }}
+          bodyStyle={{ padding: "10px" }}
+        >
+          <NodeNavigationBox />
+        </Card>
+        <div
+          onClick={() => this.setState({ showAllNodesWindow: false })}
+          className={this.state.showAllNodesWindow ? "mask-show" : "mask-hide"}
+        ></div>
+        <Container BreakpointStage={this.props.BreakpointStage}>
+          <div style={{ marginTop: "30px", display: "flex", width: "100%" }}>
+            <div className={`${this.props.BreakpointStage}-topic`}>
+              <TopicList
+                topics={this.state.topics}
+                showNodeName={true}
+                showAvatar={true}
+                topType={topType}
+              />
+            </div>
+            <div
+              style={{ marginLeft: "30px" }}
+              className={`${this.props.BreakpointStage}-rightBox`}
+            >
+              <TopicRightBox />
+            </div>
           </div>
-          <div className="cell" id="SecondaryTabs" style={{ padding: "10px" }}>
-            {this.props.account !== undefined &&
-            this.props.account !== null &&
-            this.state.tabInfo?.defaultNode !== "" ? (
-              <div className="fr">
-                <Link to={`/new/${this.state.tabInfo?.defaultNode}`}>
-                  {this.state.tab === "all"
-                    ? i18next.t("topic:Post a Question")
-                    : i18next.t("topic:Create a Post")}
-                </Link>
-                &nbsp;
-                <li className="fa fa-caret-right gray" />
-              </div>
-            ) : null}
-            {this.state.nodes.map((node) => {
-              return this.renderNode(node);
-            })}
-            &nbsp;
-          </div>
-          <TopicList
-            topics={this.state.topics}
-            showNodeName={true}
-            showAvatar={true}
-            topType={topType}
-          />
-          <div className="inner">
-            <span className="chevron">»</span> &nbsp;
-            <Link to="/recent">{i18next.t("topic:More Topics")}</Link>
-            <NodeNavigationBox />
-          </div>
-        </div>
-        <div>
-          <TopicRightBox />
-        </div>
-      </Container>
+        </Container>
+      </div>
     );
   }
 }
