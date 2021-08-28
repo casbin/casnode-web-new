@@ -53,10 +53,8 @@ class TopicRightBox extends React.Component {
   renderAddNewTopic() {
     return (
       <Card style={{ marginBottom: "20px" }}>
-        <a href="/new">
-          <Button block="true" type="primary">
-            {i18next.t("general:New Topic")}
-          </Button>
+        <a href="/new" className="btn" style={{ lineHeight: "27px" }}>
+          {i18next.t("general:New Topic")}
         </a>
       </Card>
     );
