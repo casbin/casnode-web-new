@@ -1,0 +1,112 @@
+.col-md-3 {
+  flex: 0 0 25%;
+  /* max-width: 25%; */
+  position: relative;
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+.col-md-3 :hover {
+  background-color: #fcfcfc !important;
+}
+
+.right {
+  padding-right: 0px;
+}
+
+.left {
+  padding-left: 0px;
+}
+
+.home-icons,
+.item {
+  text-align: center;
+  margin-bottom: 15px;
+  border-radius: 3px;
+  background-color: #fff !important;
+  border: 1px solid hsla(210, 8%, 51%, 0.09);
+}
+
+.home-icons,
+.item,
+.icon {
+  display: block;
+}
+
+.home-icons,
+.item,
+.icon a {
+  display: block;
+  padding: 20px 15px;
+  text-align: center;
+}
+
+.home-icons,
+.item,
+.text {
+  display: block;
+  text-align: left;
+  background: transparent;
+  border-top: 1px solid hsla(210, 8%, 51%, 0.09);
+  border-top: 1px solid var(--card-border-color);
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 0 0 3px 3px;
+}
+
+.home-icons,
+.item,
+.text a {
+  display: block;
+  color: #666 !important;
+  padding: 6px 15px;
+}
+
+.home-icons,
+.item,
+.text,
+.fa {
+  margin-top: 3px;
+}
+
+.ant-card {
+  flex: 1;
+}
+
+.more-topics {
+  color: #1890ff !important;
+  padding-left: 30px;
+  line-height: 80px;
+  font-size: 16px;
+}
+
+.stage1-topic,
+.stage2-topic,
+.stage3-topic {
+  display: flex;
+  width: 100%;
+}
+
+.stage4-topic,
+.stage5-topic {
+  width: 100%;
+}
+
+.stage1-entry,
+.stage2-entry,
+.stage3-entry {
+  display: flex;
+  width: 100%;
+}
+
+.stage4-entry,
+.stage5-entry {
+  width: 100%;
+}
+
+.stage4-entry .col-md-3,
+.stage5-entry .col-md-3 {
+  padding-left: 0px;
+  padding-right: 0px;
+}

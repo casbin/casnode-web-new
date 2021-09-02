@@ -43,6 +43,7 @@ import AuthCallback from "./auth/AuthCallback";
 import LazyLoad from "./components/LazyLoad";
 import { Casdoor } from "./Casdoor/Casdoor";
 import { AuthConfig } from "./Conf";
+import HomePage from "./HomePage";
 
 // lazy load imports
 const SignoutBox = React.lazy(() => import("./main/SignoutBox"));
@@ -206,12 +207,15 @@ class App extends Component {
     const pcBrowser = Setting.PcBrowser;
     return (
       <Switch>
+        <Route exact path="/">
+          <HomePage BreakpointStage={this.state.BreakpointStage} />
+        </Route>
         <Route exact path="/callback" component={AuthCallback} />
         <Route exact path="/topics">
-          {pcBrowser ? null : (
+          {/* {pcBrowser ? null : (
             <RightCheckinBonusBox account={this.state.account} />
           )}
-          {pcBrowser ? null : <div className="sep5" />}
+          {pcBrowser ? null : <div className="sep5" />} */}
           {/* <div id={pcBrowser ? "Main" : ""}> */}
 
           {/* {pcBrowser ? <div className="sep20" /> : null} */}
