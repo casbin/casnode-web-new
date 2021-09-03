@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Content } from "antd/lib/layout/layout";
-
 export const AuthConfig = {
   // serverUrl: "https://door.casbin.com",
   serverUrl: "http://localhost:8000",
@@ -96,5 +94,34 @@ export const CustomizeSideBarItems = [
         line: "test 2",
       },
     ],
+  },
+];
+
+export const HomepageRowLimit = 3;
+
+export const HomepageTopConfig = [
+  {
+    img: "https://gocn.vip/uploads/svg/topics.svg",
+    title: "communication",
+    url: "/topics",
+    special: "left",
+  },
+  {
+    img: "https://gocn.vip/uploads/svg/doc.svg",
+    title: "swagger",
+    url: "http://localhost:7000/swagger/",
+    special: "",
+  },
+  {
+    img: "https://gocn.vip/uploads/svg/job.svg",
+    title: "work",
+    url: "",
+    special: "",
+  },
+  {
+    img: "https://gocn.vip/uploads/svg/news.svg",
+    title: "news",
+    url: "",
+    special: "right",
   },
 ];
