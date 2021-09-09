@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The casbin Settingors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,9 +19,7 @@ import * as Setting from "./Setting";
 import * as Conf from "./Conf";
 import { withRouter, Link } from "react-router-dom";
 import i18next from "i18next";
-import * as Auth from "./auth/Auth";
 import { ServerUrl } from "./Setting";
-import { authConfig } from "./auth/Auth";
 
 import { Layout, Menu, Dropdown, Avatar } from "antd";
 import { createFromIconfontCN, CaretDownOutlined } from "@ant-design/icons";
@@ -71,7 +69,7 @@ class PageHeader extends React.Component {
       this.setState({ selectedMenuKey: 2 });
     } else if (uri.includes("swagger")) {
       this.setState({ selectedMenuKey: 3 });
-    } else if (uri.includes(this.props.account?.username)) {
+    } else if (uri.includes(this.props.account?.name)) {
       this.setState({ selectedMenuKey: 4 });
     } else if (uri.includes("records")) {
       this.setState({ selectedMenuKey: 5 });
@@ -144,9 +142,7 @@ class PageHeader extends React.Component {
       return (
         <Avatar
           style={{
-            backgroundColor: Setting.getUserAvatar(
-              this.props.account?.username
-            ),
+            backgroundColor: Setting.getUserAvatar(this.props.account?.name),
             verticalAlign: "middle",
           }}
           size="medium"
@@ -170,12 +166,12 @@ class PageHeader extends React.Component {
     const menu = (
       <ul className="nav">
         <li>
-          <a href={Auth.getSignupUrl()} className="top">
+          <a href={Setting.getSignupUrl()} className="top">
             {i18next.t("general:Sign Up")}
           </a>
         </li>
         <li>
-          <a href={"/signin"} className="top">
+          <a href={Setting.getSigninUrl()} className="top">
             {i18next.t("general:Sign In")}
           </a>
         </li>
@@ -184,8 +180,8 @@ class PageHeader extends React.Component {
     const account = (
       <Menu style={{ fontSize: "20px" }}>
         <Menu.Item>
-          <Link to={`/member/${this.props.account?.username}`} className="top">
-            {this.props.account?.username}
+          <Link to={`/member/${this.props.account?.name}`} className="top">
+            {this.props.account?.name}
           </Link>
         </Menu.Item>
         <Menu.Divider />
@@ -193,7 +189,7 @@ class PageHeader extends React.Component {
           <a
             target="_blank"
             className="top"
-            href={Auth.getMyProfileUrl(this.props.account)}
+            href={Setting.getMyProfileUrl(this.props.account)}
           >
             {i18next.t("general:Setting")}
           </a>
@@ -270,7 +266,9 @@ class PageHeader extends React.Component {
           <Link to="/topics">{i18next.t("general:Topics")}</Link>
         </li>
         <li key="3">
-          <a href={`${ServerUrl}/swagger`}>{i18next.t("general:Swagger")}</a>
+          <a href="https://forum.casbin.com/swagger/">
+            {i18next.t("general:Swagger")}
+          </a>
         </li>
         <li key="100">
           <a href={Conf.WikiUrl}>{i18next.t("general:Wiki")}</a>
@@ -326,11 +324,11 @@ class PageHeader extends React.Component {
                         {i18next.t("general:Home")}
                       </Link>
                       &nbsp;&nbsp;&nbsp;
-                      <a href={Auth.getSignupUrl()} className="top">
+                      <a href={Setting.getSignupUrl()} className="top">
                         {i18next.t("general:Sign Up")}
                       </a>
                       &nbsp;&nbsp;&nbsp;
-                      <a href={Auth.getSigninUrl()} className="top">
+                      <a href={Setting.getSigninUrl()} className="top">
                         {i18next.t("general:Sign In")}
                       </a>
                     </td>
@@ -346,21 +344,27 @@ class PageHeader extends React.Component {
       return (
         <header className="site-header">
           <div className="site-header-logo">
-            <div id="logoMobile" onClick={() => this.props.history.push("/")} />
+            <div
+              id="logoMobile"
+              style={{
+                backgroundImage: `url(${Conf.FrontConfig.logoImage})`,
+              }}
+              onClick={() => this.props.history.push("/")}
+            />
           </div>
           <div className="site-header-menu">
             {this.renderSearch()}
             <button id="menu-entry" onClick={() => this.changeShowMenuStatus()}>
               {this.props.account?.avatar === "" ? (
                 <img
-                  src={Setting.getUserAvatar(this.props.account?.username)}
+                  src={Setting.getUserAvatar(this.props.account?.name)}
                   width={24}
                   border={0}
                   style={{ borderRadius: "32px", verticalAlign: "middle" }}
                   width="32"
                   height="32"
                   align="absmiddle"
-                  alt={this.props.account?.username}
+                  alt={this.props.account?.name}
                 />
               ) : (
                 <img
@@ -371,14 +375,14 @@ class PageHeader extends React.Component {
                   width="32"
                   height="32"
                   align="absmiddle"
-                  alt={this.props.account?.username}
+                  alt={this.props.account?.name}
                 />
               )}
             </button>
             <div id="user-menu" style={menuStyle}>
               <div>
                 <Link
-                  to={`/member/${this.props.account?.username}`}
+                  to={`/member/${this.props.account?.name}`}
                   className="top"
                 >
                   {i18next.t("general:Homepage")}
@@ -398,7 +402,7 @@ class PageHeader extends React.Component {
                 <a
                   target="_blank"
                   className="top"
-                  href={Auth.getMyProfileUrl(this.state.account)}
+                  href={Setting.getMyProfileUrl(this.state.account)}
                 >
                   {i18next.t("general:Setting")}
                 </a>
@@ -415,7 +419,7 @@ class PageHeader extends React.Component {
               <div>
                 <Link to="/i" className="top">
                   <img
-                    src={Setting.getStatic("/static/img/neue_image.png")}
+                    src={Setting.getStatic("/img/neue_image.png")}
                     height="14"
                     border="0"
                     align="absmiddle"
@@ -426,7 +430,7 @@ class PageHeader extends React.Component {
               <div>
                 <Link to="/notes" className="top">
                   <img
-                    src={Setting.getStatic("/static/img/neue_notepad.png")}
+                    src={Setting.getStatic("/img/neue_notepad.png")}
                     height="14"
                     border="0"
                     align="absmiddle"
@@ -437,7 +441,7 @@ class PageHeader extends React.Component {
               <div>
                 <Link to="/t" className="top">
                   <img
-                    src={Setting.getStatic("/static/img/neue_comment.png")}
+                    src={Setting.getStatic("/img/neue_comment.png")}
                     height="14"
                     border="0"
                     align="absmiddle"
@@ -455,7 +459,7 @@ class PageHeader extends React.Component {
               <div>
                 <Link to="/settings/night/toggle" className="top">
                   <img
-                    src={Setting.getStatic("/static/img/toggle-light.png")}
+                    src={Setting.getStatic("/img/toggle-light.png")}
                     align="absmiddle"
                     height="10"
                     alt="Light"

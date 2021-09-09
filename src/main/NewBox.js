@@ -19,15 +19,12 @@ import * as MemberBackend from "../backend/MemberBackend";
 import * as TopicBackend from "../backend/TopicBackend";
 import * as Setting from "../Setting";
 import * as Tools from "./Tools";
-import * as Auth from "../auth/Auth";
 import NewNodeTopicBox from "./NewNodeTopicBox";
 import "../codemirrorSize.css";
 import { withRouter } from "react-router-dom";
 import i18next from "i18next";
 import Select2 from "react-select2-wrapper";
-import { Resizable } from "re-resizable";
 import { Controlled as CodeMirror } from "react-codemirror2";
-import "codemirror/lib/codemirror.css";
 import Editor from "./richTextEditor";
 import * as Conf from "../Conf";
 import TagsInput from "react-tagsinput";
@@ -244,7 +241,7 @@ class NewBox extends React.Component {
     }
 
     if (this.props.account === null) {
-      this.props.history.push(Auth.getSigninUrl());
+      this.props.history.push(Setting.getSigninUrl());
     }
 
     return (

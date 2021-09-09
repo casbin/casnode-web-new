@@ -41,9 +41,7 @@ class TopicList extends React.Component {
   }
 
   topTopicStyle = {
-    backgroundImage: `url('${Setting.getStatic(
-      "/static/img/corner_star.png"
-    )}')`,
+    backgroundImage: `url('${Setting.getStatic("/img/corner_star.png")}')`,
     backgroundRepeat: "no-repeat",
     backgroundSize: "20px 20px",
     backgroundPosition: "right top",
@@ -66,8 +64,10 @@ class TopicList extends React.Component {
         if (homePageTopTime !== "") {
           return this.topTopicStyle;
         }
+        return null;
+      default:
+        return null;
     }
-    return null;
   }
 
   renderTopic(topic) {
@@ -91,7 +91,9 @@ class TopicList extends React.Component {
           <div className="content">
             <div className="title">
               <span className="node">
-                <Link to={`/go/${topic.nodeId}`}>{topic.nodeName}</Link>
+                <Link to={`/go/${encodeURIComponent(topic.nodeId)}`}>
+                  {topic.nodeName}
+                </Link>
               </span>
               {pangu.spacing(topic.title)}
             </div>

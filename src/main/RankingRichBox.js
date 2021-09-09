@@ -14,7 +14,6 @@
 import { withRouter, Link } from "react-router-dom";
 import React from "react";
 import i18next from "i18next";
-import Header from "./Header";
 import * as Setting from "../Setting";
 import Avatar from "../Avatar";
 import * as MemberBackend from "../backend/MemberBackend";
@@ -45,21 +44,21 @@ class RankingRichBox extends React.Component {
       >
         {goldCount}&nbsp;
         <img
-          src={Setting.getStatic("/static/img/gold@2x.png")}
+          src={Setting.getStatic("/img/gold@2x.png")}
           height="16"
           alt="G"
           border="0"
         />
         &nbsp;{silverCount}&nbsp;
         <img
-          src={Setting.getStatic("/static/img/silver@2x.png")}
+          src={Setting.getStatic("/img/silver@2x.png")}
           height="16"
           alt="S"
           border="0"
         />
         &nbsp;{bronzeCount}&nbsp;
         <img
-          src={Setting.getStatic("/static/img/bronze@2x.png")}
+          src={Setting.getStatic("/img/bronze@2x.png")}
           height="16"
           alt="B"
           border="0"
@@ -111,11 +110,11 @@ class RankingRichBox extends React.Component {
                         <span class="gray">{key + 1}.</span>{" "}
                         <a href={`/member/${member.id}`}>{member.id}</a>
                       </h2>
-                      <span className="gray f12"> {member.tagline} </span>
+                      <span className="gray f12"> {member.tag} </span>
                       <div className="sep5"></div>
                       <span className="gray f12">
                         {" "}
-                        <a href={member.website}>{member.website}</a>{" "}
+                        <a href={member.homepage}>{member.homepage}</a>{" "}
                       </span>
                       <div className="sep5"></div>
                       {/* <span className="fade">第 n 名会员</span> */}

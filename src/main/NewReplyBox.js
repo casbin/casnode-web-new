@@ -26,7 +26,6 @@ import * as CodeMirror from "codemirror";
 import "codemirror/addon/hint/show-hint";
 import "./show-hint.css";
 import { Controlled as CodeMirrorsEditor } from "react-codemirror2";
-import { Resizable } from "re-resizable";
 import i18next from "i18next";
 import Editor from "./richTextEditor";
 import Select2 from "react-select2-wrapper";
@@ -138,12 +137,14 @@ class NewReplyBox extends React.Component {
     if (!this.isOkToSubmit()) {
       return;
     }
+    this.updateFormField("parentId", this.props.parent.id);
 
     this.updateFormField("topicId", this.props.topic?.id);
     ReplyBackend.addReply(this.state.form).then((res) => {
       if (res.status === "ok") {
         this.props.onReplyChange("");
         this.props.refreshReplies();
+        this.props.cancelReply();
         this.setState({
           form: {},
         });
@@ -202,7 +203,54 @@ class NewReplyBox extends React.Component {
     });
   }
 
-  renderEditor() {
+  renderEditor(needLogin) {
+    if (needLogin) {
+      if (Conf.ShowEmbedButtons) {
+        return (
+          <div style={{ width: "100%", textAlign: "center" }}>
+            <div style={{ marginTop: 30, marginBottom: 30 }}>
+              <input
+                style={{ marginRight: 20 }}
+                onClick={() => {
+                  let encodedUrl = encodeURIComponent(window.location.href);
+                  localStorage.setItem("loginCallbackUrl", encodedUrl);
+                  window.location.href = Setting.getSigninUrl();
+                }}
+                type="submit"
+                value={i18next.t("reply:Sign in")}
+                className="super normal button"
+              />
+              <input
+                onClick={() => {
+                  let encodedUrl = encodeURIComponent(window.location.href);
+                  localStorage.setItem("loginCallbackUrl", encodedUrl);
+                  window.location.href = Setting.getSignupUrl();
+                }}
+                type="submit"
+                value={i18next.t("reply:Sign up")}
+                className="super normal button"
+              />
+            </div>
+          </div>
+        );
+      } else {
+        return (
+          <div style={{ width: "100%", textAlign: "center" }}>
+            <div style={{ marginTop: 30, marginBottom: 30 }}>
+              <input
+                onClick={() => {}}
+                type="submit"
+                value={i18next.t(
+                  "reply:Want to leave comment? Please go to the top-right of this page to sign in/sign up"
+                )}
+                className="super normal button"
+              />
+            </div>
+          </div>
+        );
+      }
+    }
+
     if (
       !this.state.form.editorType ||
       this.state.form.editorType === "markdown"
@@ -274,9 +322,9 @@ class NewReplyBox extends React.Component {
     }
   }
 
-  renderEditorSelect() {
+  renderEditorSelect(blurStyle) {
     return (
-      <div>
+      <div style={blurStyle}>
         {i18next.t("new:Switch editor")}
         &nbsp;{" "}
         <Select2
@@ -314,6 +362,14 @@ class NewReplyBox extends React.Component {
       return null;
     }
 
+    const needLogin =
+      this.props.account === undefined || this.props.account === null;
+    if (!this.props.isEmbedded && needLogin) {
+      return null;
+    }
+
+    let blurStyle = needLogin ? { color: "#ccc", pointerEvents: "none" } : null;
+
     return (
       <div
         className={[
@@ -323,8 +379,21 @@ class NewReplyBox extends React.Component {
         ].join(" ")}
         id="reply-box"
       >
-        <div className={`cell ${this.props.nodeId}`}>
+        <div style={blurStyle} className={`cell ${this.props.nodeId}`}>
           <div className="fr">
+            {this.props.parent?.id > 0 ? (
+              <a
+                onClick={this.props.cancelReply.bind(this)}
+                style={{ display: this.props.sticky ? "" : "none" }}
+                id="cancel-button"
+                className={`${this.props.nodeId}`}
+              >
+                {i18next
+                  .t("reply:Cancel reply to {username}")
+                  .replace("{username}", this.props.parent.username)}
+              </a>
+            ) : null}{" "}
+            &nbsp; &nbsp;{" "}
             <a
               onClick={this.undockBox.bind(this)}
               style={{ display: this.props.sticky ? "" : "none" }}
@@ -338,6 +407,7 @@ class NewReplyBox extends React.Component {
               href="#"
               onClick={this.backToTop.bind(this)}
               className={`${this.props.nodeId}`}
+              style={blurStyle}
             >
               {i18next.t("reply:Back to Top")}
             </a>
@@ -351,7 +421,7 @@ class NewReplyBox extends React.Component {
               overflow: "hidden",
             }}
           >
-            {this.renderEditor()}
+            {this.renderEditor(needLogin)}
           </div>
           <div className="sep10" />
           <div
@@ -361,12 +431,13 @@ class NewReplyBox extends React.Component {
             }}
           >
             <input
+              style={blurStyle}
               onClick={this.publishReply.bind(this)}
               type="submit"
               value={i18next.t("reply:Reply")}
               className="super normal button"
             />
-            {this.renderEditorSelect()}
+            {this.renderEditorSelect(blurStyle)}
           </div>
 
           <div
@@ -374,9 +445,9 @@ class NewReplyBox extends React.Component {
               overflow: "hidden",
             }}
           >
-            <div className="fr">
+            <div style={blurStyle} className="fr">
               <div className="sep5" />
-              <span className="gray">
+              <span className="gray" style={blurStyle}>
                 {i18next.t(
                   "reply:Make your comment helpful for others as much as possible"
                 )}
@@ -387,7 +458,7 @@ class NewReplyBox extends React.Component {
 
         <div className="inner">
           <div className="fr">
-            <Link to="/" className={`${this.props.nodeId}`}>
+            <Link style={blurStyle} to="/" className={`${this.props.nodeId}`}>
               ← {Setting.getForumName()}
             </Link>
           </div>

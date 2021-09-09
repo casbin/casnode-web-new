@@ -20,7 +20,6 @@ import * as NodeBackend from "../backend/NodeBackend";
 import * as Setting from "../Setting";
 import * as Tools from "../main/Tools";
 import * as FileBackend from "../backend/FileBackend";
-import { Resizable } from "re-resizable";
 import { Controlled as CodeMirror } from "react-codemirror2";
 import { SketchPicker } from "react-color";
 import Zmage from "react-zmage";
@@ -191,6 +190,7 @@ class AdminNode extends React.Component {
       form["headerImage"] = this.state.nodeInfo?.headerImage;
       form["mailingList"] = this.state.nodeInfo?.mailingList;
       form["googleGroupCookie"] = this.state.nodeInfo?.googleGroupCookie;
+      form["isHidden"] = this.state.nodeInfo?.isHidden;
     }
 
     this.setState({
@@ -293,7 +293,7 @@ class AdminNode extends React.Component {
             setTimeout(
               () =>
                 this.props.history.push(
-                  `/admin/node/edit/${this.state.form.id}`
+                  `/admin/node/edit/${encodeURIComponent(this.state.form.id)}`
                 ),
               1600
             );
@@ -400,7 +400,7 @@ class AdminNode extends React.Component {
           {this.props.event === "new" ? (
             <span>{i18next.t("node:New node")}</span>
           ) : (
-            <Link to={`/go/${this.state.nodeId}`}>
+            <Link to={`/go/${encodeURIComponent(this.state.nodeId)}`}>
               {this.state.nodeInfo?.name}
             </Link>
           )}
@@ -423,12 +423,16 @@ class AdminNode extends React.Component {
           <tbody>
             <tr>
               <td width={pcBrowser ? "200" : "auto"} align="left">
-                <Link to={`/go/${node?.nodeInfo.id}`}>
+                <Link to={`/go/${encodeURIComponent(node?.nodeInfo.id)}`}>
                   {node?.nodeInfo.name}
                 </Link>
               </td>
               <td width={pcBrowser ? "200" : "auto"} align="center">
-                <Link to={`/admin/node/edit/${node?.nodeInfo.id}`}>
+                <Link
+                  to={`/admin/node/edit/${encodeURIComponent(
+                    node?.nodeInfo.id
+                  )}`}
+                >
                   {i18next.t("node:Manage")}
                 </Link>
               </td>
@@ -491,6 +495,8 @@ class AdminNode extends React.Component {
           return { text: `${plane.name} / ${plane.id}`, id: i };
         });
         break;
+      default:
+        break;
     }
 
     return (
@@ -520,6 +526,8 @@ class AdminNode extends React.Component {
             case "plane":
               const planeId = this.state.planes[index].id;
               this.updateFormField("planeId", planeId);
+              break;
+            default:
               break;
           }
         }}
@@ -608,7 +616,7 @@ class AdminNode extends React.Component {
                     <br />
                     <span className="chevron">‹</span> &nbsp;
                     {i18next.t("error:Back to")}{" "}
-                    <Link to={`/member/${this.props.account?.username}`}>
+                    <Link to={`/member/${this.props.account?.name}`}>
                       {i18next.t("error:My profile")}
                     </Link>
                   </span>
@@ -688,7 +696,9 @@ class AdminNode extends React.Component {
                             autoComplete="off"
                           />
                         ) : (
-                          <Link to={`/go/${this.state.nodeId}`}>
+                          <Link
+                            to={`/go/${encodeURIComponent(this.state.nodeId)}`}
+                          >
                             {node?.name}
                           </Link>
                         )}
@@ -879,6 +889,29 @@ class AdminNode extends React.Component {
                         />
                       </td>
                     </tr>
+                    <tr>
+                      <td width="120" align="right">
+                        {i18next.t("node:Is hidden")}
+                      </td>
+                      <td width="auto" align="left">
+                        <input
+                          type="radio"
+                          onClick={() =>
+                            this.updateFormField("isHidden", false)
+                          }
+                          checked={!this.state.form?.isHidden}
+                          name="visible"
+                        />
+                        {i18next.t("plane:Visible")}{" "}
+                        <input
+                          type="radio"
+                          onClick={() => this.updateFormField("isHidden", true)}
+                          checked={this.state.form?.isHidden}
+                          name="invisible"
+                        />
+                        {i18next.t("plane:Invisible")}
+                      </td>
+                    </tr>
                     {!newNode ? (
                       this.state.nodeInfo?.moderators !== null &&
                       this.state.nodeInfo?.moderators.length !== 0 ? (
@@ -910,7 +943,11 @@ class AdminNode extends React.Component {
                         <td width="120" align="right"></td>
                         <td width="auto" align="left">
                           <span className="gray">
-                            <Link to={`/go/${this.state.nodeId}/moderators`}>
+                            <Link
+                              to={`/go/${encodeURIComponent(
+                                this.state.nodeId
+                              )}/moderators`}
+                            >
                               {i18next.t("node:Manage moderators")}
                             </Link>
                           </span>
@@ -1182,7 +1219,11 @@ class AdminNode extends React.Component {
                         id="Wrapper"
                         style={{
                           backgroundColor: `${this.state.form?.backgroundColor}`,
-                          backgroundImage: `url(${this.state.form?.backgroundImage}), url(https://cdn.jsdelivr.net/gh/casbin/static/img/shadow_light.png)`,
+                          backgroundImage: `url(${
+                            this.state.form?.backgroundImage
+                          }), url(${Setting.getStatic(
+                            "/img/shadow_light.png"
+                          )})`,
                           backgroundSize: "contain",
                           backgroundRepeat: `${this.state.form?.backgroundRepeat}, repeat-x`,
                           width: Setting.PcBrowser ? "500px" : "200px",

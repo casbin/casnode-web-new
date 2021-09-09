@@ -13,23 +13,28 @@
 // limitations under the License.
 
 import React from "react";
+import { Link } from "react-router-dom";
 import { message } from "antd";
 import moment from "moment";
 import { animateScroll as scroll } from "react-scroll";
 import md5 from "js-md5";
 import * as Conf from "./Conf";
-import * as AccountBackend from "./backend/AccountBackend";
 import * as MemberBackend from "./backend/MemberBackend";
-import { Link } from "react-router-dom";
-import * as i18n from "./i18n";
 import i18next from "i18next";
 import Zmage from "react-zmage";
 import Identicon from "identicon.js";
+import Sdk from "casdoor-js-sdk";
+import * as ConfBackend from "./backend/ConfBackend";
+import { FrontConfig } from "./Conf";
 
 const pangu = require("pangu");
 
 export let ServerUrl = "";
 export let ClientUrl = "";
+export let CasdoorSdk;
+
+// export const StaticBaseUrl = "https://cdn.jsdelivr.net/gh/casbin/static";
+export const StaticBaseUrl = "https://cdn.casbin.org";
 
 export function initServerUrl() {
   const hostname = window.location.hostname;
@@ -47,12 +52,28 @@ export function initFullClientUrl() {
   }
 }
 
-export function parseJson(s) {
-  if (s === "") {
-    return null;
-  } else {
-    return JSON.parse(s);
-  }
+export function initCasdoorSdk(config) {
+  CasdoorSdk = new Sdk(config);
+}
+
+export function getSignupUrl() {
+  return CasdoorSdk.getSignupUrl();
+}
+
+export function getSigninUrl() {
+  return CasdoorSdk.getSigninUrl();
+}
+
+export function getUserProfileUrl(userName, account) {
+  return CasdoorSdk.getUserProfileUrl(userName, account);
+}
+
+export function getMyProfileUrl(account) {
+  return CasdoorSdk.getMyProfileUrl(account);
+}
+
+export function signin() {
+  return CasdoorSdk.signin(ServerUrl);
 }
 
 export function scrollToTop() {
@@ -78,16 +99,14 @@ export function openLink(link) {
 
 export function getLink(link) {
   return (
-    <a target="_blank" href={link}>
+    <a target="_blank" href={link} rel="noopener noreferrer">
       {link}
     </a>
   );
 }
 
 export function showMessage(type, text) {
-  if (type === "") {
-    return;
-  } else if (type === "success") {
+  if (type === "success") {
     message.success(text);
   } else if (type === "error") {
     message.error(text);
@@ -119,7 +138,7 @@ export function getDiffDays(date) {
 }
 
 export function getStatic(path) {
-  return `https://cdn.jsdelivr.net/gh/casbin${path}`;
+  return `https://cdn.casbin.org${path}`;
 }
 
 export function getUserAvatar(username, isLarge = false) {
@@ -132,31 +151,11 @@ export function getUserAvatar(username, isLarge = false) {
 }
 
 export function getForumName() {
-  return "Casnode";
+  return Conf.FrontConfig.forumName;
 }
 
 export function getHomeLink(text) {
   return <Link to={"/"}>{text === undefined ? getForumName() : text}</Link>;
-}
-
-export function getGoogleAuthCode(method) {
-  window.location.href = `${Conf.GoogleOauthUri}?client_id=${Conf.GoogleClientId}&redirect_uri=${ClientUrl}/callback/google/${method}&scope=${Conf.GoogleAuthScope}&response_type=code&state=${Conf.AuthState}`;
-}
-
-export function getGithubAuthCode(method) {
-  window.location.href = `${Conf.GithubOauthUri}?client_id=${Conf.GithubClientId}&redirect_uri=${ClientUrl}/callback/github/${method}&scope=${Conf.GithubAuthScope}&response_type=code&state=${Conf.AuthState}`;
-}
-
-export function getQQAuthCode(method) {
-  window.location.href = `${Conf.QQOauthUri}?client_id=${Conf.QQClientId}&redirect_uri=${ClientUrl}/callback/qq/${method}&scope=${Conf.QQAuthScope}&response_type=code&state=${Conf.AuthState}`;
-}
-
-export function getWeChatAuthCode(method) {
-  window.location.href = `${Conf.WeChatOauthUri}?appid=${Conf.WechatClientId}&redirect_uri=${ClientUrl}/callback/wechat/${method}&scope=${Conf.WeChatAuthScope}&response_type=code&state=${Conf.AuthState}#wechat_redirect`;
-}
-
-export function SetEditorType(editorType) {
-  localStorage.setItem("casnode-editorType", editorType);
 }
 
 export function ChangeEditorType(editorType) {
@@ -306,4 +305,27 @@ export function renderImage({ alt, src }) {
 
 export function renderLink(props) {
   return <a {...props} target="_blank" rel="nofollow noopener noreferrer" />;
+}
+
+export function getFrontConf(field) {
+  let storage = window.localStorage;
+  for (let conf in FrontConfig) {
+    if (storage[conf] !== undefined) {
+      FrontConfig[conf] = storage[conf];
+    }
+  }
+
+  ConfBackend.getFrontConfByField(field).then((res) => {
+    for (let key in res) {
+      if (res[key].Value !== "") {
+        FrontConfig[res[key].Id] = res[key].Value;
+      }
+      storage[res[key].Id] = FrontConfig[res[key].Id];
+    }
+  });
+}
+
+export function getProviderLogoLink(provider) {
+  const idp = provider.type.toLowerCase();
+  return `${StaticBaseUrl}/img/social_${idp}.png`;
 }

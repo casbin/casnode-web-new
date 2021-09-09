@@ -310,7 +310,7 @@ class TopicBox extends React.Component {
         <div className="inner">
           <div className="fr">
             &nbsp;{" "}
-            <a href="#;" onClick="">
+            <a href="#;" onClick={() => {}}>
               {i18next.t("topic:Sink")} ↓
             </a>
             &nbsp;{" "}
@@ -381,7 +381,7 @@ class TopicBox extends React.Component {
           &nbsp;
           {this.props.account !== undefined &&
           this.props.account !== null &&
-          this.props.account?.username !== this.state.topic?.author ? (
+          this.props.account?.name !== this.state.topic?.author ? (
             this.state.topic?.thanksStatus === false ? (
               <div id="topic_thank">
                 <a
@@ -469,7 +469,7 @@ class TopicBox extends React.Component {
         &nbsp;
         {this.props.account !== undefined &&
         this.props.account !== null &&
-        this.props.account?.username !== this.state.topic?.author ? (
+        this.props.account?.name !== this.state.topic?.author ? (
           this.state.topic?.thanksStatus === false ? (
             <div id="topic_thank">
               <a
@@ -540,7 +540,7 @@ class TopicBox extends React.Component {
     if (this.state.event === "review") {
       if (
         this.props.account === null ||
-        this.props.account?.username !== this.state.topic?.author
+        this.props.account?.name !== this.state.topic?.author
       ) {
         this.props.history.push(`/t/${this.state.topic?.id}`);
       }
@@ -548,7 +548,7 @@ class TopicBox extends React.Component {
         <div class="box">
           <div class="header">
             {Setting.getHomeLink()} <span class="chevron">&nbsp;›&nbsp;</span>{" "}
-            <Link to={`/go/${this.state.topic?.nodeId}`}>
+            <Link to={`/go/${encodeURIComponent(this.state.topic?.nodeId)}`}>
               {this.state.topic?.nodeName}
             </Link>{" "}
             <span class="chevron">&nbsp;›&nbsp;</span>{" "}
@@ -562,7 +562,7 @@ class TopicBox extends React.Component {
               {i18next.t(
                 "topic:The new topic has been successfully created on the"
               )}{" "}
-              <Link to={`/go/${this.state.topic?.nodeId}`}>
+              <Link to={`/go/${encodeURIComponent(this.state.topic?.nodeId)}`}>
                 {this.state.topic?.nodeName}
               </Link>{" "}
               {i18next.t(
@@ -583,7 +583,9 @@ class TopicBox extends React.Component {
             <ul>
               <li>
                 {i18next.t("topic:The topic is currently at")}&nbsp;
-                <Link to={`/go/${this.state.topic?.nodeId}`}>
+                <Link
+                  to={`/go/${encodeURIComponent(this.state.topic?.nodeId)}`}
+                >
                   {this.state.topic?.nodeName}
                 </Link>{" "}
                 {i18next.t(
@@ -623,7 +625,9 @@ class TopicBox extends React.Component {
               <tr>
                 <td align="right">{i18next.t("topic:Node")}</td>
                 <td align="left">
-                  <Link to={`/go/${this.state.topic?.nodeId}`}>
+                  <Link
+                    to={`/go/${encodeURIComponent(this.state.topic?.nodeId)}`}
+                  >
                     {this.state.topic?.nodeName}
                   </Link>
                 </td>
@@ -674,7 +678,9 @@ class TopicBox extends React.Component {
             <h3>{i18next.t("topic:Related resources")}</h3>
             <ul>
               <li>
-                <Link to={`/go/${this.state.topic?.nodeId}`}>
+                <Link
+                  to={`/go/${encodeURIComponent(this.state.topic?.nodeId)}`}
+                >
                   {this.state.topic?.nodeName}
                 </Link>
                 <Link to="/help/currency">
@@ -716,7 +722,7 @@ class TopicBox extends React.Component {
             </Link>{" "}
             <span className="chevron">&nbsp;›&nbsp;</span>{" "}
             <Link
-              to={`/go/${this.state.topic?.nodeId}`}
+              to={`/go/${encodeURIComponent(this.state.topic?.nodeId)}`}
               className={`${this.state.topic?.nodeId}`}
             >
               {this.state.topic?.nodeName}
@@ -941,7 +947,11 @@ class TopicBox extends React.Component {
             : this.renderMobileButtons()}
         </div>
         {pcBrowser ? <div className="sep20" /> : <div className="sep5" />}
-        <ReplyBox account={this.props.account} topic={this.state.topic} />
+        <ReplyBox
+          account={this.props.account}
+          topic={this.state.topic}
+          isEmbedded={false}
+        />
         {pcBrowser ? <div className="sep20" /> : <div className="sep5" />}
         {this.props.account?.isAdmin ? this.renderTopTopic() : null}
       </div>
