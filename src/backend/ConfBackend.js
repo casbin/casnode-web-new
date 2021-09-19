@@ -1,4 +1,4 @@
-// Copyright 2020 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The casbin Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,22 +14,26 @@
 
 import * as Setting from "../Setting";
 
-export function getAccount() {
-  const params = new URLSearchParams(window.location.search);
-  const accessToken = params.get("accessToken");
-  let query = "";
-  if (accessToken !== null) {
-    query = `?accessToken=${accessToken}`;
-  }
+export function getFrontConfByField(field) {
+  return fetch(
+    `${Setting.ServerUrl}/api/get-front-conf-by-field?field=${field}`,
+    {
+      method: "GET",
+      credentials: "include",
+    }
+  ).then((res) => res.json());
+}
 
-  return fetch(`${Setting.ServerUrl}/api/get-account${query}`, {
-    method: "GET",
+export function updateFrontConfs(confs) {
+  return fetch(`${Setting.ServerUrl}/api/update-front-conf`, {
+    method: "POST",
     credentials: "include",
+    body: JSON.stringify(confs),
   }).then((res) => res.json());
 }
 
-export function signout() {
-  return fetch(`${Setting.ServerUrl}/api/signout`, {
+export function updateFrontConfToDefault() {
+  return fetch(`${Setting.ServerUrl}/api/update-to-default-conf`, {
     method: "POST",
     credentials: "include",
   }).then((res) => res.json());

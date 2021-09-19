@@ -16,7 +16,6 @@ import React from "react";
 import * as FileBackend from "../backend/FileBackend";
 import * as Setting from "../Setting";
 import * as Tools from "./Tools";
-import * as Auth from "../auth/Auth";
 import PageColumn from "./PageColumn";
 import { withRouter, Link } from "react-router-dom";
 import "../deopzone.css";
@@ -679,7 +678,7 @@ class FilesBox extends React.Component {
 
     if (this.state.event === "upload") {
       if (this.props.account === null) {
-        this.props.history.push(Auth.getSigninUrl());
+        this.props.history.push(Setting.getSigninUrl());
       }
       return this.renderUpload();
     }
@@ -706,13 +705,13 @@ class FilesBox extends React.Component {
               <tr>
                 <td width="64">
                   <img
-                    src={Setting.getStatic("/static/img/essentials/images.png")}
+                    src={Setting.getStatic("/img/essentials/images.png")}
                     width="64"
                   />
                 </td>
                 <td width={pcBrowser ? "200" : "auto"}>
                   <span className="item_title">
-                    {this.props.account?.username}{" "}
+                    {this.props.account?.name}{" "}
                     {i18next.t("file:'s file library")}
                   </span>
                   <div className="sep5"></div>

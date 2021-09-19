@@ -52,7 +52,10 @@ class NodeNavigationBox extends React.Component {
           textAlign: "left",
         }}
       >
-        <Link to={`/go/${node?.id}`} style={{ fontSize: "15px" }}>
+        <Link
+          to={`/go/${encodeURIComponent(node?.id)}`}
+          style={{ fontSize: "15px" }}
+        >
           {node?.name}
         </Link>
       </span>

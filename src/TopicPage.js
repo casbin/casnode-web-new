@@ -135,11 +135,7 @@ class TopicPage extends React.Component {
           1
         ).then((res) => {
           this.setState({
-
             topics: res.data,
-
-          
-
           });
         });
         break;
@@ -154,10 +150,7 @@ class TopicPage extends React.Component {
           1
         ).then((res) => {
           this.setState({
-
             topics: res.data,
-            
-
           });
         });
         break;
@@ -172,12 +165,7 @@ class TopicPage extends React.Component {
           1
         ).then((res) => {
           this.setState({
-
-
             topics: res.data,
-
-            
-
           });
         });
         break;
@@ -193,8 +181,6 @@ class TopicPage extends React.Component {
         ).then((res) => {
           this.setState({
             topics: res.data,
-          
-
           });
         });
         break;
@@ -209,9 +195,8 @@ class TopicPage extends React.Component {
           1
         ).then((res) => {
           this.setState({
-            
-  topics: res.data,
-});
+            topics: res.data,
+          });
         });
         break;
       }

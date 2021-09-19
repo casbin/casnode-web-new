@@ -24,11 +24,9 @@ import RightSigninBox from "./rightbar/RightSigninBox";
 import RightAccountBox from "./rightbar/RightAccountBox";
 import SearchTag from "./main/SearchTag";
 import * as AccountBackend from "./backend/AccountBackend";
-import RightCommunityHealthBox from "./rightbar/RightCommunityHealthBox";
 import RightFavouriteBox from "./rightbar/RightFavouriteBox";
 import RightNodeBox from "./rightbar/RightNodeBox";
 import CustomGithubCorner from "./main/CustomGithubCorner";
-import NodeNavigationBox from "./main/NodeNavigationBox";
 import RightCheckinBonusBox from "./rightbar/RightCheckinBonusBox";
 import RightLatestNodeBox from "./rightbar/RightLatestNodeBox";
 import RightHotNodeBox from "./rightbar/RightHotNodeBox";
@@ -37,12 +35,9 @@ import i18next from "i18next";
 import "./node.css";
 import "./i18n";
 import * as FavoritesBackend from "./backend/FavoritesBackend";
-import * as Auth from "./auth/Auth";
 import * as Conf from "./Conf";
 import AuthCallback from "./auth/AuthCallback";
 import LazyLoad from "./components/LazyLoad";
-import { Casdoor } from "./Casdoor/Casdoor";
-import { AuthConfig } from "./Conf";
 import HomePage from "./HomePage";
 
 // lazy load imports
@@ -52,8 +47,6 @@ const MemberBox = React.lazy(() => import("./main/MemberBox"));
 const AllCreatedTopicsBox = React.lazy(() =>
   import("./main/AllCreatedTopicsBox")
 );
-const CallbackBox = React.lazy(() => import("./main/AuthBox"));
-const SettingsBox = React.lazy(() => import("./main/SettingsBox"));
 const NewBox = React.lazy(() => import("./main/NewBox"));
 const NodesBox = React.lazy(() => import("./main/NodeBox"));
 const FavoritesBox = React.lazy(() => import("./main/FavoritesBox"));
@@ -75,14 +68,14 @@ const AdminNode = React.lazy(() => import("./admin/AdminNode"));
 const AdminTab = React.lazy(() => import("./admin/AdminTab"));
 const AdminPoster = React.lazy(() => import("./admin/AdminPoster"));
 const AdminTranslation = React.lazy(() => import("./admin/AdminTranslation"));
-const AdminMember = React.lazy(() => import("./admin/AdminMember"));
-const NewMember = React.lazy(() => import("./main/NewMember"));
 const AdminPlane = React.lazy(() => import("./admin/AdminPlane"));
 const AdminTopic = React.lazy(() => import("./admin/AdminTopic"));
 const AdminSensitive = React.lazy(() => import("./admin/AdminSensitive"));
 const AboutForum = React.lazy(() => import("./main/AboutForum"));
 const SearchResultPage = React.lazy(() => import("./SearchResultPage"));
-const SigninBox = React.lazy(() => import("./main/SigninBox"));
+const NoMatch = React.lazy(() => import("./main/NoMatch"));
+const Embed = React.lazy(() => import("./Embed"));
+const AdminFrontConf = React.lazy(() => import("./admin/AdminFrontConfig"));
 
 class App extends Component {
   constructor(props) {
@@ -107,15 +100,14 @@ class App extends Component {
       nodeBackgroundImage: "",
       nodeBackgroundColor: "",
       nodeBackgroundRepeat: "",
-      casdoor: null,
-      OAuthObjects: [],
       BreakpointStage: initalBreakpoint,
     };
 
     Setting.initServerUrl();
-    Auth.initAuthWithConfig(Conf.AuthConfig);
+    Setting.initCasdoorSdk(Conf.AuthConfig);
     Setting.initFullClientUrl();
     Setting.initBrowserType();
+    Setting.getFrontConf("visualConf");
     this.getNodeBackground = this.getNodeBackground.bind(this);
     this.changeMenuStatus = this.changeMenuStatus.bind(this);
   }
@@ -124,7 +116,6 @@ class App extends Component {
     //Setting.SetLanguage();
     this.getAccount();
     this.getFavoriteNum();
-    this.initCasdoor();
     window.addEventListener("resize", this.handleResize.bind(this));
   }
 
@@ -151,26 +142,6 @@ class App extends Component {
     });
   }
 
-  initCasdoor() {
-    let url = `${window.location.protocol}//${window.location.hostname}`;
-    let port = window.location.port;
-    if (port !== "") url = `${url}:${port}`;
-    url += "/callback";
-    let casdoor = new Casdoor(
-      AuthConfig.serverUrl,
-      AuthConfig.organizationName,
-      AuthConfig.appName,
-      AuthConfig.clientId,
-      url
-    );
-    casdoor.connect().then((c) => {
-      this.setState({
-        casdoor: c,
-        OAuthObjects: c.getOAuthSigninObjects(),
-      });
-    });
-  }
-
   getAccount() {
     AccountBackend.getAccount().then((res) => {
       let account = res.data;
@@ -180,6 +151,12 @@ class App extends Component {
           Setting.SetLanguage(language);
         }
         // i18n.changeCustomLanguage(language)
+        let loginCallbackUrl = localStorage.getItem("loginCallbackUrl");
+        localStorage.removeItem("loginCallbackUrl");
+        if (loginCallbackUrl !== null) {
+          loginCallbackUrl = decodeURIComponent(loginCallbackUrl);
+          window.location.href = loginCallbackUrl;
+        }
       }
       this.setState({
         account: account,
@@ -212,38 +189,10 @@ class App extends Component {
         </Route>
         <Route exact path="/callback" component={AuthCallback} />
         <Route exact path="/topics">
-          {/* {pcBrowser ? null : (
-            <RightCheckinBonusBox account={this.state.account} />
-          )}
-          {pcBrowser ? null : <div className="sep5" />} */}
-          {/* <div id={pcBrowser ? "Main" : ""}> */}
-
-          {/* {pcBrowser ? <div className="sep20" /> : null} */}
           <TopicPage
             account={this.state.account}
             BreakpointStage={this.state.BreakpointStage}
           />
-          {/* {pcBrowser ? <div className="sep20" /> : <div className="sep5" />} */}
-          {/* <NodeNavigationBox /> */}
-        </Route>
-        <Route exact path="/signin">
-          {/* <div id={pcBrowser ? "Main" : ""}> */}
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            {/* {pcBrowser ? <div className="sep20" /> : null} */}
-            <LazyLoad>
-              <SigninBox
-                onSignin={this.onSignin.bind(this)}
-                onSignout={this.onSignout.bind(this)}
-                Casdoor={this.state.casdoor}
-                BreakpointStage={this.state.BreakpointStage}
-                OAuthObjects={this.state.OAuthObjects}
-              />
-            </LazyLoad>
-            {/* {pcBrowser ? null : <div className="sep5" />}
-            {pcBrowser ? null : (
-              <RightSigninBox OAuthObjects={this.state.OAuthObjects} />
-            )} */}
-          </div>
         </Route>
         <Route exact path="/signout">
           <div id={pcBrowser ? "Main" : ""}>
@@ -295,42 +244,6 @@ class App extends Component {
             {pcBrowser ? <div className="sep20" /> : null}
             <LazyLoad>
               <AllCreatedTopicsBox />
-            </LazyLoad>
-          </div>
-        </Route>
-        {/*<Route exact path="/settings">*/}
-        {/*  <div id={pcBrowser ? "Main" : ""}>*/}
-        {/*    {pcBrowser ? <div className="sep20" /> : null}*/}
-        {/*    <SettingsBox*/}
-        {/*      account={this.state.account}*/}
-        {/*      refreshAccount={this.getAccount.bind(this)}*/}
-        {/*    />*/}
-        {/*  </div>*/}
-        {/*</Route>*/}
-        <Route exact path="/callback/:authType/:addition">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <CallbackBox />
-            </LazyLoad>
-          </div>
-        </Route>
-        <Route exact path="/settings/:event">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <SettingsBox
-                account={this.state.account}
-                refreshAccount={this.getAccount.bind(this)}
-              />
-            </LazyLoad>
-          </div>
-        </Route>
-        <Route exact path="/new">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <NewBox account={this.state.account} />
             </LazyLoad>
           </div>
         </Route>
@@ -563,30 +476,6 @@ class App extends Component {
             </LazyLoad>
           </div>
         </Route>
-        <Route exact path="/admin/member">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <AdminMember account={this.state.account} />
-            </LazyLoad>
-          </div>
-        </Route>
-        <Route exact path="/admin/member/new">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <NewMember />
-            </LazyLoad>
-          </div>
-        </Route>
-        <Route exact path="/admin/member/edit/:memberId">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <AdminMember account={this.state.account} />
-            </LazyLoad>
-          </div>
-        </Route>
         <Route exact path="/admin/plane">
           <div id={pcBrowser ? "Main" : ""}>
             {pcBrowser ? <div className="sep20" /> : null}
@@ -643,6 +532,14 @@ class App extends Component {
             </LazyLoad>
           </div>
         </Route>
+        <Route exact path="/admin/frontconf">
+          <div id={pcBrowser ? "Main" : ""}>
+            {pcBrowser ? <div className="sep20" /> : null}
+            <LazyLoad>
+              <AdminFrontConf account={this.state.account} />
+            </LazyLoad>
+          </div>
+        </Route>
         <Route exact path="/about">
           <div id={pcBrowser ? "Main" : ""}>
             {pcBrowser ? <div className="sep20" /> : null}
@@ -656,6 +553,14 @@ class App extends Component {
             {pcBrowser ? <div className="sep20" /> : null}
             <LazyLoad>
               <SearchResultPage />
+            </LazyLoad>
+          </div>
+        </Route>
+        <Route path="*">
+          <div id={pcBrowser ? "Main" : ""}>
+            {pcBrowser ? <div className="sep20" /> : null}
+            <LazyLoad>
+              <NoMatch />
             </LazyLoad>
           </div>
         </Route>
@@ -734,15 +639,15 @@ class App extends Component {
   }
 
   getThemeLink() {
-    var themeMode = undefined;
-    var modeArray = document.cookie.split("; ");
-    for (var i = 0; i < modeArray.length; i++) {
-      var kvset = modeArray[i].split("=");
-      if (kvset[0] == "themeMode") themeMode = kvset[1];
+    let themeMode = undefined;
+    let modeArray = document.cookie.split("; ");
+    for (let i = 0; i < modeArray.length; i++) {
+      let kvset = modeArray[i].split("=");
+      if (kvset[0] === "themeMode") themeMode = kvset[1];
     }
-    if (themeMode == undefined) themeMode = "true";
-    if (themeMode == "true") return "";
-    else return Setting.getStatic("/static/css/night.css");
+    if (themeMode === undefined) themeMode = "true";
+    if (themeMode === "true") return "";
+    else return Setting.getStatic("/css/night.css");
   }
 
   handleResize() {
@@ -767,6 +672,13 @@ class App extends Component {
 
   render() {
     console.log(window.innerWidth);
+    if (window.location.pathname.startsWith("/embedded-replies")) {
+      return (
+        <LazyLoad>
+          <Embed account={this.state.account} />
+        </LazyLoad>
+      );
+    }
     return (
       <div>
         <link

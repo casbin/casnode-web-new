@@ -125,9 +125,18 @@ class PageFooter extends React.Component {
         }}
       >
         <Container BreakpointStage={this.props.BreakpointStage}>
-          <div className="fr" style={{ marginRight: "10px" }}>
-            <a href="https://www.digitalocean.com/" target="_blank">
-              <div id="logoFooter" />
+          <div className="fr">
+            <a
+              href={Conf.FrontConfig.footerLogoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div
+                id="logoFooter"
+                style={{
+                  backgroundImage: `url(${Conf.FrontConfig.footerLogoImage})`,
+                }}
+              />
             </a>
           </div>
           {/*<div className="fr">*/}
@@ -175,7 +184,9 @@ class PageFooter extends React.Component {
                 </span>
               </span>
               {i18next.t("footer:Community of Creators")}
-              <div style={{ color: "gray" }}>{Conf.FooterSlogan1}</div>
+              <div style={{ color: "gray" }}>
+                {Conf.FrontConfig.footerDeclaration}
+              </div>
             </div>
             <div style={{ textAlign: "center", color: "gray" }}>
               VERSION:
@@ -188,7 +199,7 @@ class PageFooter extends React.Component {
               · {loadingTime}ms · UTC {utcTime} · PVG {pvgTime} · LAX {laxTime}·
               JFK {jfkTime}
               <br />
-              {Conf.FooterSlogan2}
+              {Conf.FrontConfig.footerAdvise}
             </div>
             <div style={{ textAlign: "center", marginTop: "10px" }}>
               <IconFont style={{ fontSize: "25px" }} type="icon-rss" />
@@ -202,7 +213,7 @@ class PageFooter extends React.Component {
                   className="f11"
                 >
                   <img
-                    src={Setting.getStatic("/static/img/language.png")}
+                    src={Setting.getStatic("/img/language.png")}
                     width="16"
                     align="absmiddle"
                     id="ico-select-language"
@@ -212,7 +223,7 @@ class PageFooter extends React.Component {
                 &nbsp;
                 <Link to="/select/editorType" className="f11">
                   <img
-                    src={Setting.getStatic("/static/img/editType.png")}
+                    src={Setting.getStatic("/img/editType.png")}
                     width="16"
                     align="absmiddle"
                     id="ico-select-editorType"

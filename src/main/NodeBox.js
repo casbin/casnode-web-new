@@ -24,8 +24,6 @@ import NewNodeTopicBox from "./NewNodeTopicBox";
 import "../node.css";
 import ReactMarkdown from "react-markdown";
 import i18next from "i18next";
-import * as url from "url";
-import * as Auth from "../auth/Auth";
 import Container from "../components/container";
 import { Button, Card } from "antd";
 
@@ -531,7 +529,7 @@ class NodeBox extends React.Component {
                   <br />
                   <span className="chevron">‹</span> &nbsp;
                   {i18next.t("error:Back to")}{" "}
-                  <Link to={`/member/${this.props.account?.username}`}>
+                  <Link to={`/member/${this.props.account?.name}`}>
                     {i18next.t("error:My profile")}
                   </Link>
                 </span>
@@ -547,7 +545,7 @@ class NodeBox extends React.Component {
         return null;
       }
       if (this.props.account === null || !this.props.account?.isAdmin) {
-        this.props.history.push(Auth.getSigninUrl());
+        this.props.history.push(Setting.getSigninUrl());
       }
 
       return (

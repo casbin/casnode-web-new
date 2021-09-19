@@ -14,29 +14,24 @@
 
 export const AuthConfig = {
   // serverUrl: "https://door.casbin.com",
-  serverUrl: "http://localhost:8000",
+  serverUrl: "http://localhost:7001",
   clientId: "c27c22c1c293cce07d43",
   appName: "casnode",
   organizationName: "built-in",
 };
 
-export const AuthState = "casnode";
+export let FrontConfig = {
+  forumName: "casnode",
+  logoImage: "",
+  footerLogoImage: "",
+  footerLogoUrl: "",
+  signinBoxStrong: "Casbin = way to authorization",
+  signinBoxSpan: "A place for Casbin developers and users",
+  footerDeclaration: "World is powered by code",
+  footerAdvise: "♥ Do have faith in what you're doing.",
+};
 
-export const GoogleClientId = "";
-export const GoogleAuthScope = "profile+email";
-export const GoogleOauthUri = "https://accounts.google.com/signin/oauth";
-
-export const GithubClientId = "";
-export const GithubAuthScope = "user:email+read:user";
-export const GithubOauthUri = "https://github.com/login/oauth/authorize";
-
-export const QQClientId = "";
-export const QQAuthScope = "get_user_info";
-export const QQOauthUri = "https://graph.qq.com/oauth2.0/authorize";
-
-export const WechatClientId = "";
-export const WeChatAuthScope = "snsapi_login";
-export const WeChatOauthUri = "https://open.weixin.qq.com/connect/qrconnect";
+export const ShowEmbedButtons = false;
 
 export const ShowGithubCorner = true;
 export const GithubRepo = "https://github.com/casbin/casnode";
@@ -61,14 +56,11 @@ export const DefaultTopicPageReplyNum = 100;
 //Wiki URL at header
 export const WikiUrl = "https://casdoor.org/docs/overview";
 
-export const FooterSlogan1 = "World is powered by code";
+export const ReplyMaxDepth = 10;
 
-export const FooterSlogan2 = "♥ Do have faith in what you're doing.";
+export const ForceLanguage = "";
 
-//Will display on sign in box
-export const SiteSlogan = "Casbin = way to authorization";
-
-export const SiteDescription = "A place for Casbin developers and users";
+export const ReplyMobileMaxDepth = 3;
 
 export const CustomizeSideBarItems = [
   {

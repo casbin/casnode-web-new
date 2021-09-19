@@ -15,371 +15,209 @@
 import React from "react";
 import * as Setting from "../Setting";
 import { withRouter, Link } from "react-router-dom";
-import * as TopicBackend from "../backend/TopicBackend";
-import * as ReplyBackend from "../backend/ReplyBackend";
-import { Resizable } from "re-resizable";
-import { Controlled as CodeMirror } from "react-codemirror2";
-import TagsInput from "react-tagsinput";
-import "../tagsInput.css";
-import * as Tools from "./Tools";
+import * as FavoritesBackend from "../backend/FavoritesBackend";
+import TopicList from "./TopicList";
+import PageColumn from "./PageColumn";
 import i18next from "i18next";
-import Editor from "./richTextEditor";
-import Select2 from "react-select2-wrapper";
 
-const pangu = require("pangu");
-
-class EditBox extends React.Component {
+class FavoritesBox extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       classes: props,
-      objectId: props.match.params.id,
-      editType: props.match.params.editType,
-      editObject: [],
-      nodes: [],
-      tags: [],
-      form: {},
-      editor: [
-        {
-          text: i18next.t("new:markdown"),
-          id: 0,
-        },
-        {
-          text: i18next.t("new:richtext"),
-          id: 1,
-        },
-      ],
-      placeholder: "",
+      favoritesType: props.match.params.favorites,
+      favorites: [],
+      p: "",
+      page: 1,
+      limit: 20,
+      minPage: 1,
+      maxPage: -1,
+      favoritesNum: 0,
+      temp: 0,
+      url: "",
     };
+    const params = new URLSearchParams(this.props.location.search);
+    this.state.p = params.get("p");
+    if (this.state.p === null) {
+      this.state.page = 1;
+    } else {
+      this.state.page = parseInt(this.state.p);
+    }
+
+    this.state.url = `/my/${this.state.favoritesType}`;
   }
 
   componentDidMount() {
-    this.getEditObject();
+    this.getFavoritesInfo();
   }
 
-  initForm() {
-    let form = this.state.form;
-    form["id"] = this.state.editObject?.id;
-    if (this.state.editType === "topic") {
-      form["title"] = this.state.editObject?.title;
-      form["nodeId"] = this.state.editObject?.nodeId;
-      if (this.state.editObject?.tags != null) {
-        this.setState({
-          tags: this.state.editObject?.tags,
-        });
+  componentWillReceiveProps(newProps) {
+    if (newProps.location !== this.props.location) {
+      let params = new URLSearchParams(newProps.location.search);
+      let page = params.get("p");
+      if (page === null) {
+        page = 1;
       }
-    }
-    form["content"] = this.state.editObject?.content;
-    form["editorType"] = this.state.editObject?.editorType;
-    this.setState({
-      form: form,
-      placeholder: i18next.t(`new:${this.state.editObject?.editorType}`),
-    });
-  }
-
-  handleChange(tags) {
-    this.updateFormField("tags", tags);
-    this.setState({
-      tags: tags,
-    });
-  }
-
-  editContent() {
-    // topic
-    if (this.state.editType === "topic") {
-      TopicBackend.editTopicContent(this.state.form).then((res) => {
-        if (res.status === "ok") {
-          this.props.history.push(`/t/${this.state.editObject?.id}`);
-        } else {
-          Setting.showMessage("error", res?.msg);
-        }
-      });
-      return;
-    }
-    // reply
-    ReplyBackend.editReplyContent(this.state.form).then((res) => {
-      if (res.status === "ok") {
-        this.props.history.push(
-          `/t/${this.state.editObject?.topicId}#r_${this.state.editObject?.id}`
-        );
-      } else {
-        Setting.showMessage("error", res?.msg);
-      }
-    });
-  }
-
-  getEditObject() {
-    if (this.state.editType === "topic") {
-      TopicBackend.getTopic(this.state.objectId).then((res) => {
-        this.setState(
-          {
-            editObject: res,
-          },
-          () => {
-            this.initForm();
-          }
-        );
-      });
-      return;
-    }
-    ReplyBackend.getReplyWithDetails(this.state.objectId).then((res) => {
       this.setState(
         {
-          editObject: res,
+          page: parseInt(page),
+          favoritesType: newProps.match.params.favorites,
         },
-        () => {
-          this.initForm();
-        }
+        () => this.getFavoritesInfo()
       );
+    }
+  }
+
+  getFavoritesInfo() {
+    let favoritesType;
+    switch (this.state.favoritesType) {
+      case "topics":
+        favoritesType = 1;
+        break;
+      case "following":
+        favoritesType = 2;
+        break;
+      case "nodes":
+        favoritesType = 3;
+        break;
+      default:
+        return;
+    }
+    FavoritesBackend.getFavorites(
+      favoritesType,
+      this.state.limit,
+      this.state.page
+    ).then((res) => {
+      if (res.status === "ok") {
+        this.setState({
+          favorites: res.data,
+          favoritesNum: res.data2,
+        });
+      }
     });
   }
 
-  updateFormField(key, value) {
-    let form = this.state.form;
-    form[key] = value;
-    this.setState({
-      form: form,
-    });
-  }
+  renderNodes(node) {
+    if (node.nodeInfo == null) {
+      return;
+    }
 
-  renderEditorSelect() {
     return (
-      <div>
-        {i18next.t("new:Switch editor")}
-        &nbsp;{" "}
-        <Select2
-          value={this.state.form.editorType}
-          style={{ width: "110px", fontSize: "14px" }}
-          data={this.state.editor.map((node, i) => {
-            return { text: `${node.text}`, id: i };
-          })}
-          onSelect={(event) => {
-            const s = event.target.value;
-            if (s === null) {
-              return;
-            }
-            const index = parseInt(s);
-            if (index === 0) {
-              this.updateFormField("editorType", "markdown");
-              this.setState({
-                placeholder: i18next.t("new:markdown"),
-              });
-            } else {
-              this.updateFormField("editorType", "richtext");
-              this.setState({
-                placeholder: i18next.t("new:richtext"),
-              });
-            }
+      <Link className="grid_item" to={`/go/${node?.nodeInfo.id}`}>
+        <div
+          style={{
+            display: "table",
+            padding: "20px 0px 20px 0px",
+            width: "100%",
+            textAlign: "center",
+            fontSize: "14px",
           }}
-          options={{ placeholder: this.state.placeholder }}
-        />
-      </div>
+        >
+          <img
+            src={node?.nodeInfo.image}
+            border="0"
+            align="default"
+            width="73"
+            alt={node?.nodeInfo.name}
+          />
+          <div className="sep10"></div>
+          {node?.nodeInfo.name}
+          <div className="sep5"></div>
+          <span className="fade f12">
+            <li className="fa fa-comments"></li>
+            {node?.topicNum}
+          </span>
+        </div>
+      </Link>
     );
   }
 
-  renderEditor() {
-    if (
-      !this.state.form.editorType ||
-      this.state.form.editorType === "markdown"
-    ) {
-      return (
-        <div
-          style={{
-            overflow: "hidden",
-            overflowWrap: "break-word",
-            resize: "none",
-            height: "auto",
-            minHeight: "320px",
-          }}
-          name="content"
-          className="mle tall"
-          id="reply_content"
-        >
-          <div className={`cm-long-content`}>
-            <CodeMirror
-              editorDidMount={(editor) => Tools.attachEditor(editor)}
-              onPaste={() => Tools.uploadMdFile()}
-              value={this.state.form.content}
-              onDrop={() => Tools.uploadMdFile()}
-              options={{
-                mode: "markdown",
-                lineNumbers: false,
-                lineWrapping: true,
-              }}
-              onBeforeChange={(editor, data, value) => {
-                this.updateFormField("content", value);
-              }}
-              onChange={(editor, data, value) => {}}
-            />
-          </div>
-        </div>
-      );
-    } else {
-      return (
-        <div
-          style={{
-            overflow: "hidden",
-            overflowWrap: "break-word",
-            resize: "none",
-            minHeight: "172",
-            height: "auto",
-          }}
-          name="content"
-          className="mle"
-          id="reply_content"
-        >
-          <Editor
-            defaultValue={this.state.form.content}
-            language={i18next.language}
-            height="auto"
-            id="richTextEditor"
-            onBeforeChange={(value) => {
-              this.updateFormField("content", value);
-            }}
-          />
-        </div>
-      );
+  showPageColumn() {
+    if (this.state.favoritesNum < this.state.limit) {
+      return;
     }
+
+    return (
+      <PageColumn
+        page={this.state.page}
+        total={this.state.favoritesNum}
+        url={this.state.url}
+        defaultPageNum={this.state.limit}
+      />
+    );
   }
 
   render() {
-    if (this.state.editObject !== null && this.state.editObject.length === 0) {
-      return (
-        <div className="box">
-          <div className="header">
-            <Link to="/">{Setting.getForumName()}</Link>{" "}
-            <span className="chevron">&nbsp;›&nbsp;</span>{" "}
-            {i18next.t("loading:Content loading")}
+    switch (this.state.favoritesType) {
+      case "nodes":
+        return (
+          <div className="box">
+            <div className="header">
+              <Link to="/">{Setting.getForumName()}</Link>
+              <span className="chevron">&nbsp;›&nbsp;</span>{" "}
+              {i18next.t("fav:My Favorite Nodes")}
+              <div className="fr f12">
+                <span className="snow">
+                  {i18next.t("fav:Total nodes")} &nbsp;
+                </span>
+                <strong className="gray">{this.state.favoritesNum}</strong>
+              </div>
+            </div>
+            <div id="my-nodes">
+              {this.state.favorites.map((node) => {
+                return this.renderNodes(node);
+              })}
+            </div>
           </div>
-          <div className="cell">
-            <span className="gray bigger">
-              {i18next.t("loading:Please wait patiently...")}
-            </span>
+        );
+      case "topics":
+        return (
+          <div className="box">
+            <div className="header">
+              <Link to="/">{Setting.getForumName()}</Link>
+              <span className="chevron">&nbsp;›&nbsp;</span>{" "}
+              {i18next.t("fav:My favorite topics")}
+              <div className="fr f12">
+                <span className="snow">
+                  {i18next.t("fav:Total topics")} &nbsp;
+                </span>
+                <strong className="gray">{this.state.favoritesNum}</strong>
+              </div>
+            </div>
+            <TopicList
+              topics={this.state.favorites}
+              showNodeName={true}
+              showAvatar={true}
+            />
           </div>
-        </div>
-      );
+        );
+      case "following":
+        return (
+          <div className="box">
+            <div className="header">
+              <Link to="/">{Setting.getForumName()}</Link>
+              <span className="chevron">&nbsp;›&nbsp;</span>{" "}
+              {i18next.t("fav:Latest topics from people I followed")}
+              <div className="fr f12">
+                <span className="snow">
+                  {i18next.t("fav:Total topics")} &nbsp;
+                </span>
+                <strong className="gray">{this.state.favoritesNum}</strong>
+              </div>
+            </div>
+            {Setting.PcBrowser ? this.showPageColumn() : null}
+            <TopicList
+              topics={this.state.favorites}
+              showNodeName={true}
+              showAvatar={true}
+            />
+            {this.showPageColumn()}
+          </div>
+        );
+      default:
+        return <div className="box">{this.state.favoritesType}</div>;
     }
-
-    if (this.state.editObject === null || !this.state.editObject?.editable) {
-      return (
-        <div className="box">
-          <div className="header">
-            <Link to="/">{Setting.getForumName()}</Link>{" "}
-            <span className="chevron">&nbsp;›&nbsp;</span>{" "}
-            {i18next.t("edit:Edit content")}
-          </div>
-          <div className="inner">
-            {i18next.t("edit:You cannot edit this content.")}
-          </div>
-        </div>
-      );
-    }
-
-    if (this.state.editType === "reply") {
-      return (
-        <div className="box">
-          <div className="header">
-            <Link to="/">{Setting.getForumName()}</Link>{" "}
-            <span className="chevron">&nbsp;›&nbsp;</span>{" "}
-            {i18next.t("edit:Edit reply")}
-          </div>
-          <div className="cell">
-            <table cellPadding="5" cellSpacing="0" border="0" width="100%">
-              <tbody>
-                <tr>
-                  <td>{this.renderEditor()}</td>
-                </tr>
-                <tr>
-                  <td
-                    style={{ display: "flex", justifyContent: "space-between" }}
-                  >
-                    <div>
-                      <input
-                        type="submit"
-                        value={i18next.t("edit:Save")}
-                        className="super normal button"
-                        onClick={() => this.editContent()}
-                      />
-                    </div>
-                    {this.renderEditorSelect()}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      );
-    }
-    return (
-      <div className="box">
-        <div className="header">
-          <Link to="/">{Setting.getForumName()}</Link>{" "}
-          <span className="chevron">&nbsp;›&nbsp;</span>
-          <Link to={`/go/${this.state.editObject?.nodeId}`}>
-            {" "}
-            {this.state.editObject?.nodeName}
-          </Link>{" "}
-          <span className="chevron">&nbsp;›&nbsp;</span>
-          <Link to={`/t/${this.state.editObject?.id}`}>
-            {" "}
-            {pangu.spacing(this.state.editObject?.title)}
-          </Link>{" "}
-          <span className="chevron">&nbsp;›&nbsp;</span>{" "}
-          {i18next.t("edit:Edit topic")}
-          {/* todo */}
-        </div>
-        <div className="cell">
-          <table cellPadding="5" cellSpacing="0" border="0" width="100%">
-            <tbody>
-              <tr>
-                <td>
-                  <textarea
-                    type="text"
-                    maxLength="120"
-                    name="title"
-                    className="mle"
-                    name="title"
-                    value={this.state.form.title}
-                    onChange={(event) => {
-                      this.updateFormField("title", event.target.value);
-                    }}
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td>{this.renderEditor()}</td>
-              </tr>
-              <tr>
-                <TagsInput
-                  inputProps={{
-                    maxLength: "8",
-                    placeholder:
-                      "After adding tags press Enter,only add up to four tags,the length of each tag is up to 8",
-                  }}
-                  maxTags="4"
-                  value={this.state.tags}
-                  onChange={this.handleChange.bind(this)}
-                />
-                <td
-                  style={{ display: "flex", justifyContent: "space-between" }}
-                >
-                  <div>
-                    <input
-                      type="submit"
-                      value={i18next.t("edit:Save")}
-                      className="super normal button"
-                      onClick={() => this.editContent()}
-                    />
-                  </div>
-                  {this.renderEditorSelect()}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    );
   }
 }
 
-export default withRouter(EditBox);
+export default withRouter(FavoritesBox);

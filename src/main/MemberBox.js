@@ -22,6 +22,7 @@ import AllCreatedTopicsBox from "./AllCreatedTopicsBox";
 import LatestReplyBox from "./LatestReplyBox";
 import i18next from "i18next";
 import { scoreConverter } from "./Tools";
+import { getProviderLogoLink } from "../Setting";
 
 class MemberBox extends React.Component {
   constructor(props) {
@@ -42,17 +43,19 @@ class MemberBox extends React.Component {
 
   componentWillReceiveProps(newProps) {
     if (newProps.location !== this.props.location) {
-      this.setState({
-        memberId: newProps.match.params.memberId,
-      });
-      this.getMember();
+      this.setState(
+        {
+          memberId: newProps.match.params.memberId,
+        },
+        () => this.getMember()
+      );
     }
   }
 
   getMember() {
     MemberBackend.getMember(this.state.memberId).then((res) => {
       this.setState({
-        member: res,
+        member: res.data,
       });
     });
   }
@@ -161,7 +164,7 @@ class MemberBox extends React.Component {
     const showWatch =
       this.props.account !== undefined &&
       this.props.account !== null &&
-      this.state.memberId !== this.props.account?.username;
+      this.state.memberId !== this.props.account?.name;
     const { goldCount, silverCount, bronzeCount } = scoreConverter(
       this.state.member.score
     );
@@ -177,7 +180,7 @@ class MemberBox extends React.Component {
                   align="center"
                 >
                   <Avatar
-                    username={this.state.member?.id}
+                    username={this.state.member?.name}
                     size={Setting.PcBrowser ? "large" : "middle"}
                     avatar={this.state.member?.avatar}
                   />
@@ -199,7 +202,7 @@ class MemberBox extends React.Component {
                         type="button"
                         value={i18next.t("member:Cancel Following")}
                         onClick={() =>
-                          this.deleteFavorite(this.state.member?.id)
+                          this.deleteFavorite(this.state.member?.name)
                         }
                         className="super inverse button"
                       />
@@ -207,7 +210,9 @@ class MemberBox extends React.Component {
                       <input
                         type="button"
                         value={i18next.t("member:Watch")}
-                        onClick={() => this.addFavorite(this.state.member?.id)}
+                        onClick={() =>
+                          this.addFavorite(this.state.member?.name)
+                        }
                         className="super special button"
                       />
                     )}
@@ -220,34 +225,34 @@ class MemberBox extends React.Component {
                     />
                   </div>
                   <h1 style={{ marginBottom: "5px" }}>
-                    {this.state.member?.id}
+                    {this.state.member?.name}
                   </h1>
                   <span className="bigger">{this.state.member?.tagline}</span>
                   <div className="sep10" />
-                  {this.state.member?.company.length !== 0 ||
-                  this.state.member?.companyTitle.length !== 0 ? (
+                  {this.state.member?.affiliation?.length !== 0 ||
+                  this.state.member?.title?.length !== 0 ? (
                     <span>
-                      🏢&nbsp; <strong>{this.state.member?.company}</strong> /{" "}
-                      {this.state.member?.companyTitle}
+                      🏢&nbsp; <strong>{this.state.member?.affiliation}</strong>{" "}
+                      / {this.state.member?.title}
                     </span>
                   ) : null}
                   <div className={Setting.PcBrowser ? "sep10" : "sep5"} />
                   <span className="gray">
                     {Setting.getForumName()} {i18next.t("member:No.")}{" "}
-                    {this.state.member?.no}{" "}
+                    {this.state.member?.ranking}{" "}
                     {i18next.t("member:member, joined on")}{" "}
                     {Setting.getFormattedDate(this.state.member?.createdTime)}
-                    {Setting.PcBrowser ? (
-                      <span>
-                        <div className="sep5" />
-                        {i18next.t("member:Today's ranking")}{" "}
-                        <Link to="/top/dau">{this.state.member?.ranking}</Link>
-                      </span>
-                    ) : null}
+                    {/*{Setting.PcBrowser ? (*/}
+                    {/*  <span>*/}
+                    {/*    <div className="sep5" />*/}
+                    {/*    {i18next.t("member:Today's ranking")}{" "}*/}
+                    {/*    <Link to="/top/dau">{this.state.member?.ranking}</Link>*/}
+                    {/*  </span>*/}
+                    {/*) : null}*/}
                     <div className="sep5" />
                     {this.state.member?.isModerator ? (
                       <img
-                        src={Setting.getStatic("/static/img/mod@2x.png")}
+                        src={Setting.getStatic("/img/mod@2x.png")}
                         height="14px"
                         align="absmiddle"
                       />
@@ -260,21 +265,21 @@ class MemberBox extends React.Component {
                   <div className="balance_area">
                     {goldCount}{" "}
                     <img
-                      src={Setting.getStatic("/static/img/gold@2x.png")}
+                      src={Setting.getStatic("/img/gold@2x.png")}
                       height="16"
                       alt="G"
                       border="0"
                     />{" "}
                     {silverCount}{" "}
                     <img
-                      src={Setting.getStatic("/static/img/silver@2x.png")}
+                      src={Setting.getStatic("/img/silver@2x.png")}
                       height="16"
                       alt="S"
                       border="0"
                     />{" "}
                     {bronzeCount}{" "}
                     <img
-                      src={Setting.getStatic("/static/img/bronze@2x.png")}
+                      src={Setting.getStatic("/img/bronze@2x.png")}
                       height="16"
                       alt="B"
                       border="0"
@@ -287,23 +292,23 @@ class MemberBox extends React.Component {
           <div className="sep5" />
         </div>
         <div className="widgets">
-          {this.state.member?.website.length !== 0 ? (
+          {this.state.member?.homepage?.length !== 0 ? (
             <a
-              href={this.state.member?.website}
+              href={this.state.member?.homepage}
               className="social_label"
               target="_blank"
               rel="nofollow noopener noreferrer"
             >
               <img
-                src={Setting.getStatic("/static/img/social_home.png")}
+                src={Setting.getStatic("/img/social_home.png")}
                 width="24"
                 alt="Website"
                 align="absmiddle"
               />{" "}
-              &nbsp;{this.state.member?.website}
+              &nbsp;{this.state.member?.homepage}
             </a>
           ) : null}
-          {this.state.member?.location.length !== 0 ? (
+          {this.state.member?.location?.length !== 0 ? (
             <a
               href={`http://www.google.com/maps?q=${this.state.member?.location}`}
               className="social_label"
@@ -311,7 +316,7 @@ class MemberBox extends React.Component {
               rel="nofollow noopener noreferrer"
             >
               <img
-                src={Setting.getStatic("/static/img/social_geo.png")}
+                src={Setting.getStatic("/img/social_geo.png")}
                 width="24"
                 alt="Geo"
                 align="absmiddle"
@@ -319,43 +324,84 @@ class MemberBox extends React.Component {
               &nbsp;{this.state.member?.location}
             </a>
           ) : null}
-          {this.state.member?.githubAccount.length !== 0 ? (
-            <a
-              href={`https://github.com/${this.state.member?.githubAccount}`}
-              className="social_label"
-              target="_blank"
-              rel="nofollow noopener noreferrer"
-            >
-              <img
-                src={Setting.getStatic("/static/img/social_github.png")}
-                width="24"
-                alt="GitHub"
-                align="absmiddle"
-              />{" "}
-              &nbsp;{this.state.member?.githubAccount}
-            </a>
-          ) : null}
-          {this.state.member?.googleAccount.length !== 0 ? (
-            <a
-              href={`mailto:${this.state.member?.googleAccount}`}
-              className="social_label"
-              target="_blank"
-              rel="nofollow noopener noreferrer"
-            >
-              <img
-                src={Setting.getStatic("/static/img/social_google.png")}
-                width="24"
-                alt="Google"
-                align="absmiddle"
-              />{" "}
-              &nbsp;{this.state.member?.googleAccount}
-            </a>
-          ) : null}
+          {this.renderIdp(this.state.member, "GitHub")}
+          {this.renderIdp(this.state.member, "Google")}
+          {this.renderIdp(this.state.member, "WeChat")}
+          {this.renderIdp(this.state.member, "QQ")}
         </div>
-        {this.state.member?.bio === "" ? (
+        {this.state.member?.bio !== "" ? (
           <div className="cell">{this.state.member?.bio}</div>
         ) : null}
       </div>
+    );
+  }
+
+  getProviderLink(user, provider) {
+    if (provider.type === "GitHub") {
+      return `https://github.com/${this.getUserProperty(
+        user,
+        provider.type,
+        "username"
+      )}`;
+    } else if (provider.type === "Google") {
+      return "https://mail.google.com";
+    } else {
+      return "";
+    }
+  }
+
+  getUserProperty(user, providerType, propertyName) {
+    const key = `oauth_${providerType}_${propertyName}`;
+    if (user.properties === null) return "";
+    return user.properties[key];
+  }
+
+  renderIdp(user, providerType) {
+    const lowerProviderName = providerType.toLowerCase();
+    if (this.state.member[lowerProviderName].length === 0) {
+      return null;
+    }
+
+    const provider = { type: providerType };
+
+    const linkedValue = user[provider.type.toLowerCase()];
+    const profileUrl = this.getProviderLink(user, provider);
+    const id = this.getUserProperty(user, provider.type, "id");
+    const username = this.getUserProperty(user, provider.type, "username");
+    const displayName = this.getUserProperty(
+      user,
+      provider.type,
+      "displayName"
+    );
+    const email = this.getUserProperty(user, provider.type, "email");
+    let avatarUrl = this.getUserProperty(user, provider.type, "avatarUrl");
+
+    if (avatarUrl === "" || avatarUrl === undefined) {
+      avatarUrl = Setting.getProviderLogoLink(provider);
+    }
+
+    let name =
+      username === undefined ? displayName : `${displayName} (${username})`;
+    if (name === undefined) {
+      if (id !== undefined) {
+        name = id;
+      } else if (email !== undefined) {
+        name = email;
+      } else {
+        name = linkedValue;
+      }
+    }
+
+    return (
+      <a
+        href={profileUrl}
+        className="social_label"
+        target="_blank"
+        rel="nofollow noopener noreferrer"
+      >
+        <img src={avatarUrl} width="24" alt={providerType} align="absmiddle" />{" "}
+        &nbsp;{name}
+      </a>
     );
   }
 
@@ -364,7 +410,7 @@ class MemberBox extends React.Component {
 
     return (
       <div className="box">
-        <div className="sep5"></div>
+        <div className="sep5" />
         <table cellPadding="0" cellSpacing="0" border="0" width="100%">
           <tbody>
             <tr>
@@ -375,7 +421,7 @@ class MemberBox extends React.Component {
                   style={{ display: "block" }}
                 >
                   <span className="bigger">{this.state.nodeFavoriteNum}</span>
-                  <div className="sep3"></div>
+                  <div className="sep3" />
                   <span className="fade small">{i18next.t("bar:Nodes")}</span>
                 </Link>
               </td>
@@ -391,7 +437,7 @@ class MemberBox extends React.Component {
                   style={{ display: "block" }}
                 >
                   <span className="bigger">{this.state.topicFavoriteNum}</span>
-                  <div className="sep3"></div>
+                  <div className="sep3" />
                   <span className="fade small">{i18next.t("bar:Topics")}</span>
                 </Link>
               </td>
@@ -407,14 +453,14 @@ class MemberBox extends React.Component {
                   style={{ display: "block" }}
                 >
                   <span className="bigger">{this.state.followingNum}</span>
-                  <div className="sep3"></div>
+                  <div className="sep3" />
                   <span className="fade small">{i18next.t("bar:Watch")}</span>
                 </Link>
               </td>
             </tr>
           </tbody>
         </table>
-        <div className="sep5"></div>
+        <div className="sep5" />
       </div>
     );
   }
@@ -429,11 +475,10 @@ class MemberBox extends React.Component {
         )}
         {this.renderMember()}
         {!Setting.PcBrowser &&
-        this.props.account?.username === this.state.memberId ? (
+        this.props.account?.name === this.state.memberId ? (
           <div className="sep5" />
         ) : null}
-        {!Setting.PcBrowser &&
-        this.props.account?.username === this.state.memberId
+        {!Setting.PcBrowser && this.props.account?.name === this.state.memberId
           ? this.renderMemberFavorites()
           : null}
         {Setting.PcBrowser ? (
