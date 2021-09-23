@@ -19,6 +19,12 @@ import * as Setting from "../Setting";
 import Select2 from "react-select2-wrapper";
 import i18next from "i18next";
 
+import Container from "../components/container.js";
+import { Card, Alert, Button, Form, Input, Tabs } from "antd";
+
+import "./AdminPlane.css";
+const { TabPane } = Tabs;
+
 class AdminTab extends React.Component {
   constructor(props) {
     super(props);
@@ -255,15 +261,35 @@ class AdminTab extends React.Component {
     }
 
     return (
-      <div className="problem" onClick={() => this.clearErrorMessage()}>
-        {i18next.t(
-          "error:Please resolve the following issues before submitting"
-        )}
-        <ul>
-          {problems.map((problem, i) => {
-            return <li>{problem}</li>;
-          })}
-        </ul>
+      <div>
+        <Alert
+          message={i18next.t(
+            "error:Please resolve the following issues before submitting"
+          )}
+          type="error"
+          onClick={() => this.clearErrorMessage()}
+          closable
+          style={{
+            marginBottom: "10px",
+            alignItems: "center",
+            cursor: "pointer",
+          }}
+        />
+        {problems.map((problem) => {
+          return (
+            <Alert
+              message={problem}
+              type="error"
+              onClick={() => this.clearErrorMessage()}
+              closable
+              style={{
+                marginBottom: "10px",
+                alignItems: "center",
+                cursor: "pointer",
+              }}
+            />
+          );
+        })}
       </div>
     );
   }
@@ -319,9 +345,9 @@ class AdminTab extends React.Component {
                 <span className="gray">{tab?.name}</span>
               </td>
               <td width={pcBrowser ? "100" : "auto"} align="center">
-                <Link to={`/admin/tab/edit/${tab?.id}`}>
+                <Button href={`/admin/tab/edit/${tab?.id}`}>
                   {i18next.t("tab:Manage")}
-                </Link>
+                </Button>
               </td>
               <td width="10"></td>
               <td
@@ -341,18 +367,267 @@ class AdminTab extends React.Component {
                 {tab?.nodesNum} {i18next.t("tab:nodes")}
               </td>
               <td width="50" align="left" style={{ textAlign: "right" }}>
-                <a
-                  href="#"
+                <Button
+                  danger
                   onClick={() =>
                     this.deleteTab(tab?.id, tab?.topicsNum, tab?.nodesNum)
                   }
                 >
                   {i18next.t("tab:Delete")}
-                </a>
+                </Button>
               </td>
             </tr>
           </tbody>
         </table>
+      </div>
+    );
+  }
+
+  renderBasic() {
+    const newTab = this.props.event === "new";
+    const tab = this.state.tab;
+    return (
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <div>
+          {this.renderProblem()}
+          {this.state.message !== "" ? (
+            <Alert
+              message={this.state.message}
+              type="info"
+              onClick={() => this.clearMessage()}
+              closable
+              style={{
+                marginBottom: "10px",
+                alignItems: "center",
+                cursor: "pointer",
+              }}
+            />
+          ) : null}
+          <div className="inner">
+            <table cellPadding="8" cellSpacing="0" border="0" width="100%">
+              <tbody>
+                {newTab ? (
+                  <tr>
+                    <td width="120" align="right">
+                      {i18next.t("tab:Tab ID")}
+                    </td>
+                    <td width="auto" align="left">
+                      <Input
+                        type="text"
+                        className="sl"
+                        name="id"
+                        id="tab_id"
+                        value={this.state.form?.id}
+                        onChange={(event) =>
+                          this.updateFormField("id", event.target.value)
+                        }
+                        autoComplete="off"
+                      />
+                    </td>
+                  </tr>
+                ) : null}
+                <tr>
+                  <td width="120" align="right">
+                    {i18next.t("tab:Tab name")}
+                  </td>
+                  <td width="auto" align="left">
+                    <Input
+                      type="text"
+                      className="sl"
+                      name="name"
+                      id="tab_name"
+                      value={
+                        this.state.form?.name === undefined
+                          ? ""
+                          : this.state.form?.name
+                      }
+                      onChange={(event) =>
+                        this.updateFormField("name", event.target.value)
+                      }
+                      autoComplete="off"
+                    />
+                  </td>
+                </tr>
+                {!newTab ? (
+                  <tr>
+                    <td width="120" align="right">
+                      {i18next.t("tab:Created time")}
+                    </td>
+                    <td width="auto" align="left">
+                      <span className="gray">{tab?.createdTime}</span>
+                    </td>
+                  </tr>
+                ) : null}
+                {!newTab ? (
+                  <tr>
+                    <td width="120" align="right">
+                      {i18next.t("tab:Total topics")}
+                    </td>
+                    <td width="auto" align="left">
+                      <span className="gray">{tab?.topicsNum}</span>
+                    </td>
+                  </tr>
+                ) : null}
+                {!newTab ? (
+                  <tr>
+                    <td width="120" align="right">
+                      {i18next.t("tab:Total nodes")}
+                    </td>
+                    <td width="auto" align="left">
+                      <span className="gray">{tab?.nodesNum}</span>
+                    </td>
+                  </tr>
+                ) : null}
+                <tr>
+                  <td width="120" align="right">
+                    {i18next.t("tab:Sorter")}
+                  </td>
+                  <td width="auto" align="left">
+                    <Input
+                      type="range"
+                      min="1"
+                      className="range-input"
+                      max="1000"
+                      step="1"
+                      value={
+                        this.state.form?.sorter === undefined
+                          ? 1
+                          : this.state.form?.sorter
+                      }
+                      onChange={(event) =>
+                        this.updateFormField(
+                          "sorter",
+                          parseInt(event.target.value)
+                        )
+                      }
+                    />
+                    &nbsp; &nbsp;{" "}
+                    <input
+                      type="number"
+                      name="sorter"
+                      min="1"
+                      className="number-input"
+                      max="1000"
+                      step="1"
+                      value={this.state.form?.sorter}
+                      onChange={(event) =>
+                        this.updateFormField(
+                          "sorter",
+                          parseInt(event.target.value)
+                        )
+                      }
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td width="120" align="right"></td>
+                  <td width="auto" align="left">
+                    <span className="gray">
+                      {i18next.t(
+                        "tab:Decide the order of node navigation and homepage"
+                      )}
+                    </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td width="120" align="right">
+                    {i18next.t("tab:Home page")}
+                  </td>
+                  <td width="auto" align="left">
+                    <input
+                      type="radio"
+                      onClick={() => this.updateFormField("homePage", true)}
+                      checked={this.state.form?.homePage}
+                      name="homePage"
+                    />
+                    {i18next.t("tab:show")}{" "}
+                    <input
+                      type="radio"
+                      onClick={() => this.updateFormField("homePage", false)}
+                      checked={!this.state.form?.homePage}
+                      name="homePage"
+                    />
+                    {i18next.t("tab:hidden")}
+                  </td>
+                </tr>
+                {this.state.form?.homePage ? (
+                  <tr>
+                    <td width="120" align="right">
+                      {i18next.t("tab:Default node")}
+                    </td>
+                    <td width="auto" align="left">
+                      {tab?.nodesNum !== 0 && tab?.nodesNum !== undefined ? (
+                        <Select2
+                          value={this.getIndexFromNodeId(
+                            this.state.form?.defaultNode
+                          )}
+                          style={{
+                            width: Setting.PcBrowser ? "300px" : "200px",
+                            fontSize: "14px",
+                          }}
+                          data={this.state.nodes.map((node, i) => {
+                            return {
+                              text: `${node.name} / ${node.id}`,
+                              id: i,
+                            };
+                          })}
+                          onSelect={(event) => {
+                            const s = event.target.value;
+                            if (s === null) {
+                              return;
+                            }
+
+                            const index = parseInt(s);
+                            const nodeId = this.state.nodes[index].id;
+                            this.updateFormField("defaultNode", nodeId);
+                          }}
+                          options={{
+                            placeholder: i18next.t(
+                              "tab:Please select a default node"
+                            ),
+                          }}
+                        />
+                      ) : (
+                        <span className="gray">
+                          {i18next.t("tab:No node exists in this tab")}
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                ) : null}
+                {this.state.form?.homePage ? (
+                  <tr>
+                    <td width="120" align="right"></td>
+                    <td width="auto" align="left">
+                      <span className="gray">
+                        {i18next.t(
+                          "tab:The default node when creating a topic on the homepage"
+                        )}
+                      </span>
+                    </td>
+                  </tr>
+                ) : null}
+                <tr>
+                  <td width="120" align="right"></td>
+                  <td width="auto" align="left">
+                    {!newTab ? (
+                      <Button
+                        type="primary"
+                        onClick={() => this.updateTabInfo()}
+                      >
+                        {i18next.t("tab:Save")}
+                      </Button>
+                    ) : (
+                      <Button type="primary" onClick={() => this.postNewTab()}>
+                        {i18next.t("tab:Create")}
+                      </Button>
+                    )}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     );
   }
@@ -364,329 +639,153 @@ class AdminTab extends React.Component {
       if (this.state.tabId !== undefined) {
         if (this.state.tab !== null && this.state.tab.length === 0) {
           return (
-            <div className="box">
-              <div className="header">
-                <Link to="/">{Setting.getForumName()}</Link>
-                <span className="chevron">&nbsp;›&nbsp;</span>{" "}
-                {i18next.t("loading:Page is loading")}
-              </div>
-              <div className="cell">
-                <span className="gray bigger">
-                  {i18next.t("loading:Please wait patiently...")}
-                </span>
-              </div>
+            <div align="center">
+              <Container BreakpointStage={this.props.BreakpointStage}>
+                <div style={{ flex: "auto" }}>
+                  <Card
+                    title={i18next.t("loading:Page is loading")}
+                    style={{
+                      alignItems: "center",
+                      flex: "auto",
+                      display: "flex",
+                      flexDirection: "column",
+                      textAlign: "left",
+                    }}
+                  >
+                    <span className="gray bigger">
+                      {i18next.t("loading:Please wait patiently...")}
+                    </span>
+                  </Card>
+                </div>
+              </Container>
             </div>
           );
         }
 
         if (this.state.tab === null) {
           return (
-            <div class="box">
-              <div class="header">
-                <Link to="/">{Setting.getForumName()}</Link>
-                <span className="chevron">&nbsp;›&nbsp;</span>{" "}
-                {i18next.t("error:Tab not found")}
-              </div>
-              <div class="cell">
-                {i18next.t(
-                  "error:The tab you are trying to view does not exist"
-                )}
-              </div>
+            <div align="center">
+              <Container BreakpointStage={this.props.BreakpointStage}>
+                <div style={{ flex: "auto" }}>
+                  <Card
+                    title={i18next.t("error:Tab not found")}
+                    style={{
+                      alignItems: "center",
+                      flex: "auto",
+                      display: "flex",
+                      flexDirection: "column",
+                      textAlign: "left",
+                    }}
+                  >
+                    <span className="gray bigger">
+                      {i18next.t(
+                        "error:The tab you are trying to view does not exist"
+                      )}
+                    </span>
+                  </Card>
+                </div>
+              </Container>
             </div>
           );
         }
       }
 
-      const tab = this.state.tab;
-
       return (
-        <div>
-          {this.renderHeader()}
-          <div className="box">
-            {this.renderProblem()}
-            {this.state.message !== "" ? (
-              <div className="message" onClick={() => this.clearMessage()}>
-                <li className="fa fa-exclamation-triangle"></li>
-                &nbsp; {this.state.message}
-              </div>
-            ) : null}
-            <div className="inner">
-              <table cellPadding="5" cellSpacing="0" border="0" width="100%">
-                <tbody>
-                  {newTab ? (
-                    <tr>
-                      <td width="120" align="right">
-                        {i18next.t("tab:Tab ID")}
-                      </td>
-                      <td width="auto" align="left">
-                        <input
-                          type="text"
-                          className="sl"
-                          name="id"
-                          id="tab_id"
-                          value={this.state.form?.id}
-                          onChange={(event) =>
-                            this.updateFormField("id", event.target.value)
-                          }
-                          autoComplete="off"
-                        />
-                      </td>
-                    </tr>
-                  ) : null}
-                  <tr>
-                    <td width="120" align="right">
-                      {i18next.t("tab:Tab name")}
-                    </td>
-                    <td width="auto" align="left">
-                      <input
-                        type="text"
-                        className="sl"
-                        name="name"
-                        id="tab_name"
-                        value={
-                          this.state.form?.name === undefined
-                            ? ""
-                            : this.state.form?.name
-                        }
-                        onChange={(event) =>
-                          this.updateFormField("name", event.target.value)
-                        }
-                        autoComplete="off"
-                      />
-                    </td>
-                  </tr>
-                  {!newTab ? (
-                    <tr>
-                      <td width="120" align="right">
-                        {i18next.t("tab:Created time")}
-                      </td>
-                      <td width="auto" align="left">
-                        <span className="gray">{tab?.createdTime}</span>
-                      </td>
-                    </tr>
-                  ) : null}
-                  {!newTab ? (
-                    <tr>
-                      <td width="120" align="right">
-                        {i18next.t("tab:Total topics")}
-                      </td>
-                      <td width="auto" align="left">
-                        <span className="gray">{tab?.topicsNum}</span>
-                      </td>
-                    </tr>
-                  ) : null}
-                  {!newTab ? (
-                    <tr>
-                      <td width="120" align="right">
-                        {i18next.t("tab:Total nodes")}
-                      </td>
-                      <td width="auto" align="left">
-                        <span className="gray">{tab?.nodesNum}</span>
-                      </td>
-                    </tr>
-                  ) : null}
-                  <tr>
-                    <td width="120" align="right">
-                      {i18next.t("tab:Sorter")}
-                    </td>
-                    <td width="auto" align="left">
-                      <input
-                        type="range"
-                        min="1"
-                        max="1000"
-                        step="1"
-                        value={
-                          this.state.form?.sorter === undefined
-                            ? 1
-                            : this.state.form?.sorter
-                        }
-                        onChange={(event) =>
-                          this.updateFormField(
-                            "sorter",
-                            parseInt(event.target.value)
-                          )
-                        }
-                      />
-                      &nbsp; &nbsp;{" "}
-                      <input
-                        type="number"
-                        name="sorter"
-                        min="1"
-                        max="1000"
-                        step="1"
-                        value={this.state.form?.sorter}
-                        style={{ width: "50px" }}
-                        onChange={(event) =>
-                          this.updateFormField(
-                            "sorter",
-                            parseInt(event.target.value)
-                          )
-                        }
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td width="120" align="right"></td>
-                    <td width="auto" align="left">
-                      <span className="gray">
-                        {i18next.t(
-                          "tab:Decide the order of node navigation and homepage"
-                        )}
-                      </span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td width="120" align="right">
-                      {i18next.t("tab:Home page")}
-                    </td>
-                    <td width="auto" align="left">
-                      <input
-                        type="radio"
-                        onClick={() => this.updateFormField("homePage", true)}
-                        checked={this.state.form?.homePage}
-                        name="homePage"
-                      />
-                      {i18next.t("tab:show")}{" "}
-                      <input
-                        type="radio"
-                        onClick={() => this.updateFormField("homePage", false)}
-                        checked={!this.state.form?.homePage}
-                        name="homePage"
-                      />
-                      {i18next.t("tab:hidden")}
-                    </td>
-                  </tr>
-                  {this.state.form?.homePage ? (
-                    <tr>
-                      <td width="120" align="right">
-                        {i18next.t("tab:Default node")}
-                      </td>
-                      <td width="auto" align="left">
-                        {tab?.nodesNum !== 0 && tab?.nodesNum !== undefined ? (
-                          <Select2
-                            value={this.getIndexFromNodeId(
-                              this.state.form?.defaultNode
-                            )}
-                            style={{
-                              width: Setting.PcBrowser ? "300px" : "200px",
-                              fontSize: "14px",
-                            }}
-                            data={this.state.nodes.map((node, i) => {
-                              return {
-                                text: `${node.name} / ${node.id}`,
-                                id: i,
-                              };
-                            })}
-                            onSelect={(event) => {
-                              const s = event.target.value;
-                              if (s === null) {
-                                return;
-                              }
-
-                              const index = parseInt(s);
-                              const nodeId = this.state.nodes[index].id;
-                              this.updateFormField("defaultNode", nodeId);
-                            }}
-                            options={{
-                              placeholder: i18next.t(
-                                "tab:Please select a default node"
-                              ),
-                            }}
-                          />
-                        ) : (
-                          <span className="gray">
-                            {i18next.t("tab:No node exists in this tab")}
-                          </span>
-                        )}
-                      </td>
-                    </tr>
-                  ) : null}
-                  {this.state.form?.homePage ? (
-                    <tr>
-                      <td width="120" align="right"></td>
-                      <td width="auto" align="left">
-                        <span className="gray">
-                          {i18next.t(
-                            "tab:The default node when creating a topic on the homepage"
-                          )}
-                        </span>
-                      </td>
-                    </tr>
-                  ) : null}
-                  <tr>
-                    <td width="120" align="right"></td>
-                    <td width="auto" align="left">
-                      {!newTab ? (
-                        <input
-                          type="submit"
-                          className="super normal button"
-                          value={i18next.t("tab:Save")}
-                          onClick={() => this.updateTabInfo()}
-                        />
-                      ) : (
-                        <input
-                          type="submit"
-                          className="super normal button"
-                          value={i18next.t("tab:Create")}
-                          onClick={() => this.postNewTab()}
-                        />
-                      )}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+        <div align="center">
+          <Container
+            BreakpointStage={this.props.BreakpointStage}
+            className="translation"
+          >
+            <div style={{ flex: "auto" }}>
+              <Card
+                title={i18next.t("tab:Tab management")}
+                style={{
+                  flex: "auto",
+                  display: "flex",
+                  flexDirection: "column",
+                  textAlign: "left",
+                }}
+              >
+                <Tabs defaultActiveKey="1" type="card">
+                  <TabPane tab={i18next.t(`plane:Basic Info`)} key="1">
+                    {this.renderBasic()}
+                  </TabPane>
+                </Tabs>
+              </Card>
             </div>
-          </div>
+          </Container>
         </div>
       );
     }
 
     return (
-      <div className="box">
-        <div className="header">
-          <Link to="/">{Setting.getForumName()}</Link>{" "}
-          <span className="chevron">&nbsp;›&nbsp;</span>
-          <Link to="/admin">
-            {i18next.t("admin:Backstage management")}
-          </Link>{" "}
-          <span className="chevron">&nbsp;›&nbsp;</span>
-          {i18next.t("tab:Tab management")}
-          <div className="fr f12">
-            <span className="snow">{i18next.t("tab:Total tabs")} &nbsp;</span>
-            <strong className="gray">
-              {this.state.tabs === null ? 0 : this.state.tabs.length}
-            </strong>
-          </div>
-          <div className="fr f12">
-            <strong className="gray">
-              <Link to="tab/new">{i18next.t("tab:Add new tab")}</Link> &nbsp;
-            </strong>
-          </div>
-        </div>
-        {this.state.message !== "" ? (
-          <div className="message" onClick={() => this.clearMessage()}>
-            <li className="fa fa-exclamation-triangle"></li>
-            &nbsp; {this.state.message}
-          </div>
-        ) : null}
-        <div id="all-tabs">
-          {this.state.tabs !== null && this.state.tabs.length !== 0 ? (
-            this.state.tabs.map((tab) => this.renderTabs(tab))
-          ) : (
-            <div
-              className="cell"
+      <div align="center">
+        <Container BreakpointStage={this.props.BreakpointStage}>
+          <div style={{ flex: "auto" }}>
+            <Card
+              title={
+                <div>
+                  {i18next.t("tab:Tab management")}
+                  <div
+                    className="fr f12"
+                    style={{ paddingTop: "5px", paddingRight: "10px" }}
+                  >
+                    <span className="snow">
+                      {i18next.t("tab:Total tabs")} &nbsp;
+                    </span>
+                    <strong className="gray">
+                      {this.state.tabs === null ? 0 : this.state.tabs.length}
+                    </strong>
+                  </div>
+                </div>
+              }
               style={{
-                textAlign: "center",
-                height: "100px",
-                lineHeight: "100px",
+                flex: "auto",
+                display: "flex",
+                flexDirection: "column",
+                textAlign: "left",
               }}
+              extra={
+                <strong className="gray" style={{ paddingTop: "5px" }}>
+                  <Link to="tab/new">{i18next.t("tab:Add new tab")}</Link>{" "}
+                  &nbsp;
+                </strong>
+              }
             >
-              {this.state.tabs === null
-                ? i18next.t("loading:Data is loading...")
-                : i18next.t("tab:No tab yet")}
-            </div>
-          )}
-        </div>
+              {this.state.message !== "" ? (
+                <Alert
+                  message={this.state.message}
+                  type="info"
+                  onClick={() => this.clearMessage()}
+                  closable
+                  style={{
+                    marginBottom: "10px",
+                    alignItems: "center",
+                    cursor: "pointer",
+                  }}
+                />
+              ) : null}
+              <div id="all-tabs">
+                {this.state.tabs !== null && this.state.tabs.length !== 0 ? (
+                  this.state.tabs.map((tab) => this.renderTabs(tab))
+                ) : (
+                  <div
+                    className="cell"
+                    style={{
+                      textAlign: "center",
+                      height: "100px",
+                      lineHeight: "100px",
+                    }}
+                  >
+                    {this.state.tabs === null
+                      ? i18next.t("loading:Data is loading...")
+                      : i18next.t("tab:No tab yet")}
+                  </div>
+                )}
+              </div>
+            </Card>
+          </div>
+        </Container>
       </div>
     );
   }

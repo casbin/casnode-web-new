@@ -16,6 +16,8 @@ import React from "react";
 import * as Setting from "../Setting";
 import { Link } from "react-router-dom";
 import i18next from "i18next";
+import Container from "../components/container";
+import { Card } from "antd";
 class SelectLanguageBox extends React.Component {
   constructor(props) {
     super(props);
@@ -27,42 +29,35 @@ class SelectLanguageBox extends React.Component {
   render() {
     return (
       <div align="center">
-        <div
-          className="box"
-          style={{ width: Setting.PcBrowser ? "600px" : "auto" }}
-        >
-          <div className="header">
-            <Link to="/">{Setting.getForumName()}</Link>{" "}
-            <span className="chevron">&nbsp;›&nbsp;</span> Select Default Editor
-            / 选择默认编辑器
+        <Container BreakpointStage={this.props.BreakpointStage}>
+          <div style={{ flex: "auto" }}>
+            {Setting.PcBrowser ? <div className="sep20" /> : null}
+            <Card
+              title={`Please select the Default Editor you would like to use on ${Setting.getForumName()}`}
+              style={{
+                flex: "auto",
+                display: "flex",
+                flexDirection: "column",
+                textAlign: "left",
+              }}
+            >
+              <a
+                href="javascript:void(0);"
+                onClick={() => Setting.ChangeEditorType("markdown")}
+                className={"lang-selector"}
+              >
+                {i18next.t("new:MarkDown")}
+              </a>
+              <a
+                href="javascript:void(0);"
+                onClick={() => Setting.ChangeEditorType("richtext")}
+                className={"lang-selector"}
+              >
+                {i18next.t("new:RichText")}
+              </a>
+            </Card>
           </div>
-          <div className="cell">
-            {Setting.PcBrowser ? (
-              <span>
-                Please select the Default Editor you would like to use on{" "}
-                {Setting.getForumName()}
-              </span>
-            ) : (
-              <span>
-                Please select the Default Editor you would like to use:
-              </span>
-            )}
-          </div>
-          <a
-            href="javascript:void(0);"
-            onClick={() => Setting.ChangeEditorType("markdown")}
-            className={"lang-selector"}
-          >
-            {i18next.t("new:MarkDown")}
-          </a>
-          <a
-            href="javascript:void(0);"
-            onClick={() => Setting.ChangeEditorType("richtext")}
-            className={"lang-selector"}
-          >
-            {i18next.t("new:RichText")}
-          </a>
-        </div>
+        </Container>
       </div>
     );
   }

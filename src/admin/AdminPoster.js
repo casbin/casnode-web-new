@@ -17,6 +17,8 @@ import { withRouter, Link } from "react-router-dom";
 import * as PosterBackend from "../backend/PosterBackend";
 import * as Setting from "../Setting";
 import i18next from "i18next";
+import Container from "../components/container";
+import { Card, Button, Input, Form, Alert } from "antd";
 
 class AdminPoster extends React.Component {
   constructor(props) {
@@ -113,77 +115,94 @@ class AdminPoster extends React.Component {
 
   render() {
     return (
-      <div>
-        <div className="box">
-          <div className="header">
-            <Link to="/">{Setting.getForumName()}</Link>{" "}
-            <span className="chevron">&nbsp;›&nbsp;</span>
-            <Link to="/admin">{i18next.t("admin:Backstage management")}</Link>
-            <span className="chevron">&nbsp;›&nbsp;</span>{" "}
-            {i18next.t("poster:Poster management")}
-          </div>
-        </div>
-        <div className="box">
-          {this.state.message !== "" ? (
-            <div className="message" onClick={() => this.clearMessage()}>
-              <li className="fa fa-exclamation-triangle"></li>
-              &nbsp; {this.state.message}
-            </div>
-          ) : null}
-          <div className="inner">
-            <table cellPadding="5" cellSpacing="0" border="0" width="100%">
-              <tbody>
-                <tr>
-                  <td width={Setting.PcBrowser ? "120" : "90"} align="right">
-                    {i18next.t("poster:Advertiser")}
-                  </td>
-                  <td width="auto" align="left">
-                    <input
+      <div align="center">
+        <Container BreakpointStage={this.props.BreakpointStage}>
+          <div style={{ flex: "auto" }}>
+            <Card
+              title={i18next.t("poster:Poster management")}
+              style={{
+                alignItems: "center",
+                flex: "auto",
+                display: "flex",
+                flexDirection: "column",
+                textAlign: "left",
+              }}
+            >
+              <div>
+                {this.state.message !== "" ? (
+                  <Alert
+                    message={this.state.message}
+                    type="info "
+                    onClick={() => this.clearMessage()}
+                    closable
+                    style={{
+                      marginBottom: "10px",
+                      alignItems: "center",
+                      cursor: "pointer",
+                    }}
+                  />
+                ) : null}
+                <Form
+                  name="basic"
+                  labelCol={{ span: 8 }}
+                  wrapperCol={{ span: 16 }}
+                  autoComplete="off"
+                >
+                  <Form.Item
+                    label={i18next.t("poster:Advertiser")}
+                    name="Advertiser"
+                    rules={[
+                      { required: true, message: "Please input Advertiser!" },
+                    ]}
+                  >
+                    <Input
+                      onChange={() => this.inputChange("r_box_poster")}
                       ref={this.adver}
-                      onChange={() => this.inputChange("r_box_poster")}
                     />
-                  </td>
-                </tr>
-                <tr>
-                  <td width={Setting.PcBrowser ? "120" : "90"} align="right">
-                    {i18next.t("poster:Link")}
-                  </td>
-                  <td width="auto" align="left">
-                    <input
+                  </Form.Item>
+
+                  <Form.Item
+                    label={i18next.t("poster:Link")}
+                    name="link"
+                    rules={[
+                      { required: true, message: "Please input your ad link!" },
+                    ]}
+                  >
+                    <Input
+                      onChange={() => this.inputChange("r_box_poster")}
                       ref={this.links}
-                      onChange={() => this.inputChange("r_box_poster")}
                     />
-                  </td>
-                </tr>
-                <tr>
-                  <td width={Setting.PcBrowser ? "120" : "90"} align="right">
-                    {i18next.t("poster:Picture link")}
-                  </td>
-                  <td width="auto" align="left">
-                    <input
+                  </Form.Item>
+
+                  <Form.Item
+                    label={i18next.t("poster:Picture link")}
+                    name="picture_link"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input your picture link!",
+                      },
+                    ]}
+                  >
+                    <Input
+                      onChange={() => this.inputChange("r_box_poster")}
                       ref={this.p_link}
-                      onChange={() => this.inputChange("r_box_poster")}
                     />
-                  </td>
-                </tr>
-                <tr>
-                  <td
-                    width={Setting.PcBrowser ? "120" : "90"}
-                    align="right"
-                  ></td>
-                  <td width="auto" align="left">
-                    <input
-                      type="submit"
-                      className="super normal button"
-                      value={i18next.t("poster:Save")}
+                  </Form.Item>
+                  <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                    <Button
+                      type="primary"
+                      htmlType="submit"
                       onClick={() => this.updateposter("r_box_poster")}
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                    >
+                      {i18next.t("poster:Save")}
+                    </Button>
+                  </Form.Item>
+                </Form>
+              </div>
+            </Card>
           </div>
-        </div>
+        </Container>
       </div>
     );
   }

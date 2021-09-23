@@ -1,4 +1,4 @@
-// Copyright 2020 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The casbin Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,151 +13,261 @@
 // limitations under the License.
 
 import React from "react";
-import * as Setting from "../Setting";
 import { withRouter, Link } from "react-router-dom";
+import * as Setting from "../Setting";
 import i18next from "i18next";
+import * as ConfBackend from "../backend/ConfBackend";
+import Container from "../components/container.js";
+import { Card, Alert, Button, Form, Input, Tabs } from "antd";
 
-class AdminHomepage extends React.Component {
+import "./AdminPlane.css";
+
+const { TabPane } = Tabs;
+class AdminFrontConf extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       classes: props,
-      form: {},
-      manageItems: [
-        {
-          label: i18next.t("admin:Tab management"),
-          value: "tab",
-          image: Setting.getStatic("/img/settings.png"),
-        },
-        {
-          label: i18next.t("admin:Node management"),
-          value: "node",
-          image: Setting.getStatic("/img/settings.png"),
-        },
-        {
-          label: i18next.t("admin:Plane management"),
-          value: "plane",
-          image: Setting.getStatic("/img/settings.png"),
-        },
-        {
-          label: i18next.t("admin:Topic management"),
-          value: "topic",
-          image: Setting.getStatic("/img/settings.png"),
-        },
-        {
-          label: i18next.t("admin:Poster management"),
-          value: "poster",
-          image: Setting.getStatic("/img/settings.png"),
-        },
-        {
-          label: i18next.t("admin:Member management"),
-          value: "member",
-          image: Setting.getStatic("/img/settings.png"),
-        },
-        {
-          label: i18next.t("admin:Sensitive management"),
-          value: "sensitive",
-          image: Setting.getStatic("/img/settings.png"),
-        },
-        {
-          label: i18next.t("admin:Translation management"),
-          value: "translation",
-          image: Setting.getStatic("/img/settings.png"),
-        },
-        {
-          label: i18next.t("admin:FrontConf management"),
-          value: "frontconf",
-          image: Setting.getStatic("/img/settings.png"),
-        },
+      Management_LIST: [{ label: "Visual Conf", value: "visualConf" }],
+      field: "visualConf",
+      conf: [
+        { Id: "forumName", Value: "" },
+        { Id: "logoImage", Value: "" },
+        { Id: "signinBoxStrong", Value: "" },
+        { Id: "signinBoxSpan", Value: "" },
+        { Id: "footerAdvise", Value: "" },
+        { Id: "footerDeclaration", Value: "" },
+        { Id: "footerLogoImage", Value: "" },
+        { Id: "footerLogoUrl", Value: "" },
       ],
+      form: {},
+      changeForm: {},
       message: "",
+      memberId: props.match.params.memberId,
     };
+    this.state.url = `/admin/frontconf`;
   }
 
   componentDidMount() {
-    //
+    this.getFrontConf(this.state.field);
   }
 
-  renderManageItemInternal(item) {
+  changeField(field) {
+    this.setState(
+      {
+        field: field,
+      },
+      () => {
+        this.getFrontConf(this.state.field);
+      }
+    );
+  }
+
+  renderManagementList(item) {
     return (
-      <div
-        style={{
-          display: "table",
-          padding: "20px 0px 20px 0px",
-          width: "100%",
-          textAlign: "center",
-          fontSize: "14px",
-        }}
+      <a
+        href="javascript:void(0);"
+        className={this.state.field === item.value ? "tab_current" : "tab"}
+        onClick={() => this.changeField(item.value)}
       >
-        <img
-          src={item?.image}
-          border="0"
-          align="default"
-          width="73"
-          alt={item?.value}
-        />
-        <div className="sep10" />
-        {item?.label}
-      </div>
+        {item.label}
+      </a>
     );
   }
 
-  renderManageItem(item) {
-    if (item.value === "member") {
-      return (
-        <a
-          className="grid_item"
-          target="_blank"
-          href={Setting.getMyProfileUrl(this.props.account)}
-        >
-          {this.renderManageItemInternal(item)}
-        </a>
-      );
-    }
+  getFrontConf(field) {
+    ConfBackend.getFrontConfByField(field).then((res) => {
+      let form = this.state.form;
+      let conf = this.state.conf;
+      for (var k in res) {
+        form[res[k].Id] = res[k].Value;
+      }
+      for (var i in conf) {
+        conf[i].Value = form[conf[i].Id];
+      }
+      this.setState({
+        conf: conf,
+        form: form,
+      });
+    });
+  }
 
-    return (
-      <Link className="grid_item" to={`admin/${item?.value}`}>
-        {this.renderManageItemInternal(item)}
-      </Link>
-    );
+  clearMessage() {
+    this.setState({
+      message: "",
+    });
+  }
+
+  inputChange(event, id) {
+    event.target.style.height = event.target.scrollHeight + "px";
+    let forms = this.state.changeForm;
+    let form = this.state.form;
+    form[id] = event.target.value;
+    forms[id] = event.target.value;
+    this.setState({
+      form: form,
+      changeForm: forms,
+    });
+  }
+
+  updateConf() {
+    let confs = [];
+    for (var k in this.state.changeForm) {
+      confs.push({ Id: k, Value: this.state.changeForm[k] });
+    }
+    ConfBackend.updateFrontConfs(confs).then((res) => {
+      if (res.status === "ok") {
+        this.setState({
+          message: i18next.t("poster:Update frontconf information success"),
+        });
+      } else {
+        this.setState({
+          message: res?.msg,
+        });
+      }
+    });
+  }
+
+  updateConfToDefault() {
+    ConfBackend.updateFrontConfToDefault().then((res) => {
+      if (res.status === "ok") {
+        this.setState({
+          message: i18next.t("poster:Update frontconf information success"),
+        });
+      } else {
+        this.setState({
+          message: res?.msg,
+        });
+      }
+      window.location.reload();
+    });
+  }
+
+  convert(s) {
+    let str;
+    switch (s) {
+      case "forumName":
+        str = i18next.t("frontConf:Forum name");
+        break;
+      case "logoImage":
+        str = i18next.t("frontConf:Logo image");
+        break;
+      case "footerLogoImage":
+        str = i18next.t("frontConf:Footer Logo image");
+        break;
+      case "footerLogoUrl":
+        str = i18next.t("frontConf:Footer Logo URL");
+        break;
+      case "signinBoxStrong":
+        str = i18next.t("frontConf:Right title");
+        break;
+      case "signinBoxSpan":
+        str = i18next.t("frontConf:Right subtitle");
+        break;
+      case "footerDeclaration":
+        str = i18next.t("frontConf:Footer title");
+        break;
+      case "footerAdvise":
+        str = i18next.t("frontConf:Footer subtitle");
+        break;
+    }
+    return str;
   }
 
   render() {
-    if (this.props.account === undefined) {
-      return (
-        <div className="box">
-          <div className="header">
-            <Link to="/">{Setting.getForumName()}</Link>
-            <span className="chevron">&nbsp;›&nbsp;</span>{" "}
-            {i18next.t("loading:Page is loading")}
-          </div>
-          <div className="cell">
-            <span className="gray bigger">
-              {i18next.t("loading:Please wait patiently...")}
-            </span>
-          </div>
-        </div>
-      );
-    }
-    if (this.props.account === null || !this.props.account?.isAdmin) {
-      this.props.history.push("/");
-    }
-
     return (
-      <div className="box">
-        <div className="header">
-          <Link to="/">{Setting.getForumName()}</Link>{" "}
-          <span className="chevron">&nbsp;›&nbsp;</span>
-          {i18next.t("admin:Backstage management")}
-        </div>
-        <div id="all-items">
-          {this.state.manageItems.map((item) => {
-            return this.renderManageItem(item);
-          })}
-        </div>
+      <div align="center">
+        <Container
+          BreakpointStage={this.props.BreakpointStage}
+          className="translation"
+        >
+          <div style={{ flex: "auto" }}>
+            <Card
+              title={i18next.t("admin:FrontConf management")}
+              style={{
+                flex: "auto",
+                display: "flex",
+                flexDirection: "column",
+                textAlign: "left",
+              }}
+            >
+              <Tabs defaultActiveKey="1" type="card">
+                <TabPane tab={i18next.t(`frontend:Visual Conf`)} key="1">
+                  <div>
+                    {this.state.message !== "" ? (
+                      <Alert
+                        message={this.state.message}
+                        type="info"
+                        onClick={() => this.clearMessage()}
+                        closable
+                        style={{
+                          marginBottom: "10px",
+                          alignItems: "center",
+                          cursor: "pointer",
+                        }}
+                      />
+                    ) : null}
+                    <div>
+                      <table
+                        cellPadding="8"
+                        cellSpacing="0"
+                        border="0"
+                        width="100%"
+                      >
+                        <tbody>
+                          {this.state.conf.map((item) => {
+                            return (
+                              <tr>
+                                <td
+                                  width={Setting.PcBrowser ? "120" : "90"}
+                                  align="right"
+                                >
+                                  {this.convert(item.Id)}
+                                </td>
+                                <td width="auto" align="left">
+                                  <Input
+                                    style={{ width: "80%" }}
+                                    value={this.state.form[item.Id]}
+                                    onChange={(event) =>
+                                      this.inputChange(event, item.Id)
+                                    }
+                                  />
+                                </td>
+                              </tr>
+                            );
+                          })}
+                          <tr>
+                            <td
+                              width={Setting.PcBrowser ? "120" : "90"}
+                              align="right"
+                            ></td>
+                            <td width="auto" align="left">
+                              <Button
+                                type="primary"
+                                onClick={() => this.updateConf()}
+                              >
+                                {i18next.t("frontConf:Save")}
+                              </Button>
+                              &emsp;&emsp;&emsp;&emsp;
+                              <Button
+                                onClick={() => this.updateConfToDefault()}
+                              >
+                                {i18next.t("frontConf:Reset")}
+                              </Button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </TabPane>
+              </Tabs>
+            </Card>
+          </div>
+        </Container>
       </div>
     );
   }
 }
 
-export default withRouter(AdminHomepage);
+export default withRouter(AdminFrontConf);

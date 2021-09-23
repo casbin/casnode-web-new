@@ -17,6 +17,8 @@ import { withRouter, Link } from "react-router-dom";
 import * as SensitiveBackend from "../backend/SensitiveBackend.js";
 import * as Setting from "../Setting";
 import i18next from "i18next";
+import Container from "../components/container.js";
+import { Card, Button } from "antd";
 
 class AdminSensitive extends React.Component {
   constructor(props) {
@@ -49,16 +51,21 @@ class AdminSensitive extends React.Component {
 
   renderSensitiveItem(item) {
     return (
-      <div className="cell">
+      <div style={{ padding: "20px", borderBottom: "1px solid #e2e2e2" }}>
         <a
           href="javascript:void(0);"
           //   onClick={}
         >
           {item}
         </a>
-        <a style={{ float: "right" }} onClick={() => this.delSensitive(item)}>
+        <Button
+          danger
+          type=""
+          style={{ float: "right" }}
+          onClick={() => this.delSensitive(item)}
+        >
           delete
-        </a>
+        </Button>
       </div>
     );
   }
@@ -76,64 +83,105 @@ class AdminSensitive extends React.Component {
       } else alert(res.msg);
     });
   }
-
+  // font-size: 14px;
+  // position: relative;
+  // margin: 10px 0 9px;
+  // padding: 15px 0;
+  // height: 35px;
+  // border-radius: 20px;
+  // border: 1px solid #ced4da;
+  // display: flex;
+  // align-items: center;
+  // justify-content: space-around;
+  // width: 200px;
   renderNewSensitive() {
     return (
-      <div className="cell">
-        <input type="text" id="newsensitive" />
-        <a style={{ float: "right" }} onClick={() => this.addSensitive()}>
+      <div
+        style={{
+          padding: "20px",
+          borderBottom: "1px solid #e2e2e2",
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
+        <span
+          style={{
+            padding: "3px 8px",
+            borderRadius: "20px",
+            border: "1px solid #ced4da",
+            width: "320px",
+          }}
+        >
+          <input
+            placeholder={i18next.t(
+              "general:Please input new sensitive words here"
+            )}
+            style={{
+              border: "none",
+              margin: "0 0 0 5px",
+              outline: "none",
+              width: "300px",
+            }}
+            type="text"
+            id="newsensitive"
+          />
+        </span>
+        <Button
+          type="primary"
+          style={{ float: "right" }}
+          onClick={() => this.addSensitive()}
+        >
           add
-        </a>
-      </div>
-    );
-  }
-
-  renderHeader() {
-    return (
-      <div className="box">
-        <div className="header">
-          <Link to="/">{Setting.getForumName()}</Link>{" "}
-          <span className="chevron">&nbsp;›&nbsp;</span>
-          <Link to={`/admin`}>
-            {i18next.t("admin:Backstage management")}
-          </Link>{" "}
-          <span className="chevron">&nbsp;›&nbsp;</span>
-          <Link to={`/admin/sensitive`}>
-            {i18next.t("sensitive:sensitive management")}
-          </Link>{" "}
-          <span className="chevron">&nbsp;›&nbsp;</span>
-          <span>
-            {this.props.event === "new"
-              ? i18next.t("sensitive:new sensitive")
-              : ""}
-          </span>
-        </div>
-        <div className="cell">
-          {this.state.sensitiveList !== null &&
-          this.state.sensitiveList.length !== 0 ? (
-            this.state.sensitiveList.map((word) =>
-              this.renderSensitiveItem(word)
-            )
-          ) : (
-            <div
-              className="cell"
-              style={{
-                textAlign: "center",
-                height: "100px",
-                lineHeight: "100px",
-              }}
-            >
-              {"No data"}
-            </div>
-          )}
-          {this.renderNewSensitive()}
-        </div>
+        </Button>
       </div>
     );
   }
 
   render() {
-    return this.renderHeader();
+    // return this.renderHeader();
+    return (
+      <div align="center">
+        <Container BreakpointStage={this.props.BreakpointStage}>
+          <div style={{ flex: "auto" }}>
+            <Card
+              title={i18next.t("sensitive:sensitive management")}
+              style={{
+                flex: "auto",
+                display: "flex",
+                flexDirection: "column",
+                textAlign: "left",
+              }}
+            >
+              <span>
+                {this.props.event === "new"
+                  ? i18next.t("sensitive:new sensitive")
+                  : ""}
+              </span>
+
+              <div>
+                {this.state.sensitiveList !== null &&
+                this.state.sensitiveList.length !== 0 ? (
+                  this.state.sensitiveList.map((word) =>
+                    this.renderSensitiveItem(word)
+                  )
+                ) : (
+                  <div
+                    style={{
+                      textAlign: "center",
+                      height: "100px",
+                      lineHeight: "100px",
+                    }}
+                  >
+                    {"No data"}
+                  </div>
+                )}
+                {this.renderNewSensitive()}
+              </div>
+            </Card>
+          </div>
+        </Container>
+      </div>
+    );
   }
 }
 
