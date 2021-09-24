@@ -1,4 +1,4 @@
-// Copyright 2020 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The casbin Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,10 +14,8 @@
 
 import React from "react";
 import { withRouter, Link } from "react-router-dom";
-import * as PlaneBackend from "../backend/PlaneBackend.js";
+import * as PosterBackend from "../backend/PosterBackend";
 import * as Setting from "../Setting";
-import Zmage from "react-zmage";
-import { SketchPicker } from "react-color";
 import i18next from "i18next";
 import Container from "../components/container.js";
 import { Card, Alert, Button, Form, Input, Tabs } from "antd";
@@ -25,193 +23,73 @@ import { Card, Alert, Button, Form, Input, Tabs } from "antd";
 import "./AdminPlane.css";
 const { TabPane } = Tabs;
 
-class AdminPlane extends React.Component {
+class AdminPoster extends React.Component {
   constructor(props) {
     super(props);
+    this.adver = React.createRef();
+    this.links = React.createRef();
+    this.p_link = React.createRef();
     this.state = {
       classes: props,
-      nodes: [],
-      planes: null,
       message: "",
-      errorMessage: "",
-      form: {},
-      plane: [],
-      //event: props.match.params.event,
-      planeId: props.match.params.planeId,
-      width: "",
-      event: "basic",
-      Management_LIST: [
-        { label: "Basic Info", value: "basic" },
-        { label: "Display", value: "display" },
-      ],
-      color: "",
-      backgroundColor: "",
-      displayColorPicker: false,
-      displayBackgroundColorPicker: false,
+      form: {
+        name: "",
+        advertiser: "",
+        link: "",
+        picture_link: "",
+      },
+      memberId: props.match.params.memberId,
     };
+
+    this.state.url = `/admin/poster`;
   }
 
   componentDidMount() {
-    this.getPlane();
-    this.getPlanes();
+    this.readposter();
   }
 
-  componentWillReceiveProps(newProps) {
-    if (newProps.location !== this.props.location) {
-      this.setState(
-        {
-          message: "",
-          errorMessage: "",
-          planeId: newProps.match.params.planeId,
-        },
-        () => {
-          this.getPlane();
-        }
-      );
+  changeinputval() {
+    let a_val = this.state.form["advertiser"];
+    let l_val = this.state.form["link"];
+    let p_val = this.state.form["picture_link"];
+    if (a_val !== undefined) {
+      this.adver.current.value = a_val;
+    }
+    if (l_val !== undefined) {
+      this.links.current.value = l_val;
+    }
+    if (p_val !== undefined) {
+      this.p_link.current.value = p_val;
     }
   }
 
-  getPlanes() {
-    PlaneBackend.getPlanesAdmin().then((res) => {
-      this.setState({
-        planes: res,
-      });
-    });
-  }
-
-  getPlane() {
-    if (this.state.planeId === undefined && this.props.event !== "new") {
-      return;
-    }
-
-    PlaneBackend.getPlaneAdmin(this.state.planeId).then((res) => {
-      this.setState(
-        {
-          plane: res,
-          color: res?.color,
-          backgroundColor: res?.backgroundColor,
-        },
-        () => {
-          this.initForm();
-        }
-      );
-    });
-  }
-
-  initForm() {
-    let form = this.state.form;
-    if (this.props.event === "new") {
-      form["sorter"] = 1;
-      form["visible"] = true;
-    } else {
-      form["id"] = this.state.plane?.id;
-      form["name"] = this.state.plane?.name;
-      form["createdTime"] = this.state.plane?.createdTime;
-      form["sorter"] = this.state.plane?.sorter;
-      form["image"] = this.state.plane?.image;
-      form["backgroundColor"] = this.state.plane?.backgroundColor;
-      form["color"] = this.state.plane?.color;
-      form["visible"] = this.state.plane?.visible;
-    }
-    this.setState({
-      form: form,
-    });
-  }
-
-  updateFormField(key, value) {
-    let form = this.state.form;
-    form[key] = value;
-    this.setState({
-      form: form,
-    });
-  }
-
-  deletePlane(plane, planeId, nodesNum) {
-    if (
-      window.confirm(
-        `${i18next.t(`plane:Are you sure to delete plane`)} ${plane} ?`
-      )
-    ) {
-      if (nodesNum !== 0) {
-        alert(`
-        ${i18next.t(
-          "plane:Please delete all the nodes or move to another plane before deleting the plane"
-        )}
-        ${i18next.t(
-          "plane:Currently the number of nodes under the plane is"
-        )} ${nodesNum}
-        `);
-      } else {
-        PlaneBackend.deletePlane(planeId).then((res) => {
-          if (res.status === "ok") {
-            this.setState({
-              message: `${i18next.t("plane:Delete plane")} ${plane} ${i18next.t(
-                "plane:success"
-              )}`,
-            });
-            this.getPlanes();
-          } else {
-            this.setState({
-              errorMessage: res?.msg,
-            });
-          }
-        });
-      }
-    }
-  }
-
-  updatePlaneInfo() {
-    PlaneBackend.updatePlane(this.state.planeId, this.state.form).then(
-      (res) => {
-        if (res.status === "ok") {
-          this.getPlane();
-          this.setState({
-            message: i18next.t("plane:Update plane information success"),
-          });
-        } else {
-          this.setState({
-            message: res?.msg,
-          });
-        }
-      }
-    );
-  }
-
-  postNewPlane() {
-    if (this.state.form.id === undefined || this.state.form.id === "") {
-      this.setState({
-        errorMessage: "Please input plane ID",
-      });
-      return;
-    }
-    if (this.state.form.name === "" || this.state.form.name === undefined) {
-      this.setState({
-        errorMessage: "Please input plane name",
-      });
-      return;
-    }
-
-    PlaneBackend.addPlane(this.state.form).then((res) => {
-      if (res.status === "ok") {
-        this.getPlane();
+  readposter() {
+    PosterBackend.readposter("r_box_poster").then((res) => {
+      let poster = res;
+      if (poster) {
         this.setState(
           {
-            errorMessage: "",
-            message: i18next.t("plane:Creat plane success"),
+            form: poster,
           },
           () => {
-            setTimeout(
-              () =>
-                this.props.history.push(
-                  `/admin/plane/edit/${this.state.form.id}`
-                ),
-              1600
-            );
+            this.changeinputval();
           }
         );
+      }
+      console.log(poster);
+    });
+  }
+
+  updateposter() {
+    this.changeinputval();
+    PosterBackend.updateposter_info(this.state.form).then((res) => {
+      if (res.status === "ok") {
+        this.setState({
+          message: i18next.t("poster:Update poster information success"),
+        });
       } else {
         this.setState({
-          errorMessage: res?.msg,
+          message: res?.msg,
         });
       }
     });
@@ -223,9 +101,18 @@ class AdminPlane extends React.Component {
     });
   }
 
-  clearErrorMessage() {
+  inputChange(id) {
+    let a_val = this.adver.current.value;
+    let l_val = this.links.current.value;
+    let p_val = this.p_link.current.value;
     this.setState({
-      errorMessage: "",
+      form: {
+        advertiser: a_val,
+        link: l_val,
+        picture_link: p_val,
+        id: id,
+        state: "1",
+      },
     });
   }
 
@@ -1026,4 +913,4 @@ class AdminPlane extends React.Component {
   }
 }
 
-export default withRouter(AdminPlane);
+export default withRouter(AdminPoster);
