@@ -18,6 +18,8 @@ import * as Setting from "../Setting";
 import i18next from "i18next";
 import * as BasicBackend from "../backend/BasicBackend";
 import * as Conf from "../Conf";
+import Container from "../components/container";
+import { Card } from "antd";
 
 class AboutForum extends React.Component {
   constructor(props) {
@@ -42,16 +44,19 @@ class AboutForum extends React.Component {
 
   render() {
     return (
-      <div>
-        <div className="box">
-          <div className="header">
-            <Link to="/">{Setting.getForumName()}</Link>{" "}
-            <span className="chevron">&nbsp;›&nbsp;</span>
-            {i18next.t("about:About")}
-          </div>
-        </div>
-        <div className="box">
-          <div className="inner">
+      <div
+        style={{
+          alignItems: "center",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        {Setting.PcBrowser ? <div className="sep20" /> : null}
+        <Container BreakpointStage={this.props.BreakpointStage}>
+          <Card
+            title={`${i18next.t("about:About")} ${Setting.getForumName()}`}
+            style={{ textAlign: "left" }}
+          >
             <table cellPadding="5" cellSpacing="0" border="0" width="100%">
               <tbody>
                 <tr>
@@ -109,8 +114,8 @@ class AboutForum extends React.Component {
                 </tr>
               </tbody>
             </table>
-          </div>
-        </div>
+          </Card>
+        </Container>
       </div>
     );
   }

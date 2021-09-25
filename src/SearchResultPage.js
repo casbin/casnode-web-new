@@ -17,6 +17,9 @@ import { withRouter } from "react-router-dom";
 import * as SearchBackend from "./backend/SearchBackend";
 import TopicList from "./main/TopicList";
 import i18next from "i18next";
+import { Card } from "antd";
+import Container from "./components/container";
+import * as Setting from "./Setting";
 
 class SearchResultPage extends React.Component {
   constructor(props) {
@@ -84,11 +87,19 @@ class SearchResultPage extends React.Component {
 
   render() {
     return (
-      <div>
-        <div className="cell" id="SecondaryTabs" style={{ padding: "10px" }}>
-          {this.state.msg}
-        </div>
-        {this.renderResult()}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          flexDirection: "column",
+        }}
+      >
+        {Setting.PcBrowser ? <div className="sep20" /> : null}
+        <Container BreakpointStage={this.props.BreakpointStage}>
+          <Card title={`${this.state.msg}`} style={{ textAlign: "left" }}>
+            {this.renderResult()}
+          </Card>
+        </Container>
       </div>
     );
   }

@@ -21,6 +21,8 @@ import Collapse, { Panel } from "rc-collapse";
 import ReactMarkdown from "react-markdown";
 import Zmage from "react-zmage";
 import i18next from "i18next";
+import Container from "../components/container";
+import { Button, Card, Input, Alert } from "antd";
 
 class AdminTopic extends React.Component {
   constructor(props) {
@@ -438,7 +440,7 @@ class AdminTopic extends React.Component {
               <span className="gray">{i18next.t("topic:Author")}</span>
             </td>
             <td width={pcBrowser ? "100" : "auto"} align="left">
-              <input
+              <Input
                 value={this.state.un}
                 onChange={(event) => this.setState({ un: event.target.value })}
               />
@@ -449,7 +451,7 @@ class AdminTopic extends React.Component {
               <span className="gray">{i18next.t("topic:Title")}</span>
             </td>
             <td width={pcBrowser ? "100" : "auto"} align="left">
-              <input
+              <Input
                 value={this.state.ti}
                 onChange={(event) => this.setState({ ti: event.target.value })}
               />
@@ -459,8 +461,8 @@ class AdminTopic extends React.Component {
             <td width={pcBrowser ? "200" : "auto"} align="left">
               <span className="gray">{i18next.t("topic:Content")}</span>
             </td>
-            <td width={pcBrowser ? "100" : "auto"} align="left">
-              <input
+            <td width={pcBrowser ? "200" : "auto"} align="left">
+              <Input
                 value={this.state.cn}
                 onChange={(event) => this.setState({ cn: event.target.value })}
               />
@@ -526,12 +528,9 @@ class AdminTopic extends React.Component {
           <tr>
             <td width="10"></td>
             <td width="auto" align="left">
-              <input
-                type="submit"
-                className="super normal button"
-                value={i18next.t("topic:Search")}
-                onClick={() => this.getSearchResult()}
-              />
+              <Button type="primary" onClick={() => this.getSearchResult()}>
+                {i18next.t("topic:Search")}
+              </Button>
             </td>
           </tr>
         </tbody>
@@ -645,9 +644,9 @@ class AdminTopic extends React.Component {
                 <Link to={`/member/${topic?.author}`}>{topic?.author}</Link>
               </td>
               <td width="100" align="center">
-                <Link to={`/admin/topic/edit/${topic?.id}`}>
+                <Button href={`/admin/topic/edit/${topic?.id}`}>
                   {i18next.t("admin:Manage")}
-                </Link>
+                </Button>
               </td>
               <td width="10"></td>
               <td width="60" align="left" style={{ textAlign: "right" }}>
@@ -669,37 +668,53 @@ class AdminTopic extends React.Component {
     if (this.state.topicId !== undefined) {
       if (this.state.topic !== null && this.state.topic.length === 0) {
         return (
-          <div className="box">
-            <div className="header">
-              <Link to="/">{Setting.getForumName()}</Link>
-              <span className="chevron">&nbsp;›&nbsp;</span>{" "}
-              {i18next.t("loading:Page is loading")}
-            </div>
-            <div className="cell">
-              <span className="gray bigger">
-                {i18next.t("loading:Please wait patiently...")}
-              </span>
-            </div>
+          <div align="center">
+            <Container BreakpointStage={this.props.BreakpointStage}>
+              <div style={{ flex: "auto" }}>
+                <Card
+                  title={i18next.t("loading:Page is loading")}
+                  style={{
+                    alignItems: "center",
+                    flex: "auto",
+                    display: "flex",
+                    flexDirection: "column",
+                    textAlign: "left",
+                  }}
+                >
+                  <span className="gray bigger">
+                    {i18next.t("loading:Please wait patiently...")}
+                  </span>
+                </Card>
+              </div>
+            </Container>
           </div>
         );
       }
 
       if (this.state.topic === null) {
         return (
-          <div class="box">
-            <div className="box">
-              <div className="header">
-                <Link to="/">{Setting.getForumName()}</Link>{" "}
-                <span className="chevron">&nbsp;›&nbsp;</span>{" "}
-                {i18next.t("error:Topic does not exist")}
+          <div align="center">
+            <Container BreakpointStage={this.props.BreakpointStage}>
+              <div style={{ flex: "auto" }}>
+                <Card
+                  title={i18next.t("error:Topic does not exist")}
+                  style={{
+                    alignItems: "center",
+                    flex: "auto",
+                    display: "flex",
+                    flexDirection: "column",
+                    textAlign: "left",
+                  }}
+                >
+                  <div className="cell">
+                    <span className="gray bigger">404 Topic Not Found</span>
+                  </div>
+                  <div className="inner">
+                    ← <Link to="/">{i18next.t("error:Back to Home Page")}</Link>
+                  </div>
+                </Card>
               </div>
-              <div className="cell">
-                <span className="gray bigger">404 Topic Not Found</span>
-              </div>
-              <div className="inner">
-                ← <Link to="/">{i18next.t("error:Back to Home Page")}</Link>
-              </div>
-            </div>
+            </Container>
           </div>
         );
       }
@@ -930,67 +945,86 @@ class AdminTopic extends React.Component {
     }
 
     return (
-      <div className="box">
-        <div className="header">
-          <Link to="/">{Setting.getForumName()}</Link>{" "}
-          <span className="chevron">&nbsp;›&nbsp;</span>
-          <Link to={`/admin`}>{i18next.t("admin:Backstage management")}</Link>
-          <span className="chevron">&nbsp;›&nbsp;</span>{" "}
-          {i18next.t("topic:Topic management")}
-          <div className="fr f12">
-            <span className="snow">
-              {i18next.t("topic:Total Topics")} &nbsp;
-            </span>
-            <strong className="gray">{this.state.topicsNum}</strong>
-          </div>
-        </div>
-        {this.state.message !== "" ? (
-          <div className="message" onClick={() => this.clearMessage()}>
-            <li className="fa fa-exclamation-triangle"></li>
-            &nbsp; {this.state.message}
-          </div>
-        ) : null}
-        <div className="cell">
-          <Collapse
-            onChange={() => this.changeShowSearch()}
-            style={{
-              border: "0",
-              fontSize: "14px",
-              padding: "0",
-              backgroundColor: "#ffffff",
-            }}
-          >
-            <Panel
-              header={
-                <span style={{ color: "#666" }}>
-                  {i18next.t("admin:Condition search")}
-                </span>
+      <div align="center">
+        <Container BreakpointStage={this.props.BreakpointStage}>
+          <div style={{ flex: "auto" }}>
+            <Card
+              title={
+                <div>
+                  {i18next.t("topic:Topic management")}
+                  <div className="fr f12" style={{ paddingTop: "5px" }}>
+                    <span className="snow">
+                      {i18next.t("topic:Total Topics")} &nbsp;
+                    </span>
+                    <strong className="gray">{this.state.topicsNum}</strong>
+                  </div>
+                </div>
               }
-            >
-              {this.renderSearchList()}
-            </Panel>
-          </Collapse>
-        </div>
-        {this.showPageColumn()}
-        <div id="all-tabs">
-          {this.state.topics !== null && this.state.topics.length !== 0 ? (
-            this.state.topics.map((topic) => this.renderTopics(topic))
-          ) : (
-            <div
-              className="cell"
               style={{
-                textAlign: "center",
-                height: "100px",
-                lineHeight: "100px",
+                flex: "auto",
+                display: "flex",
+                flexDirection: "column",
+                textAlign: "left",
               }}
             >
-              {this.state.topics === null
-                ? i18next.t("loading:Data is loading...")
-                : i18next.t("admin:No matching data")}
-            </div>
-          )}
-        </div>
-        {this.showPageColumn()}
+              {this.state.message !== "" ? (
+                <Alert
+                  message={this.state.message}
+                  type="info "
+                  onClick={() => this.clearMessage()}
+                  closable
+                  style={{
+                    marginBottom: "10px",
+                    alignItems: "center",
+                    cursor: "pointer",
+                  }}
+                />
+              ) : null}
+              <div className="cell">
+                <Collapse
+                  onChange={() => this.changeShowSearch()}
+                  style={{
+                    border: "0",
+                    fontSize: "14px",
+                    padding: "0",
+                    backgroundColor: "#ffffff",
+                  }}
+                >
+                  <Panel
+                    header={
+                      <span style={{ color: "#666" }}>
+                        {i18next.t("admin:Condition search")}
+                      </span>
+                    }
+                  >
+                    {this.renderSearchList()}
+                  </Panel>
+                </Collapse>
+              </div>
+              {this.showPageColumn()}
+              <div id="all-tabs">
+                {this.state.topics !== null &&
+                this.state.topics.length !== 0 ? (
+                  this.state.topics.map((topic) => this.renderTopics(topic))
+                ) : (
+                  <div
+                    className="cell"
+                    style={{
+                      textAlign: "center",
+                      height: "100px",
+                      lineHeight: "100px",
+                    }}
+                  >
+                    {this.state.topics === null
+                      ? i18next.t("loading:Data is loading...")
+                      : i18next.t("admin:No matching data")}
+                  </div>
+                )}
+              </div>
+              {this.showPageColumn()}
+            </Card>
+          </div>
+        </Container>
       </div>
     );
   }

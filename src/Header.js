@@ -554,7 +554,7 @@ class PageHeader extends React.Component {
               <div
                 id="search-result"
                 className="box"
-                style={{ display: "block" }}
+                style={{ display: "block", zIndex: "1" }}
               >
                 <div className="cell">
                   {i18next.t("search:Press Enter to search in site.")}

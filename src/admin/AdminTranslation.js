@@ -18,6 +18,12 @@ import * as TranslatorBackend from "../backend/TranslatorBackend";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 import Select2 from "react-select2-wrapper";
+import { Form, Select, Card, Tabs, Input, Button, Alert } from "antd";
+
+import Container from "../components/container";
+
+import "./AdminTranslation.css";
+const { TabPane } = Tabs;
 
 class AdminTranslation extends React.Component {
   constructor(props) {
@@ -81,7 +87,7 @@ class AdminTranslation extends React.Component {
       <Select2
         value={this.getIndexFromTranslatorId(this.state.form.id)}
         style={{
-          width: Setting.PcBrowser ? "300px" : "200px",
+          width: "300px",
           fontSize: "14px",
         }}
         data={this.state.translators.map((translatorItem, index) => {
@@ -322,15 +328,35 @@ class AdminTranslation extends React.Component {
     }
 
     return (
-      <div className="problem" onClick={() => this.clearErrorMessage()}>
-        {i18next.t(
-          "error:Please resolve the following issues before submitting"
-        )}
-        <ul>
-          {problems.map((problem) => {
-            return <li>{problem}</li>;
-          })}
-        </ul>
+      <div>
+        <Alert
+          message={i18next.t(
+            "error:Please resolve the following issues before submitting"
+          )}
+          type="error"
+          onClick={() => this.clearErrorMessage()}
+          closable
+          style={{
+            marginBottom: "10px",
+            alignItems: "center",
+            cursor: "pointer",
+          }}
+        />
+        {problems.map((problem) => {
+          return (
+            <Alert
+              message={problem}
+              type="error"
+              onClick={() => this.clearErrorMessage()}
+              closable
+              style={{
+                marginBottom: "10px",
+                alignItems: "center",
+                cursor: "pointer",
+              }}
+            />
+          );
+        })}
       </div>
     );
   }
@@ -379,10 +405,13 @@ class AdminTranslation extends React.Component {
                   </span>
                 )}
               </td>
-              <td>
-                <a onClick={() => this.deleteTranslator(translator)}>
+              <td width={pcBrowser ? "200" : "auto"} align="right">
+                <Button
+                  danger
+                  onClick={() => this.deleteTranslator(translator)}
+                >
                   {i18next.t("translator:Delete")}
-                </a>
+                </Button>
               </td>
             </tr>
           </tbody>
@@ -413,256 +442,262 @@ class AdminTranslation extends React.Component {
     );
   }
 
+  renderPlaneConfig() {
+    return (
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <Form
+          name="basic"
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 19 }}
+          autoComplete="off"
+        >
+          <Form.Item
+            label={i18next.t("translator:Translation Platform")}
+            name="Platform"
+            rules={[{ required: true }]}
+          >
+            {this.renderSelectPlatform()}
+          </Form.Item>
+          <Form.Item
+            name="key"
+            label={i18next.t("translator:Key")}
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <Input style={{ width: "300px" }} />
+          </Form.Item>
+          <Form.Item name="visible" label={i18next.t("translator:Visible")}>
+            <input
+              type="radio"
+              onClick={() => {
+                this.setState((prevState) => {
+                  prevState.form.visible = true;
+                  return prevState;
+                });
+              }}
+              checked={this.state.form.visible}
+              name="visible"
+            />
+            {i18next.t("tab:show")}{" "}
+            <input
+              type="radio"
+              onClick={() => {
+                this.setState((prevState) => {
+                  prevState.form.visible = false;
+                  return prevState;
+                });
+              }}
+              checked={!this.state.form.visible}
+              name="visible"
+            />
+            {i18next.t("tab:hidden")}
+          </Form.Item>
+          <Form.Item wrapperCol={{ offset: 10, span: 8 }}>
+            <Button type="primary" onClick={() => this.updateTranslator()}>
+              {i18next.t("translator:Save")}
+            </Button>
+          </Form.Item>
+        </Form>
+      </div>
+    );
+  }
+
+  renderPlaneCreate() {
+    return (
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <Form
+          name="basic"
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 19 }}
+          autoComplete="off"
+        >
+          <Form.Item
+            name="id"
+            label={i18next.t("translator:Translation Platform ID")}
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <Input
+              onChange={(event) => {
+                let targetVal = event.target.value;
+                this.setState((prevState) => {
+                  prevState.form.id = targetVal;
+                  return prevState;
+                });
+              }}
+              value={this.state.form.id}
+              style={{ width: 300 }}
+            />
+          </Form.Item>
+          <Form.Item
+            name="name"
+            label={i18next.t("translator:Translation Platform Name")}
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <Input
+              onChange={(event) => {
+                let targetVal = event.target.value;
+                this.setState((prevState) => {
+                  prevState.form.name = targetVal;
+                  return prevState;
+                });
+              }}
+              value={this.state.form.name}
+              style={{ width: 300 }}
+            />
+          </Form.Item>
+          <Form.Item
+            name="api"
+            label={i18next.t("translator:Translation API")}
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            {this.renderSelectAPI()}
+          </Form.Item>
+          <Form.Item
+            name="key"
+            label={i18next.t("translator:Key")}
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <Input
+              onChange={(event) => {
+                let targetVal = event.target.value;
+                this.setState((prevState) => {
+                  prevState.form.key = targetVal;
+                  return prevState;
+                });
+              }}
+              value={this.state.form.key}
+              style={{ width: 300 }}
+            />
+          </Form.Item>
+          <Form.Item name="visible" label={i18next.t("translator:Visible")}>
+            <Input
+              type="radio"
+              onClick={() => {
+                this.setState((prevState) => {
+                  prevState.form.visible = true;
+                  return prevState;
+                });
+              }}
+              checked={this.state.form.visible}
+              name="visible"
+            />
+            {i18next.t("tab:show")}{" "}
+            <Input
+              type="radio"
+              onClick={() => {
+                this.setState((prevState) => {
+                  prevState.form.visible = false;
+                  return prevState;
+                });
+              }}
+              checked={!this.state.form.visible}
+              name="visible"
+            />
+            {i18next.t("tab:hidden")}
+          </Form.Item>
+          <Form.Item wrapperCol={{ offset: 10, span: 8 }}>
+            <Button type="primary" onClick={() => this.addTranslator()}>
+              {i18next.t("translator:Save")}
+            </Button>
+          </Form.Item>
+        </Form>
+      </div>
+    );
+  }
+  renderPlaneManage() {
+    return (
+      <div id="all-translators">
+        {this.state.translators !== null &&
+        this.state.translators.length !== 0 ? (
+          this.state.translators.map((translator) =>
+            this.renderTranslators(translator)
+          )
+        ) : (
+          <div
+            className="cell"
+            style={{
+              textAlign: "center",
+              height: "100px",
+              lineHeight: "100px",
+            }}
+          >
+            {this.state.translators === null
+              ? i18next.t("loading:Data is loading...")
+              : i18next.t("translator:No translator yet")}
+          </div>
+        )}
+      </div>
+    );
+  }
   render() {
-    switch (this.state.event) {
-      case "config":
-        return this.renderFormBox(
-          <div className="box">
-            {this.renderProblem()}
-            {this.state.message !== "" ? (
-              <div className="message" onClick={() => this.clearMessage()}>
-                <li className="fa fa-exclamation-triangle" />
-                &nbsp; {this.state.message}
-              </div>
-            ) : null}
-            <div className="inner">
-              <table cellPadding="5" cellSpacing="0" border="0" width="100%">
-                <tbody>
-                  <tr>
-                    <td width={Setting.PcBrowser ? "120" : "90"} align="right">
-                      {i18next.t("translator:Translation Platform")}
-                    </td>
-                    <td width="auto" align="left">
-                      {this.renderSelectPlatform()}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td width={Setting.PcBrowser ? "120" : "90"} align="right">
-                      {i18next.t("translator:Key")}
-                    </td>
-                    <td width="auto" align="left">
-                      <input
-                        onChange={(event) => {
-                          let targetVal = event.target.value;
-                          this.setState((prevState) => {
-                            prevState.form.key = targetVal;
-                            return prevState;
-                          });
-                        }}
-                        value={this.state.form?.key}
-                        style={{ width: 300 }}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td width={Setting.PcBrowser ? "120" : "90"} align="right">
-                      {i18next.t("translator:Visible")}
-                    </td>
-                    <td width="auto" align="left">
-                      <input
-                        type="radio"
-                        onClick={() => {
-                          this.setState((prevState) => {
-                            prevState.form.visible = true;
-                            return prevState;
-                          });
-                        }}
-                        checked={this.state.form?.visible}
-                        name="visible"
-                      />
-                      {i18next.t("tab:show")}{" "}
-                      <input
-                        type="radio"
-                        onClick={() => {
-                          this.setState((prevState) => {
-                            prevState.form.visible = false;
-                            return prevState;
-                          });
-                        }}
-                        checked={!this.state.form?.visible}
-                        name="visible"
-                      />
-                      {i18next.t("tab:hidden")}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td
-                      width={Setting.PcBrowser ? "120" : "90"}
-                      align="right"
-                    ></td>
-                    <td width="auto" align="left">
-                      <input
-                        type="submit"
-                        className="super normal button"
-                        value={i18next.t("translator:Save")}
-                        onClick={() => this.updateTranslator()}
-                      />
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        );
-      case "create":
-        return this.renderFormBox(
-          <div className="box">
-            {this.renderProblem()}
-            {this.state.message !== "" ? (
-              <div className="message" onClick={() => this.clearMessage()}>
-                <li className="fa fa-exclamation-triangle" />
-                &nbsp; {this.state.message}
-              </div>
-            ) : null}
-            <div className="inner">
-              <table cellPadding="5" cellSpacing="0" border="0" width="100%">
-                <tbody>
-                  <tr>
-                    <td width={Setting.PcBrowser ? "120" : "90"} align="right">
-                      {i18next.t("translator:Translation Platform ID")}
-                    </td>
-                    <td width="auto" align="left">
-                      <input
-                        onChange={(event) => {
-                          let targetVal = event.target.value;
-                          this.setState((prevState) => {
-                            prevState.form.id = targetVal;
-                            return prevState;
-                          });
-                        }}
-                        value={this.state.form.id}
-                        style={{ width: 300 }}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td width={Setting.PcBrowser ? "120" : "90"} align="right">
-                      {i18next.t("translator:Translation Platform Name")}
-                    </td>
-                    <td width="auto" align="left">
-                      <input
-                        onChange={(event) => {
-                          let targetVal = event.target.value;
-                          this.setState((prevState) => {
-                            prevState.form.name = targetVal;
-                            return prevState;
-                          });
-                        }}
-                        value={this.state.form.name}
-                        style={{ width: 300 }}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td width={Setting.PcBrowser ? "120" : "90"} align="right">
-                      {i18next.t("translator:Translation API")}
-                    </td>
-                    <td width="auto" align="left">
-                      {this.renderSelectAPI()}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td width={Setting.PcBrowser ? "120" : "90"} align="right">
-                      {i18next.t("translator:Key")}
-                    </td>
-                    <td width="auto" align="left">
-                      <input
-                        onChange={(event) => {
-                          let targetVal = event.target.value;
-                          this.setState((prevState) => {
-                            prevState.form.key = targetVal;
-                            return prevState;
-                          });
-                        }}
-                        value={this.state.form.key}
-                        style={{ width: 300 }}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td width={Setting.PcBrowser ? "120" : "90"} align="right">
-                      {i18next.t("translator:Visible")}
-                    </td>
-                    <td width="auto" align="left">
-                      <input
-                        type="radio"
-                        onClick={() => {
-                          this.setState((prevState) => {
-                            prevState.form.visible = true;
-                            return prevState;
-                          });
-                        }}
-                        checked={this.state.form.visible}
-                        name="visible"
-                      />
-                      {i18next.t("tab:show")}{" "}
-                      <input
-                        type="radio"
-                        onClick={() => {
-                          this.setState((prevState) => {
-                            prevState.form.visible = false;
-                            return prevState;
-                          });
-                        }}
-                        checked={!this.state.form.visible}
-                        name="visible"
-                      />
-                      {i18next.t("tab:hidden")}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td
-                      width={Setting.PcBrowser ? "120" : "90"}
-                      align="right"
-                    ></td>
-                    <td width="auto" align="left">
-                      <input
-                        type="submit"
-                        className="super normal button"
-                        value={i18next.t("translator:Save")}
-                        onClick={() => this.addTranslator()}
-                      />
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        );
-      case "manage":
-        return this.renderFormBox(
-          <div className="box">
-            {this.renderProblem()}
-            {this.state.message !== "" ? (
-              <div className="message" onClick={() => this.clearMessage()}>
-                <li className="fa fa-exclamation-triangle" />
-                &nbsp; {this.state.message}
-              </div>
-            ) : null}
-            <div id="all-translators">
-              {this.state.translators !== null &&
-              this.state.translators.length !== 0 ? (
-                this.state.translators.map((translator) =>
-                  this.renderTranslators(translator)
-                )
-              ) : (
-                <div
-                  className="cell"
+    return (
+      <div align="center">
+        <Container
+          BreakpointStage={this.props.BreakpointStage}
+          className="translation"
+        >
+          <div style={{ flex: "auto" }}>
+            <Card
+              title={i18next.t("sensitive:sensitive management")}
+              style={{
+                flex: "auto",
+                display: "flex",
+                flexDirection: "column",
+                textAlign: "left",
+              }}
+            >
+              {this.renderProblem()}
+              {this.state.message !== "" ? (
+                <Alert
+                  message={this.state.message}
+                  type="info "
+                  onClick={() => this.clearMessage()}
+                  closable
                   style={{
-                    textAlign: "center",
-                    height: "100px",
-                    lineHeight: "100px",
+                    marginBottom: "10px",
+                    alignItems: "center",
+                    cursor: "pointer",
                   }}
+                />
+              ) : null}
+              <Tabs defaultActiveKey="1" type="card">
+                <TabPane
+                  tab={i18next.t(`translator:Config Translator`)}
+                  key="1"
                 >
-                  {this.state.translators === null
-                    ? i18next.t("loading:Data is loading...")
-                    : i18next.t("translator:No translator yet")}
-                </div>
-              )}
-            </div>
+                  {this.renderPlaneConfig()}
+                </TabPane>
+                <TabPane tab={i18next.t(`translator:Create`)} key="2">
+                  {this.renderPlaneCreate()}
+                </TabPane>
+                <TabPane tab={i18next.t(`translator:Manage`)} key="3">
+                  {this.renderPlaneManage()}
+                </TabPane>
+              </Tabs>
+            </Card>
           </div>
-        );
-    }
+        </Container>
+      </div>
+    );
   }
 }
 

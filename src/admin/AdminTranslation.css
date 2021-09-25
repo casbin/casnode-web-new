@@ -1,0 +1,37 @@
+.selection .select2-selection__rendered {
+  border: none;
+}
+
+.selection .select2-selection--single:hover {
+  border-color: #40a9ff !important;
+  box-shadow: 0 0 0 1px rgba(24, 144, 255, 0.2);
+  border-right-width: 1px !important;
+
+  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+.select2-container--open .selection .select2-selection--single {
+  border-color: #40a9ff !important;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+.selection .select2-selection__rendered :focus {
+  border-color: #40a9ff !important;
+}
+
+.selection .select2-selection--single {
+  position: relative;
+  background-color: #fff;
+  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+  height: 32px;
+  position: relative;
+  border: 1px solid #d9d9d9;
+  border-radius: 2px;
+  height: 32px;
+}
+.select2-search__field {
+  outline: none;
+}
+
+.select2-dropdown {
+  margin-top: 1px;
+}

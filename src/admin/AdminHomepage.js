@@ -16,6 +16,8 @@ import React from "react";
 import * as Setting from "../Setting";
 import { withRouter, Link } from "react-router-dom";
 import i18next from "i18next";
+import Container from "../components/container";
+import { Card } from "antd";
 
 class AdminHomepage extends React.Component {
   constructor(props) {
@@ -106,6 +108,7 @@ class AdminHomepage extends React.Component {
     if (item.value === "member") {
       return (
         <a
+          style={{ background: "white" }}
           className="grid_item"
           target="_blank"
           href={Setting.getMyProfileUrl(this.props.account)}
@@ -116,7 +119,11 @@ class AdminHomepage extends React.Component {
     }
 
     return (
-      <Link className="grid_item" to={`admin/${item?.value}`}>
+      <Link
+        style={{ background: "white" }}
+        className="grid_item"
+        to={`admin/${item?.value}`}
+      >
         {this.renderManageItemInternal(item)}
       </Link>
     );
@@ -125,17 +132,16 @@ class AdminHomepage extends React.Component {
   render() {
     if (this.props.account === undefined) {
       return (
-        <div className="box">
-          <div className="header">
-            <Link to="/">{Setting.getForumName()}</Link>
-            <span className="chevron">&nbsp;›&nbsp;</span>{" "}
-            {i18next.t("loading:Page is loading")}
-          </div>
-          <div className="cell">
-            <span className="gray bigger">
-              {i18next.t("loading:Please wait patiently...")}
-            </span>
-          </div>
+        <div align="center">
+          <Container BreakpointStage={this.props.BreakpointStage}>
+            <div style={{ flex: "auto" }}>
+              <Card title={i18next.t("loading:Page is loading")}>
+                <span className="gray bigger">
+                  {i18next.t("loading:Please wait patiently...")}
+                </span>
+              </Card>
+            </div>
+          </Container>
         </div>
       );
     }
@@ -144,17 +150,18 @@ class AdminHomepage extends React.Component {
     }
 
     return (
-      <div className="box">
-        <div className="header">
-          <Link to="/">{Setting.getForumName()}</Link>{" "}
-          <span className="chevron">&nbsp;›&nbsp;</span>
-          {i18next.t("admin:Backstage management")}
-        </div>
-        <div id="all-items">
-          {this.state.manageItems.map((item) => {
-            return this.renderManageItem(item);
-          })}
-        </div>
+      <div align="center">
+        <Container BreakpointStage={this.props.BreakpointStage}>
+          <div style={{ flex: "auto" }}>
+            <Card title={i18next.t("admin:Backstage management")}>
+              <div>
+                {this.state.manageItems.map((item) => {
+                  return this.renderManageItem(item);
+                })}
+              </div>
+            </Card>
+          </div>
+        </Container>
       </div>
     );
   }

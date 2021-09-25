@@ -25,7 +25,7 @@ import "../node.css";
 import ReactMarkdown from "react-markdown";
 import i18next from "i18next";
 import Container from "../components/container";
-import { Button, Card } from "antd";
+import { Button } from "antd";
 
 import TopicRightBox from "../rightbar/TopicRightBox";
 

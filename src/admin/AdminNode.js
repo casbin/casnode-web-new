@@ -26,6 +26,12 @@ import Zmage from "react-zmage";
 import "../codemirrorSize.css";
 import Select2 from "react-select2-wrapper";
 import i18next from "i18next";
+import Container from "../components/container.js";
+import { Card, Alert, Button, Form, Input, Tabs } from "antd";
+
+import "./AdminPlane.css";
+import "./AdminTranslation.css";
+const { TabPane } = Tabs;
 
 class AdminNode extends React.Component {
   constructor(props) {
@@ -383,37 +389,6 @@ class AdminNode extends React.Component {
     );
   }
 
-  renderHeader() {
-    return (
-      <div className="box">
-        <div className="header">
-          <Link to="/">{Setting.getForumName()}</Link>{" "}
-          <span className="chevron">&nbsp;›&nbsp;</span>
-          <Link to={`/admin`}>
-            {i18next.t("admin:Backstage management")}
-          </Link>{" "}
-          <span className="chevron">&nbsp;›&nbsp;</span>
-          <Link to={`/admin/node`}>
-            {i18next.t("node:Node management")}
-          </Link>{" "}
-          <span className="chevron">&nbsp;›&nbsp;</span>
-          {this.props.event === "new" ? (
-            <span>{i18next.t("node:New node")}</span>
-          ) : (
-            <Link to={`/go/${encodeURIComponent(this.state.nodeId)}`}>
-              {this.state.nodeInfo?.name}
-            </Link>
-          )}
-        </div>
-        <div className="cell">
-          {this.state.Management_LIST.map((item) => {
-            return this.renderManagementList(item);
-          })}
-        </div>
-      </div>
-    );
-  }
-
   renderNodes(node) {
     const pcBrowser = Setting.PcBrowser;
 
@@ -428,13 +403,13 @@ class AdminNode extends React.Component {
                 </Link>
               </td>
               <td width={pcBrowser ? "200" : "auto"} align="center">
-                <Link
-                  to={`/admin/node/edit/${encodeURIComponent(
+                <Button
+                  href={`/admin/node/edit/${encodeURIComponent(
                     node?.nodeInfo.id
                   )}`}
                 >
                   {i18next.t("node:Manage")}
-                </Link>
+                </Button>
               </td>
               <td width="10"></td>
               <td
@@ -553,6 +528,621 @@ class AdminNode extends React.Component {
     );
   }
 
+  renderBasic() {
+    const node = this.state.nodeInfo;
+    const newNode = this.props.event === "new";
+    return (
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <div>
+          {this.renderProblem()}
+          {this.state.message !== "" ? (
+            <Alert
+              message={this.state.message}
+              type="info"
+              onClick={() => this.clearMessage()}
+              closable
+              style={{
+                marginBottom: "10px",
+                alignItems: "center",
+                cursor: "pointer",
+              }}
+            />
+          ) : null}
+          <div>
+            <table cellPadding="8" cellSpacing="0" border="0" width="100%">
+              <tbody>
+                {newNode ? (
+                  <tr>
+                    <td width="120" align="right">
+                      {i18next.t("node:Node ID")}
+                    </td>
+                    <td width="auto" align="left">
+                      <Input
+                        type="text"
+                        className="sl"
+                        name="id"
+                        id="node_id"
+                        value={this.state.form?.id}
+                        onChange={(event) =>
+                          this.updateFormField("id", event.target.value)
+                        }
+                        autoComplete="off"
+                      />
+                    </td>
+                  </tr>
+                ) : null}
+                <tr>
+                  <td width="120" align="right">
+                    {i18next.t("node:Node name")}
+                  </td>
+                  <td width="auto" align="left">
+                    {newNode ? (
+                      <Input
+                        type="text"
+                        className="sl"
+                        name="name"
+                        id="node_name"
+                        value={
+                          this.state.form?.name === undefined
+                            ? ""
+                            : this.state.form?.name
+                        }
+                        onChange={(event) =>
+                          this.updateFormField("name", event.target.value)
+                        }
+                        autoComplete="off"
+                      />
+                    ) : (
+                      <Link to={`/go/${encodeURIComponent(this.state.nodeId)}`}>
+                        {node?.name}
+                      </Link>
+                    )}
+                  </td>
+                </tr>
+                {!newNode ? (
+                  <tr>
+                    <td width="120" align="right">
+                      {i18next.t("node:Created time")}
+                    </td>
+                    <td width="auto" align="left">
+                      <span className="gray">{node?.createdTime}</span>
+                    </td>
+                  </tr>
+                ) : null}
+                <tr>
+                  <td width="120" align="right">
+                    {i18next.t("node:Image")}
+                  </td>
+                  <td width="auto" align="left">
+                    {this.state.form?.image === undefined ||
+                    this.state.form?.image === "" ? (
+                      <span className="gray">{i18next.t("node:Not set")}</span>
+                    ) : (
+                      <Zmage
+                        src={this.state.form?.image}
+                        alt={this.state.form?.id}
+                        style={{ maxWidth: "48px", maxHeight: "48px" }}
+                      />
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <td width="120" align="right">
+                    {newNode
+                      ? i18next.t("node:Set image")
+                      : i18next.t("node:Change image")}
+                  </td>
+                  <td width="auto" align="left">
+                    <Input
+                      type="text"
+                      className="sl"
+                      name="image"
+                      id="change_image"
+                      defaultValue={this.state.form?.image}
+                      onChange={(event) =>
+                        this.updateFormField("image", event.target.value)
+                      }
+                      autoComplete="off"
+                    />
+                  </td>
+                </tr>
+                {!newNode ? (
+                  <tr>
+                    <td width="120" align="right">
+                      {i18next.t("node:Total topics")}
+                    </td>
+                    <td width="auto" align="left">
+                      <span className="gray">{this.state.topicNum}</span>
+                    </td>
+                  </tr>
+                ) : null}
+                {!newNode ? (
+                  <tr>
+                    <td width="120" align="right">
+                      {i18next.t("node:Total favorites")}
+                    </td>
+                    <td width="auto" align="left">
+                      <span className="gray">{this.state.favoritesNum}</span>
+                    </td>
+                  </tr>
+                ) : null}
+                {!newNode ? (
+                  <tr>
+                    <td width="120" align="right">
+                      {i18next.t("node:Hot")}
+                    </td>
+                    <td width="auto" align="left">
+                      <span className="gray">{node?.hot}</span>
+                    </td>
+                  </tr>
+                ) : null}
+                <tr>
+                  <td width="120" align="right">
+                    {i18next.t("node:Sorter")}
+                  </td>
+                  <td width="auto" align="left">
+                    <Input
+                      type="range"
+                      max="1000"
+                      className="range-input"
+                      step="1"
+                      value={
+                        this.state.form?.sorter === undefined
+                          ? 1
+                          : this.state.form?.sorter
+                      }
+                      onChange={(event) =>
+                        this.updateFormField(
+                          "sorter",
+                          parseInt(event.target.value)
+                        )
+                      }
+                    />
+                    &nbsp; &nbsp;{" "}
+                    <input
+                      type="number"
+                      name="sorter"
+                      className="number-input"
+                      min="1"
+                      max="1000"
+                      step="1"
+                      value={this.state.form?.sorter}
+                      onChange={(event) =>
+                        this.updateFormField(
+                          "sorter",
+                          parseInt(event.target.value)
+                        )
+                      }
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td width="120" align="right">
+                    {i18next.t("node:Parent node")}
+                  </td>
+                  <td width="auto" align="left">
+                    {this.renderSelect("node")}
+                  </td>
+                </tr>
+                <tr>
+                  <td width="120" align="right">
+                    {i18next.t("node:Tab")}
+                  </td>
+                  <td width="auto" align="left">
+                    {this.renderSelect("tab")}
+                  </td>
+                </tr>
+                <tr>
+                  <td width="120" align="right">
+                    {i18next.t("node:Plane")}
+                  </td>
+                  <td width="auto" align="left">
+                    {this.renderSelect("plane")}
+                  </td>
+                </tr>
+                <tr>
+                  <td width="120" align="right">
+                    {i18next.t("node:Mailing List")}
+                  </td>
+                  <td width="auto" align="left">
+                    <Input
+                      type="text"
+                      className="sl"
+                      name="mailingList"
+                      defaultValue={this.state.form?.mailingList}
+                      onChange={(event) =>
+                        this.updateFormField("mailingList", event.target.value)
+                      }
+                      autoComplete="off"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td width="120" align="right">
+                    {i18next.t("node:Google Group Cookie")}
+                  </td>
+                  <td width="auto" align="left">
+                    <Input
+                      type="text"
+                      className="sl"
+                      name="googleGroupCookie"
+                      defaultValue={this.state.form?.googleGroupCookie}
+                      onChange={(event) =>
+                        this.updateFormField(
+                          "googleGroupCookie",
+                          event.target.value
+                        )
+                      }
+                      autoComplete="off"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td width="120" align="right">
+                    {i18next.t("node:Is hidden")}
+                  </td>
+                  <td width="auto" align="left">
+                    <input
+                      type="radio"
+                      onClick={() => this.updateFormField("isHidden", false)}
+                      checked={!this.state.form?.isHidden}
+                      name="visible"
+                    />
+                    {i18next.t("plane:Visible")}{" "}
+                    <input
+                      type="radio"
+                      onClick={() => this.updateFormField("isHidden", true)}
+                      checked={this.state.form?.isHidden}
+                      name="invisible"
+                    />
+                    {i18next.t("plane:Invisible")}
+                  </td>
+                </tr>
+                {!newNode ? (
+                  this.state.nodeInfo?.moderators !== null &&
+                  this.state.nodeInfo?.moderators.length !== 0 ? (
+                    <tr>
+                      <td width="120" align="right">
+                        {i18next.t("node:Moderators")}
+                      </td>
+                      <td width="auto" align="left">
+                        {this.state.nodeInfo?.moderators.map((moderators) =>
+                          this.renderNodeModerators(moderators)
+                        )}
+                      </td>
+                    </tr>
+                  ) : (
+                    <tr>
+                      <td width="120" align="right">
+                        {i18next.t("node:Moderators")}
+                      </td>
+                      <td width="auto" align="left">
+                        <span class="gray">
+                          {i18next.t("node:No moderators")}
+                        </span>
+                      </td>
+                    </tr>
+                  )
+                ) : null}
+                {!newNode ? (
+                  <tr>
+                    <td width="120" align="right"></td>
+                    <td width="auto" align="left">
+                      <span className="gray">
+                        <Button
+                          href={`/go/${encodeURIComponent(
+                            this.state.nodeId
+                          )}/moderators`}
+                        >
+                          {i18next.t("node:Manage moderators")}
+                        </Button>
+                      </span>
+                    </td>
+                  </tr>
+                ) : null}
+                <tr>
+                  <td width="120" align="right">
+                    {i18next.t("node:Description")}
+                  </td>
+                  <td>
+                    <div
+                      style={{
+                        overflow: "hidden",
+                        overflowWrap: "break-word",
+                        resize: "none",
+                      }}
+                      className="mle"
+                      id="node_description"
+                    >
+                      <div className={`cm-middle-unresizable-content`}>
+                        <CodeMirror
+                          editorDidMount={(editor) =>
+                            Tools.attachEditor(editor)
+                          }
+                          onPaste={() => Tools.uploadMdFile()}
+                          value={this.state.form.desc}
+                          onDrop={() => Tools.uploadMdFile()}
+                          options={{
+                            mode: "markdown",
+                            lineNumbers: false,
+                            lineWrapping: true,
+                          }}
+                          onBeforeChange={(editor, data, value) => {
+                            this.updateFormField("desc", value);
+                          }}
+                          onChange={(editor, data, value) => {}}
+                        />
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td width="120" align="right"></td>
+                  <td width="auto" align="left">
+                    {!newNode ? (
+                      <Button
+                        type="primary"
+                        onClick={() => this.updateNodeInfo()}
+                      >
+                        {i18next.t("node:Save")}
+                      </Button>
+                    ) : null}
+                  </td>
+                </tr>
+                {newNode ? (
+                  <tr>
+                    <td width="120" align="right"></td>
+                    <td width="auto" align="left">
+                      <span className="gray">
+                        {i18next.t(
+                          "node:Please go to the background page to continue to improve the information and submit"
+                        )}
+                      </span>
+                    </td>
+                  </tr>
+                ) : null}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  renderBackground() {
+    const newNode = this.props.event === "new";
+    return (
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <div>
+          {this.renderProblem()}
+          {this.state.message !== "" ? (
+            <Alert
+              message={this.state.message}
+              type="info"
+              onClick={() => this.clearMessage()}
+              closable
+              style={{
+                marginBottom: "10px",
+                alignItems: "center",
+                cursor: "pointer",
+              }}
+            />
+          ) : null}
+
+          <div>
+            <table cellPadding="8" cellSpacing="0" border="0" width="100%">
+              <tbody>
+                <tr>
+                  <td width="120" align="right">
+                    {i18next.t("node:Header image")}
+                  </td>
+                  <td width="auto" align="left">
+                    {this.state.form?.headerImage === undefined ||
+                    this.state.form?.headerImage === "" ? (
+                      <span className="gray">{i18next.t("node:Not set")}</span>
+                    ) : (
+                      <Zmage
+                        src={this.state.form?.headerImage}
+                        alt={this.state.form?.id}
+                        style={{ maxWidth: "48px", maxHeight: "48px" }}
+                      />
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <td width="120" align="right">
+                    {newNode
+                      ? i18next.t("node:Set header image")
+                      : i18next.t("node:Change header image")}
+                  </td>
+                  <td width="auto" align="left">
+                    <Input
+                      type="text"
+                      className="sl"
+                      name="image"
+                      id="change_header"
+                      value={
+                        this.state.form?.headerImage === undefined
+                          ? ""
+                          : this.state.form?.headerImage
+                      }
+                      onChange={(event) =>
+                        this.updateFormField("headerImage", event.target.value)
+                      }
+                      autoComplete="off"
+                    />{" "}
+                    &nbsp;{" "}
+                    <input
+                      type="file"
+                      accept=".jpg,.gif,.png,.JPG,.GIF,.PNG"
+                      onChange={(event) =>
+                        this.handleUploadImage(event, "headerImage")
+                      }
+                      name="headerImage"
+                      style={{ width: "200px", paddingTop: "10px" }}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td width="120" align="right">
+                    {i18next.t("node:Background image")}
+                  </td>
+                  <td width="auto" align="left">
+                    {this.state.form?.backgroundImage === undefined ||
+                    this.state.form?.backgroundImage === "" ? (
+                      <span className="gray">{i18next.t("node:Not set")}</span>
+                    ) : (
+                      <Zmage
+                        src={this.state.form?.backgroundImage}
+                        alt={this.state.form?.id}
+                        style={{ maxWidth: "48px", maxHeight: "48px" }}
+                      />
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <td width="120" align="right">
+                    {newNode
+                      ? i18next.t("node:Set background image")
+                      : i18next.t("node:Change background image")}
+                  </td>
+                  <td width="auto" align="left">
+                    <Input
+                      type="text"
+                      className="sl"
+                      name="image"
+                      id="change_image"
+                      value={
+                        this.state.form?.backgroundImage === undefined
+                          ? ""
+                          : this.state.form?.backgroundImage
+                      }
+                      onChange={(event) =>
+                        this.updateFormField(
+                          "backgroundImage",
+                          event.target.value
+                        )
+                      }
+                      autoComplete="off"
+                    />{" "}
+                    &nbsp;{" "}
+                    <input
+                      type="file"
+                      accept=".jpg,.gif,.png,.JPG,.GIF,.PNG"
+                      onChange={(event) =>
+                        this.handleUploadImage(event, "backgroundImage")
+                      }
+                      name="backgroundImage"
+                      style={{ width: "200px", paddingTop: "10px" }}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td width="120" align="right">
+                    {i18next.t("node:Background repeat")}
+                  </td>
+                  <td width="auto" align="left">
+                    {this.state.Repeat_LIST.map((item) => {
+                      return this.renderRadioButton(item);
+                    })}
+                  </td>
+                </tr>
+                <tr>
+                  <td width="120" align="right">
+                    {i18next.t("node:Background color")}
+                  </td>
+                  <td width="auto" align="left">
+                    <div
+                      style={{
+                        padding: "5px",
+                        background: "#fff",
+                        borderRadius: "1px",
+                        boxShadow: "0 0 0 1px rgba(0,0,0,.1)",
+                        display: "inline-block",
+                        cursor: "pointer",
+                      }}
+                      onClick={this.handleColorClick}
+                    >
+                      <div
+                        style={{
+                          width: "36px",
+                          height: "14px",
+                          borderRadius: "2px",
+                          background: `${this.state.form.backgroundColor}`,
+                        }}
+                      />
+                    </div>
+                    {this.state.displayColorPicker ? (
+                      <div
+                        style={{
+                          position: "absolute",
+                          zIndex: "2",
+                        }}
+                      >
+                        <div
+                          style={{
+                            position: "fixed",
+                            top: "0px",
+                            right: "0px",
+                            bottom: "0px",
+                            left: "0px",
+                          }}
+                          onClick={this.handleColorClose}
+                        />
+                        <SketchPicker
+                          color={this.state.form.backgroundColor}
+                          onChange={this.handleColorChange}
+                        />
+                      </div>
+                    ) : null}
+                  </td>
+                </tr>
+                <tr>
+                  <td width="120" align="right">
+                    {i18next.t("node:Preview")}
+                  </td>
+                  <td width="auto" align="left">
+                    <div
+                      id="Wrapper"
+                      style={{
+                        backgroundColor: `${this.state.form?.backgroundColor}`,
+                        backgroundImage: `url(${
+                          this.state.form?.backgroundImage
+                        }), url(${Setting.getStatic("/img/shadow_light.png")})`,
+                        backgroundSize: "contain",
+                        backgroundRepeat: `${this.state.form?.backgroundRepeat}, repeat-x`,
+                        width: Setting.PcBrowser ? "500px" : "200px",
+                        height: Setting.PcBrowser ? "400px" : "100px",
+                      }}
+                      className={this.state.nodeId}
+                    ></div>
+                  </td>
+                </tr>
+                <tr>
+                  <td width="120" align="right"></td>
+                  <td width="auto" align="left">
+                    {newNode ? (
+                      <Button type="primary" onClick={() => this.postNewNode()}>
+                        {i18next.t("node:Create")}
+                      </Button>
+                    ) : (
+                      <Button
+                        type="primary"
+                        onClick={() => this.updateNodeInfo()}
+                      >
+                        {i18next.t("node:Save")}
+                      </Button>
+                    )}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   render() {
     const newNode = this.props.event === "new";
 
@@ -560,68 +1150,52 @@ class AdminNode extends React.Component {
       if (this.state.nodeId !== undefined) {
         if (this.state.nodeInfo !== null && this.state.nodeInfo.length === 0) {
           return (
-            <div className="box">
-              <div className="header">
-                <Link to="/">{Setting.getForumName()}</Link>
-                <span className="chevron">&nbsp;›&nbsp;</span>{" "}
-                {i18next.t("loading:Node is loading")}
-              </div>
-              <div className="cell">
-                <span className="gray bigger">
-                  {i18next.t("loading:Please wait patiently...")}
-                </span>
-              </div>
+            <div align="center">
+              <Container BreakpointStage={this.props.BreakpointStage}>
+                <div style={{ flex: "auto" }}>
+                  <Card
+                    title={i18next.t("loading:Node is loading")}
+                    style={{
+                      alignItems: "center",
+                      flex: "auto",
+                      display: "flex",
+                      flexDirection: "column",
+                      textAlign: "left",
+                    }}
+                  >
+                    <span className="gray bigger">
+                      {i18next.t("loading:Please wait patiently...")}
+                    </span>
+                  </Card>
+                </div>
+              </Container>
             </div>
           );
         }
 
         if (this.state.nodeInfo === null) {
           return (
-            <div class="box">
-              <div class="header">
-                <Link to="/">{Setting.getForumName()}</Link>
-                <span className="chevron">&nbsp;›&nbsp;</span>{" "}
-                {i18next.t("error:Node not found")}
-              </div>
-              <div class="cell">
-                {i18next.t(
-                  "error:The node you are trying to view does not exist, there are several possibilities"
-                )}
-                <div class="sep10"></div>
-                <ul>
-                  <li>
-                    {i18next.t(
-                      "error:You entered a node ID that does not exist."
-                    )}
-                  </li>
-                  <li>
-                    {i18next.t(
-                      "error:The node is currently in invisible state."
-                    )}
-                  </li>
-                </ul>
-              </div>
-              <div class="inner">
-                {this.props.account === null ? (
-                  <span className="gray">
-                    <span className="chevron">‹</span> &nbsp;
-                    {i18next.t("error:Back to")}{" "}
-                    <Link to="/">{i18next.t("error:Home Page")}</Link>
-                  </span>
-                ) : (
-                  <span className="gray">
-                    <span className="chevron">‹</span> &nbsp;
-                    {i18next.t("error:Back to")}{" "}
-                    <Link to="/">{i18next.t("error:Home Page")}</Link>
-                    <br />
-                    <span className="chevron">‹</span> &nbsp;
-                    {i18next.t("error:Back to")}{" "}
-                    <Link to={`/member/${this.props.account?.name}`}>
-                      {i18next.t("error:My profile")}
-                    </Link>
-                  </span>
-                )}
-              </div>
+            <div align="center">
+              <Container BreakpointStage={this.props.BreakpointStage}>
+                <div style={{ flex: "auto" }}>
+                  <Card
+                    title={i18next.t("error:Node not found")}
+                    style={{
+                      alignItems: "center",
+                      flex: "auto",
+                      display: "flex",
+                      flexDirection: "column",
+                      textAlign: "left",
+                    }}
+                  >
+                    <span className="gray bigger">
+                      {i18next.t(
+                        "error:The node you are trying to view does not exist"
+                      )}
+                    </span>
+                  </Card>
+                </div>
+              </Container>
             </div>
           );
         }
@@ -637,668 +1211,107 @@ class AdminNode extends React.Component {
         }
       }
 
-      const node = this.state.nodeInfo;
-
       if (this.state.event === "basic") {
         return (
-          <div>
-            {this.renderHeader()}
-            <div className="box">
-              {this.renderProblem()}
-              {this.state.message !== "" ? (
-                <div className="message" onClick={() => this.clearMessage()}>
-                  <li className="fa fa-exclamation-triangle"></li>
-                  &nbsp; {this.state.message}
-                </div>
-              ) : null}
-              <div className="inner">
-                <table cellPadding="5" cellSpacing="0" border="0" width="100%">
-                  <tbody>
-                    {newNode ? (
-                      <tr>
-                        <td width="120" align="right">
-                          {i18next.t("node:Node ID")}
-                        </td>
-                        <td width="auto" align="left">
-                          <input
-                            type="text"
-                            className="sl"
-                            name="id"
-                            id="node_id"
-                            value={this.state.form?.id}
-                            onChange={(event) =>
-                              this.updateFormField("id", event.target.value)
-                            }
-                            autoComplete="off"
-                          />
-                        </td>
-                      </tr>
-                    ) : null}
-                    <tr>
-                      <td width="120" align="right">
-                        {i18next.t("node:Node name")}
-                      </td>
-                      <td width="auto" align="left">
-                        {newNode ? (
-                          <input
-                            type="text"
-                            className="sl"
-                            name="name"
-                            id="node_name"
-                            value={
-                              this.state.form?.name === undefined
-                                ? ""
-                                : this.state.form?.name
-                            }
-                            onChange={(event) =>
-                              this.updateFormField("name", event.target.value)
-                            }
-                            autoComplete="off"
-                          />
-                        ) : (
-                          <Link
-                            to={`/go/${encodeURIComponent(this.state.nodeId)}`}
-                          >
-                            {node?.name}
-                          </Link>
-                        )}
-                      </td>
-                    </tr>
-                    {!newNode ? (
-                      <tr>
-                        <td width="120" align="right">
-                          {i18next.t("node:Created time")}
-                        </td>
-                        <td width="auto" align="left">
-                          <span className="gray">{node?.createdTime}</span>
-                        </td>
-                      </tr>
-                    ) : null}
-                    <tr>
-                      <td width="120" align="right">
-                        {i18next.t("node:Image")}
-                      </td>
-                      <td width="auto" align="left">
-                        {this.state.form?.image === undefined ||
-                        this.state.form?.image === "" ? (
-                          <span className="gray">
-                            {i18next.t("node:Not set")}
-                          </span>
-                        ) : (
-                          <Zmage
-                            src={this.state.form?.image}
-                            alt={this.state.form?.id}
-                            style={{ maxWidth: "48px", maxHeight: "48px" }}
-                          />
-                        )}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td width="120" align="right">
-                        {newNode
-                          ? i18next.t("node:Set image")
-                          : i18next.t("node:Change image")}
-                      </td>
-                      <td width="auto" align="left">
-                        <input
-                          type="text"
-                          className="sl"
-                          name="image"
-                          id="change_image"
-                          defaultValue={this.state.form?.image}
-                          onChange={(event) =>
-                            this.updateFormField("image", event.target.value)
-                          }
-                          autoComplete="off"
-                        />
-                      </td>
-                    </tr>
-                    {!newNode ? (
-                      <tr>
-                        <td width="120" align="right">
-                          {i18next.t("node:Total topics")}
-                        </td>
-                        <td width="auto" align="left">
-                          <span className="gray">{this.state.topicNum}</span>
-                        </td>
-                      </tr>
-                    ) : null}
-                    {!newNode ? (
-                      <tr>
-                        <td width="120" align="right">
-                          {i18next.t("node:Total favorites")}
-                        </td>
-                        <td width="auto" align="left">
-                          <span className="gray">
-                            {this.state.favoritesNum}
-                          </span>
-                        </td>
-                      </tr>
-                    ) : null}
-                    {!newNode ? (
-                      <tr>
-                        <td width="120" align="right">
-                          {i18next.t("node:Hot")}
-                        </td>
-                        <td width="auto" align="left">
-                          <span className="gray">{node?.hot}</span>
-                        </td>
-                      </tr>
-                    ) : null}
-                    <tr>
-                      <td width="120" align="right">
-                        {i18next.t("node:Sorter")}
-                      </td>
-                      <td width="auto" align="left">
-                        <input
-                          type="range"
-                          min="1"
-                          max="1000"
-                          step="1"
-                          value={
-                            this.state.form?.sorter === undefined
-                              ? 1
-                              : this.state.form?.sorter
-                          }
-                          onChange={(event) =>
-                            this.updateFormField(
-                              "sorter",
-                              parseInt(event.target.value)
-                            )
-                          }
-                        />
-                        &nbsp; &nbsp;{" "}
-                        <input
-                          type="number"
-                          name="sorter"
-                          min="1"
-                          max="1000"
-                          step="1"
-                          value={this.state.form?.sorter}
-                          style={{ width: "50px" }}
-                          onChange={(event) =>
-                            this.updateFormField(
-                              "sorter",
-                              parseInt(event.target.value)
-                            )
-                          }
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td width="120" align="right">
-                        {i18next.t("node:Parent node")}
-                      </td>
-                      <td width="auto" align="left">
-                        {this.renderSelect("node")}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td width="120" align="right">
-                        {i18next.t("node:Tab")}
-                      </td>
-                      <td width="auto" align="left">
-                        {this.renderSelect("tab")}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td width="120" align="right">
-                        {i18next.t("node:Plane")}
-                      </td>
-                      <td width="auto" align="left">
-                        {this.renderSelect("plane")}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td width="120" align="right">
-                        {i18next.t("node:Mailing List")}
-                      </td>
-                      <td width="auto" align="left">
-                        <input
-                          type="text"
-                          className="sl"
-                          name="mailingList"
-                          defaultValue={this.state.form?.mailingList}
-                          onChange={(event) =>
-                            this.updateFormField(
-                              "mailingList",
-                              event.target.value
-                            )
-                          }
-                          autoComplete="off"
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td width="120" align="right">
-                        {i18next.t("node:Google Group Cookie")}
-                      </td>
-                      <td width="auto" align="left">
-                        <input
-                          type="text"
-                          className="sl"
-                          name="googleGroupCookie"
-                          defaultValue={this.state.form?.googleGroupCookie}
-                          onChange={(event) =>
-                            this.updateFormField(
-                              "googleGroupCookie",
-                              event.target.value
-                            )
-                          }
-                          autoComplete="off"
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td width="120" align="right">
-                        {i18next.t("node:Is hidden")}
-                      </td>
-                      <td width="auto" align="left">
-                        <input
-                          type="radio"
-                          onClick={() =>
-                            this.updateFormField("isHidden", false)
-                          }
-                          checked={!this.state.form?.isHidden}
-                          name="visible"
-                        />
-                        {i18next.t("plane:Visible")}{" "}
-                        <input
-                          type="radio"
-                          onClick={() => this.updateFormField("isHidden", true)}
-                          checked={this.state.form?.isHidden}
-                          name="invisible"
-                        />
-                        {i18next.t("plane:Invisible")}
-                      </td>
-                    </tr>
-                    {!newNode ? (
-                      this.state.nodeInfo?.moderators !== null &&
-                      this.state.nodeInfo?.moderators.length !== 0 ? (
-                        <tr>
-                          <td width="120" align="right">
-                            {i18next.t("node:Moderators")}
-                          </td>
-                          <td width="auto" align="left">
-                            {this.state.nodeInfo?.moderators.map((moderators) =>
-                              this.renderNodeModerators(moderators)
-                            )}
-                          </td>
-                        </tr>
-                      ) : (
-                        <tr>
-                          <td width="120" align="right">
-                            {i18next.t("node:Moderators")}
-                          </td>
-                          <td width="auto" align="left">
-                            <span class="gray">
-                              {i18next.t("node:No moderators")}
-                            </span>
-                          </td>
-                        </tr>
-                      )
-                    ) : null}
-                    {!newNode ? (
-                      <tr>
-                        <td width="120" align="right"></td>
-                        <td width="auto" align="left">
-                          <span className="gray">
-                            <Link
-                              to={`/go/${encodeURIComponent(
-                                this.state.nodeId
-                              )}/moderators`}
-                            >
-                              {i18next.t("node:Manage moderators")}
-                            </Link>
-                          </span>
-                        </td>
-                      </tr>
-                    ) : null}
-                    <tr>
-                      <td width="120" align="right">
-                        {i18next.t("node:Description")}
-                      </td>
-                      <td>
-                        <div
-                          style={{
-                            overflow: "hidden",
-                            overflowWrap: "break-word",
-                            resize: "none",
-                          }}
-                          className="mle"
-                          id="node_description"
-                        >
-                          <div className={`cm-middle-unresizable-content`}>
-                            <CodeMirror
-                              editorDidMount={(editor) =>
-                                Tools.attachEditor(editor)
-                              }
-                              onPaste={() => Tools.uploadMdFile()}
-                              value={this.state.form.desc}
-                              onDrop={() => Tools.uploadMdFile()}
-                              options={{
-                                mode: "markdown",
-                                lineNumbers: false,
-                                lineWrapping: true,
-                              }}
-                              onBeforeChange={(editor, data, value) => {
-                                this.updateFormField("desc", value);
-                              }}
-                              onChange={(editor, data, value) => {}}
-                            />
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td width="120" align="right"></td>
-                      <td width="auto" align="left">
-                        {!newNode ? (
-                          <input
-                            type="submit"
-                            className="super normal button"
-                            value={i18next.t("node:Save")}
-                            onClick={() => this.updateNodeInfo()}
-                          />
-                        ) : null}
-                      </td>
-                    </tr>
-                    {newNode ? (
-                      <tr>
-                        <td width="120" align="right"></td>
-                        <td width="auto" align="left">
-                          <span className="gray">
-                            {i18next.t(
-                              "node:Please go to the background page to continue to improve the information and submit"
-                            )}
-                          </span>
-                        </td>
-                      </tr>
-                    ) : null}
-                  </tbody>
-                </table>
+          <div align="center">
+            <Container
+              BreakpointStage={this.props.BreakpointStage}
+              className="translation"
+            >
+              <div style={{ flex: "auto" }}>
+                <Card
+                  title={i18next.t("node:Node management")}
+                  style={{
+                    flex: "auto",
+                    display: "flex",
+                    flexDirection: "column",
+                    textAlign: "left",
+                  }}
+                >
+                  <Tabs defaultActiveKey="1" type="card">
+                    <TabPane tab={i18next.t(`node:Basic Info`)} key="1">
+                      {this.renderBasic()}
+                    </TabPane>
+                    <TabPane tab={i18next.t(`node:Background`)} key="2">
+                      {this.renderBackground()}
+                    </TabPane>
+                  </Tabs>
+                </Card>
               </div>
-            </div>
+            </Container>
           </div>
         );
       }
-
-      // background
-      return (
-        <div>
-          {this.renderHeader()}
-          <div className="box">
-            {this.renderProblem()}
-            {this.state.message !== "" ? (
-              <div className="message" onClick={() => this.clearMessage()}>
-                <li className="fa fa-exclamation-triangle"></li>
-                &nbsp; {this.state.message}
-              </div>
-            ) : null}
-            <div className="inner">
-              <table cellPadding="5" cellSpacing="0" border="0" width="100%">
-                <tbody>
-                  <tr>
-                    <td width="120" align="right">
-                      {i18next.t("node:Header image")}
-                    </td>
-                    <td width="auto" align="left">
-                      {this.state.form?.headerImage === undefined ||
-                      this.state.form?.headerImage === "" ? (
-                        <span className="gray">
-                          {i18next.t("node:Not set")}
-                        </span>
-                      ) : (
-                        <Zmage
-                          src={this.state.form?.headerImage}
-                          alt={this.state.form?.id}
-                          style={{ maxWidth: "48px", maxHeight: "48px" }}
-                        />
-                      )}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td width="120" align="right">
-                      {newNode
-                        ? i18next.t("node:Set header image")
-                        : i18next.t("node:Change header image")}
-                    </td>
-                    <td width="auto" align="left">
-                      <input
-                        type="text"
-                        className="sl"
-                        name="image"
-                        id="change_header"
-                        value={
-                          this.state.form?.headerImage === undefined
-                            ? ""
-                            : this.state.form?.headerImage
-                        }
-                        onChange={(event) =>
-                          this.updateFormField(
-                            "headerImage",
-                            event.target.value
-                          )
-                        }
-                        autoComplete="off"
-                      />{" "}
-                      &nbsp;{" "}
-                      <input
-                        type="file"
-                        accept=".jpg,.gif,.png,.JPG,.GIF,.PNG"
-                        onChange={(event) =>
-                          this.handleUploadImage(event, "headerImage")
-                        }
-                        name="headerImage"
-                        style={{ width: "200px" }}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td width="120" align="right">
-                      {i18next.t("node:Background image")}
-                    </td>
-                    <td width="auto" align="left">
-                      {this.state.form?.backgroundImage === undefined ||
-                      this.state.form?.backgroundImage === "" ? (
-                        <span className="gray">
-                          {i18next.t("node:Not set")}
-                        </span>
-                      ) : (
-                        <Zmage
-                          src={this.state.form?.backgroundImage}
-                          alt={this.state.form?.id}
-                          style={{ maxWidth: "48px", maxHeight: "48px" }}
-                        />
-                      )}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td width="120" align="right">
-                      {newNode
-                        ? i18next.t("node:Set background image")
-                        : i18next.t("node:Change background image")}
-                    </td>
-                    <td width="auto" align="left">
-                      <input
-                        type="text"
-                        className="sl"
-                        name="image"
-                        id="change_image"
-                        value={
-                          this.state.form?.backgroundImage === undefined
-                            ? ""
-                            : this.state.form?.backgroundImage
-                        }
-                        onChange={(event) =>
-                          this.updateFormField(
-                            "backgroundImage",
-                            event.target.value
-                          )
-                        }
-                        autoComplete="off"
-                      />{" "}
-                      &nbsp;{" "}
-                      <input
-                        type="file"
-                        accept=".jpg,.gif,.png,.JPG,.GIF,.PNG"
-                        onChange={(event) =>
-                          this.handleUploadImage(event, "backgroundImage")
-                        }
-                        name="backgroundImage"
-                        style={{ width: "200px" }}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td width="120" align="right">
-                      {i18next.t("node:Background repeat")}
-                    </td>
-                    <td width="auto" align="left">
-                      {this.state.Repeat_LIST.map((item) => {
-                        return this.renderRadioButton(item);
-                      })}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td width="120" align="right">
-                      {i18next.t("node:Background color")}
-                    </td>
-                    <td width="auto" align="left">
-                      <div
-                        style={{
-                          padding: "5px",
-                          background: "#fff",
-                          borderRadius: "1px",
-                          boxShadow: "0 0 0 1px rgba(0,0,0,.1)",
-                          display: "inline-block",
-                          cursor: "pointer",
-                        }}
-                        onClick={this.handleColorClick}
-                      >
-                        <div
-                          style={{
-                            width: "36px",
-                            height: "14px",
-                            borderRadius: "2px",
-                            background: `${this.state.form.backgroundColor}`,
-                          }}
-                        />
-                      </div>
-                      {this.state.displayColorPicker ? (
-                        <div
-                          style={{
-                            position: "absolute",
-                            zIndex: "2",
-                          }}
-                        >
-                          <div
-                            style={{
-                              position: "fixed",
-                              top: "0px",
-                              right: "0px",
-                              bottom: "0px",
-                              left: "0px",
-                            }}
-                            onClick={this.handleColorClose}
-                          />
-                          <SketchPicker
-                            color={this.state.form.backgroundColor}
-                            onChange={this.handleColorChange}
-                          />
-                        </div>
-                      ) : null}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td width="120" align="right">
-                      {i18next.t("node:Preview")}
-                    </td>
-                    <td width="auto" align="left">
-                      <div
-                        id="Wrapper"
-                        style={{
-                          backgroundColor: `${this.state.form?.backgroundColor}`,
-                          backgroundImage: `url(${
-                            this.state.form?.backgroundImage
-                          }), url(${Setting.getStatic(
-                            "/img/shadow_light.png"
-                          )})`,
-                          backgroundSize: "contain",
-                          backgroundRepeat: `${this.state.form?.backgroundRepeat}, repeat-x`,
-                          width: Setting.PcBrowser ? "500px" : "200px",
-                          height: Setting.PcBrowser ? "400px" : "100px",
-                        }}
-                        className={this.state.nodeId}
-                      ></div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td width="120" align="right"></td>
-                    <td width="auto" align="left">
-                      {newNode ? (
-                        <input
-                          type="submit"
-                          className="super normal button"
-                          value={i18next.t("node:Create")}
-                          onClick={() => this.postNewNode()}
-                        />
-                      ) : (
-                        <input
-                          type="submit"
-                          className="super normal button"
-                          value={i18next.t("node:Save")}
-                          onClick={() => this.updateNodeInfo()}
-                        />
-                      )}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      );
     }
 
     return (
-      <div className="box">
-        <div className="header">
-          <Link to="/">{Setting.getForumName()}</Link>{" "}
-          <span className="chevron">&nbsp;›&nbsp;</span>
-          <Link to="/admin">{i18next.t("admin:Backstage management")}</Link>
-          <span className="chevron">&nbsp;›&nbsp;</span>{" "}
-          {i18next.t("node:Node management")}
-          <div className="fr f12">
-            <span className="snow">{i18next.t("node:Total nodes")} &nbsp;</span>
-            <strong className="gray">
-              {this.state.nodes === null ? 0 : this.state.nodes.length}
-            </strong>
-          </div>
-          <div className="fr f12">
-            <strong className="gray">
-              <Link to="node/new">{i18next.t("node:Add new node")}</Link> &nbsp;
-            </strong>
-          </div>
-        </div>
-        <div id="all-nodes">
-          {this.state.nodes !== null && this.state.nodes.length !== 0 ? (
-            this.state.nodes.map((node) => this.renderNodes(node))
-          ) : (
-            <div
-              className="cell"
+      <div align="center">
+        <Container BreakpointStage={this.props.BreakpointStage}>
+          <div style={{ flex: "auto" }}>
+            <Card
+              title={
+                <div>
+                  {i18next.t("node:Node management")}
+                  <div
+                    className="fr f12"
+                    style={{ paddingTop: "5px", paddingRight: "10px" }}
+                  >
+                    <span className="snow">
+                      {i18next.t("node:Total nodes")} &nbsp;
+                    </span>
+                    <strong className="gray">
+                      {this.state.nodes === null ? 0 : this.state.nodes.length}
+                    </strong>
+                  </div>
+                </div>
+              }
               style={{
-                textAlign: "center",
-                height: "100px",
-                lineHeight: "100px",
+                flex: "auto",
+                display: "flex",
+                flexDirection: "column",
+                textAlign: "left",
               }}
+              extra={
+                <strong className="gray" style={{ paddingTop: "5px" }}>
+                  <Link to="node/new">{i18next.t("node:Add new node")}</Link>{" "}
+                  &nbsp;
+                </strong>
+              }
             >
-              {this.state.nodes === null
-                ? i18next.t("loading:Data is loading...")
-                : i18next.t("node:No node yet")}
-            </div>
-          )}
-        </div>
+              {this.state.message !== "" ? (
+                <Alert
+                  message={this.state.message}
+                  type="info"
+                  onClick={() => this.clearMessage()}
+                  closable
+                  style={{
+                    marginBottom: "10px",
+                    alignItems: "center",
+                    cursor: "pointer",
+                  }}
+                />
+              ) : null}
+              <div id="all-nodes">
+                {this.state.nodes !== null && this.state.nodes.length !== 0 ? (
+                  this.state.nodes.map((plane) => this.renderNodes(plane))
+                ) : (
+                  <div
+                    className="cell"
+                    style={{
+                      textAlign: "center",
+                      height: "100px",
+                      lineHeight: "100px",
+                    }}
+                  >
+                    {this.state.nodes === null
+                      ? i18next.t("loading:Data is loading...")
+                      : i18next.t("plane:No plant yet")}
+                  </div>
+                )}
+              </div>
+            </Card>
+          </div>
+        </Container>
       </div>
     );
   }
