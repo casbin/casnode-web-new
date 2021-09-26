@@ -561,14 +561,6 @@ class App extends Component {
             />
           </LazyLoad>
         </Route>
-        <Route exact path="/admin/frontconf">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <AdminFrontConf account={this.state.account} />
-            </LazyLoad>
-          </div>
-        </Route>
         <Route exact path="/about">
           <LazyLoad>
             <AboutForum BreakpointStage={this.state.BreakpointStage} />
@@ -578,14 +570,6 @@ class App extends Component {
           <LazyLoad>
             <SearchResultPage BreakpointStage={this.state.BreakpointStage} />
           </LazyLoad>
-        </Route>
-        <Route path="*">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <NoMatch />
-            </LazyLoad>
-          </div>
         </Route>
         <Route path="*">
           <div id={pcBrowser ? "Main" : ""}>
