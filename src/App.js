@@ -361,12 +361,10 @@ class App extends Component {
           </div>
         </Route>
         <Route exact path="/move/topic/:id">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <MoveTopicNodeBox />
-            </LazyLoad>
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <LazyLoad>
+            <MoveTopicNodeBox BreakpointStage={this.state.BreakpointStage} />
+          </LazyLoad>
         </Route>
         <Route exact path="/edit/:editType/:id">
           <div id={pcBrowser ? "Main" : ""}>

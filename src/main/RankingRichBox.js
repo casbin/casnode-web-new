@@ -91,7 +91,7 @@ class RankingRichBox extends React.Component {
         <div className="inner">
           <table cellPadding="10" cellSpacing="0" border="0" width="100%">
             {this.state.richList
-              ? this.state.richList.map((member, key) => (
+              ? this.state.richList.data.map((member, key) => (
                   <tr>
                     <td
                       width={Setting.PcBrowser ? "73" : "36"}
