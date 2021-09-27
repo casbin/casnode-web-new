@@ -185,6 +185,8 @@ class App extends Component {
     return (
       <Switch>
         <Route exact path="/">
+          {pcBrowser ? <div className="sep20" /> : null}
+
           <HomePage BreakpointStage={this.state.BreakpointStage} />
         </Route>
         <Route exact path="/callback" component={AuthCallback} />
@@ -320,11 +322,15 @@ class App extends Component {
         </Route>
         <Route exact path="/select/language">
           <LazyLoad>
+            {pcBrowser ? <div className="sep20" /> : null}
+
             <SelectLanguageBox BreakpointStage={this.state.BreakpointStage} />
           </LazyLoad>
         </Route>
         <Route exact path="/select/editorType">
           <LazyLoad>
+            {pcBrowser ? <div className="sep20" /> : null}
+
             <SelectEditorTypeBox BreakpointStage={this.state.BreakpointStage} />
           </LazyLoad>
         </Route>

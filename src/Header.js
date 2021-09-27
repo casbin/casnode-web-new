@@ -615,9 +615,9 @@ class PageHeader extends React.Component {
   }
 
   render() {
-    if (!Setting.PcBrowser) {
-      return this.renderMobileHeader();
-    }
+    //    if (!Setting.PcBrowser) {
+    //    return this.renderMobileHeader();
+    //}
 
     return (
       <Header

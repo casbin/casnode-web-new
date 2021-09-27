@@ -98,7 +98,7 @@ class AdminSensitive extends React.Component {
     return (
       <div
         style={{
-          padding: "20px",
+          padding: "20px 0",
           borderBottom: "1px solid #e2e2e2",
           display: "flex",
           justifyContent: "space-between",
@@ -109,7 +109,7 @@ class AdminSensitive extends React.Component {
             padding: "3px 8px",
             borderRadius: "20px",
             border: "1px solid #ced4da",
-            width: "320px",
+            flex: "1",
           }}
         >
           <input
@@ -120,7 +120,8 @@ class AdminSensitive extends React.Component {
               border: "none",
               margin: "0 0 0 5px",
               outline: "none",
-              width: "300px",
+              flex: "1",
+              justifyContent: "space-between",
             }}
             type="text"
             id="newsensitive"
@@ -128,7 +129,7 @@ class AdminSensitive extends React.Component {
         </span>
         <Button
           type="primary"
-          style={{ float: "right" }}
+          style={{ float: "right", marginLeft: "40px" }}
           onClick={() => this.addSensitive()}
         >
           add
@@ -146,6 +147,7 @@ class AdminSensitive extends React.Component {
             <Card
               title={i18next.t("sensitive:sensitive management")}
               style={{
+                alignItems: "center",
                 flex: "auto",
                 display: "flex",
                 flexDirection: "column",
