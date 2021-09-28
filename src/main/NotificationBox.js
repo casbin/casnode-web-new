@@ -22,6 +22,8 @@ import { withRouter, Link } from "react-router-dom";
 import Zmage from "react-zmage";
 import ReactMarkdown from "react-markdown";
 import i18next from "i18next";
+import Container from "../components/container";
+import { Card } from "antd";
 
 const pangu = require("pangu");
 
@@ -314,7 +316,6 @@ class NotificationBox extends React.Component {
                 <Avatar
                   username={notification?.senderId}
                   avatar={notification?.avatar}
-                  size={"small"}
                 />
               </Link>
             </td>
@@ -327,25 +328,36 @@ class NotificationBox extends React.Component {
 
   render() {
     return (
-      <div className="box">
-        <div className="header">
-          <div className="fr f12">
-            <span className="snow">
-              {i18next.t("notification:Total reminders received")}&nbsp;
-            </span>{" "}
-            <strong className="gray">{this.state.notificationNum}</strong>
+      <div align="center">
+        <Container BreakpointStage={this.props.BreakpointStage}>
+          <div style={{ flex: "auto" }}>
+            <Card
+              style={{
+                flex: "auto",
+                display: "flex",
+                flexDirection: "column",
+                textAlign: "left",
+              }}
+            >
+              <div className="title" style={{ marginBottom: "25px" }}>
+                <span style={{ fontSize: "18px" }}>
+                  {i18next.t("notification:Reminder system")}&nbsp;
+                </span>
+                <span style={{ marginLeft: "5px", fontSize: "15px" }}>
+                  {this.state.notificationNum}
+                </span>
+              </div>
+
+              {Setting.PcBrowser ? this.showPageColumn() : null}
+              <div id="notifications">
+                {this.state.notifications.map((notification) => {
+                  return this.renderNotification(notification);
+                })}
+              </div>
+              {this.showPageColumn()}
+            </Card>
           </div>
-          <Link to="/">{Setting.getForumName()}</Link>{" "}
-          <span className="chevron">&nbsp;›&nbsp;</span>{" "}
-          {i18next.t("notification:Reminder system")}
-        </div>
-        {Setting.PcBrowser ? this.showPageColumn() : null}
-        <div id="notifications">
-          {this.state.notifications.map((notification) => {
-            return this.renderNotification(notification);
-          })}
-        </div>
-        {this.showPageColumn()}
+        </Container>
       </div>
     );
   }
