@@ -324,12 +324,10 @@ class App extends Component {
           </LazyLoad>
         </Route>
         <Route exact path="/planes">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <PlaneBox />
-            </LazyLoad>
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <LazyLoad>
+            <PlaneBox BreakpointStage={this.state.BreakpointStage} />
+          </LazyLoad>
         </Route>
         <Route exact path="/balance">
           <div id={pcBrowser ? "Main" : ""}>
