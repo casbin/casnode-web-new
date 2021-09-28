@@ -18,6 +18,8 @@ import { withRouter } from "react-router-dom";
 import * as AccountBackend from "../backend/AccountBackend";
 import i18next from "i18next";
 import * as Setting from "../Setting";
+import Container from "../components/container";
+import { Card, Button } from "antd";
 
 class SignoutBox extends React.Component {
   constructor(props) {
@@ -46,43 +48,51 @@ class SignoutBox extends React.Component {
     const isSignedIn =
       this.props.account !== undefined && this.props.account !== null;
 
-    if (!isSignedIn) {
-      return (
-        <div className="box">
-          <Header item={i18next.t("member:Sign Out")} />
-          <div className="inner">
-            {i18next.t(
-              "member:You have signed out completely, no personal information is left on this computer."
-            )}
-            <div className="sep20" />
-            <input
-              type="button"
-              className="super normal button"
-              onClick={this.onSigninAgain.bind(this)}
-              value={i18next.t("member:Sign In Again")}
-            />
+    return (
+      <div align="center">
+        <Container BreakpointStage={this.props.BreakpointStage}>
+          <div style={{ flex: "auto" }}>
+            <Card
+              title={i18next.t("member:Sign Out")}
+              style={{
+                flex: "auto",
+                display: "flex",
+                flexDirection: "column",
+                textAlign: "left",
+              }}
+            >
+              {isSignedIn ? (
+                <div className="inner">
+                  {i18next.t(
+                    "error:We had a problem when you signed out, please try again."
+                  )}
+                  <div className="sep20" />
+                  <Button
+                    type="primary"
+                    onClick={this.onRetrySignout.bind(this)}
+                  >
+                    {i18next.t("error:Retry Sign Out")}
+                  </Button>
+                </div>
+              ) : (
+                <div className="inner">
+                  {i18next.t(
+                    "member:You have signed out completely, no personal information is left on this computer."
+                  )}
+                  <div className="sep20" />
+                  <Button
+                    type="primary"
+                    onClick={this.onSigninAgain.bind(this)}
+                  >
+                    {i18next.t("member:Sign In Again")}
+                  </Button>
+                </div>
+              )}
+            </Card>
           </div>
-        </div>
-      );
-    } else {
-      return (
-        <div className="box">
-          <Header item={i18next.t("member:Sign Out")} />
-          <div className="inner">
-            {i18next.t(
-              "error:We had a problem when you signed out, please try again."
-            )}
-            <div className="sep20" />
-            <input
-              type="button"
-              className="super normal button"
-              onClick={this.onRetrySignout.bind(this)}
-              value={i18next.t("error:Retry Sign Out")}
-            />
-          </div>
-        </div>
-      );
-    }
+        </Container>
+      </div>
+    );
   }
 }
 

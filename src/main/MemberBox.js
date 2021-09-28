@@ -16,13 +16,16 @@ import React from "react";
 import * as Setting from "../Setting";
 import * as MemberBackend from "../backend/MemberBackend";
 import * as FavoritesBackend from "../backend/FavoritesBackend";
+import * as TopicBackend from "../backend/TopicBackend";
 import { withRouter, Link } from "react-router-dom";
 import Avatar from "../Avatar";
 import AllCreatedTopicsBox from "./AllCreatedTopicsBox";
-import LatestReplyBox from "./LatestReplyBox";
 import i18next from "i18next";
-import { scoreConverter } from "./Tools";
-import { getProviderLogoLink } from "../Setting";
+import { Button, Card } from "antd";
+import Container from "../components/container";
+
+import "./member.css";
+import "./icons.css";
 
 class MemberBox extends React.Component {
   constructor(props) {
@@ -33,12 +36,15 @@ class MemberBox extends React.Component {
       member: [],
       favoritesStatus: false,
       getFavoriteStatus: false,
+      createdTopicsNum: 0,
     };
   }
 
   componentDidMount() {
     this.getMember();
     this.getFavoriteStatus();
+    this.getCreatedTopicNum(this.state.memberId);
+    this.getFavoriteNum();
   }
 
   componentWillReceiveProps(newProps) {
@@ -56,6 +62,14 @@ class MemberBox extends React.Component {
     MemberBackend.getMember(this.state.memberId).then((res) => {
       this.setState({
         member: res.data,
+      });
+    });
+  }
+
+  getCreatedTopicNum(id) {
+    TopicBackend.getCreatedTopicsNum(id).then((res) => {
+      this.setState({
+        createdTopicsNum: res,
       });
     });
   }
@@ -128,210 +142,322 @@ class MemberBox extends React.Component {
   renderMember() {
     if (this.state.member !== null && this.state.member.length === 0) {
       return (
-        <div className="box">
-          <div className="header">
-            <Link to="/">{Setting.getForumName()}</Link>{" "}
-            <span className="chevron">&nbsp;›&nbsp;</span>{" "}
-            {i18next.t("loading:Member profile is loading")}
-          </div>
-          <div className="cell">
-            <span className="gray bigger">
-              {i18next.t("loading:Please wait patiently...")}
-            </span>
-          </div>
+        <div align="center">
+          <Container BreakpointStage={this.props.BreakpointStage}>
+            <div style={{ flex: "auto" }}>
+              <Card
+                title={i18next.t("loading:Member profile is loading")}
+                style={{
+                  alignItems: "center",
+                  flex: "auto",
+                  display: "flex",
+                  flexDirection: "column",
+                  textAlign: "left",
+                }}
+              >
+                <span className="gray bigger">
+                  {i18next.t("loading:Please wait patiently...")}
+                </span>
+              </Card>
+            </div>
+          </Container>
         </div>
       );
     }
 
     if (this.state.member === null) {
       return (
-        <div className="box">
-          <div className="header">
-            <Link to="/">{Setting.getForumName()}</Link>{" "}
-            <span className="chevron">&nbsp;›&nbsp;</span>{" "}
-            {i18next.t("error:Member does not exist")}
-          </div>
-          <div className="cell">
-            <span className="gray bigger">404 Member Not Found</span>
-          </div>
-          <div className="inner">
-            ← <Link to="/">{i18next.t("error:Back to Home Page")}</Link>
-          </div>
+        <div align="center">
+          <Container BreakpointStage={this.props.BreakpointStage}>
+            <div style={{ flex: "auto" }}>
+              <Card
+                title={i18next.t("error:Member does not exist")}
+                style={{
+                  alignItems: "center",
+                  flex: "auto",
+                  display: "flex",
+                  flexDirection: "column",
+                  textAlign: "left",
+                }}
+              >
+                <div className="cell">
+                  <span className="gray bigger">404 Member Not Found</span>
+                </div>
+                <div className="inner">
+                  ← <Link to="/">{i18next.t("error:Back to Home Page")}</Link>
+                </div>
+              </Card>
+            </div>
+          </Container>
         </div>
       );
     }
 
-    const showWatch =
+    const isSelf =
       this.props.account !== undefined &&
       this.props.account !== null &&
       this.state.memberId !== this.props.account?.name;
-    const { goldCount, silverCount, bronzeCount } = scoreConverter(
-      this.state.member.score
-    );
+
     return (
-      <div className="box">
-        <div className="cell">
-          <table cellPadding="0" cellSpacing="0" border="0" width="100%">
-            <tbody>
-              <tr>
-                <td
-                  width={Setting.PcBrowser ? "73" : "56"}
-                  valign="top"
-                  align="center"
+      <div className={`${this.props.BreakpointStage}-left`}>
+        <div style={{ flex: "auto" }}>
+          <Card>
+            <div
+              className="media"
+              style={{ display: "flex", alignItems: "flex-start" }}
+            >
+              <div className="avatar" style={{ marginRight: "15px" }}>
+                <Avatar
+                  username={this.state.member?.name}
+                  size={Setting.PcBrowser ? "large" : "middle"}
+                  avatar={this.state.member?.avatar}
+                />
+              </div>
+              <div class="media-body" style={{ flex: "1" }}>
+                <div
+                  class="items name-box flex aic jcsb"
+                  style={{
+                    marginBottom: "5px",
+                    textDecoration: "none",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
                 >
-                  <Avatar
-                    username={this.state.member?.name}
-                    size={Setting.PcBrowser ? "large" : "middle"}
-                    avatar={this.state.member?.avatar}
-                  />
-                  <div className="sep10" />
-                  {this.state.member?.onlineStatus ? (
-                    <strong className="online"> {i18next.t("ONLINE")} </strong>
-                  ) : (
-                    ""
-                  )}
-                </td>
-                <td width="10" />
-                <td width="auto" valign="top" align="left">
+                  <div>
+                    <div
+                      class="fullname"
+                      style={{
+                        textAlign: "initial",
+                        fontSize: "18px",
+                        color: "#333",
+                        fontWeight: "700",
+                      }}
+                    >
+                      {this.state.member?.name}
+                    </div>
+                    <div style={{ color: "#999", textAlign: "initial" }}>
+                      {i18next.t("member:No.")} {this.state.member?.ranking}{" "}
+                      {i18next.t("member:member")}{" "}
+                    </div>
+
+                    <div class="items number" style={{ color: "#999" }}>
+                      <span>
+                        {Setting.getFormattedDate(
+                          this.state.member?.createdTime
+                        )}
+                      </span>
+                    </div>
+                  </div>
+                  {this.state.member.title != "" ? (
+                    <div class="user-badge" style={{ textAlign: "right" }}>
+                      <div class="level">
+                        <span
+                          class="badge-role role-member"
+                          style={{
+                            background: "#564cf5",
+                            fontSize: "12px",
+                            fontWeight: "400",
+                            fontFamily: "sans-serif",
+                            color: "#fff",
+                            borderRadius: ".25rem",
+                            padding: ".25em .4em",
+                            lineHeight: "1",
+                            display: "inline-block",
+                          }}
+                        >
+                          {this.state.member?.title}
+                        </span>
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+            </div>
+            <hr style={{ borderTop: "1px solid #e5e5e5", margin: "15px 0" }} />
+            <div class="user-items" style={{ textAlign: "justify" }}>
+              {this.state.member.affiliation != "" ? (
+                <div
+                  class="items company"
+                  style={{ color: "#333", marginBottom: "5px" }}
+                >
+                  <i class="icon fa fa-company"></i>
+                  {this.state.member?.affiliation}
+                </div>
+              ) : null}
+              {this.state.member.location != "" ? (
+                <div
+                  class="items location"
+                  style={{ color: "#333", marginBottom: "5px" }}
+                >
+                  <i class="fas fa fa-map-marked"></i>
+                  <a
+                    href={`http://www.google.com/maps?q=${this.state.member?.location}`}
+                    style={{ color: "#333" }}
+                  >
+                    {this.state.member?.location}
+                  </a>
+                </div>
+              ) : null}
+              <div class="items counts" style={{ color: "#999" }}>
+                <span>{`${this.state.createdTopicsNum}`}</span> 篇帖子
+              </div>
+              <div
+                class="items social"
+                style={{ fontSize: "24px", marginBottom: "5px" }}
+              >
+                {this.renderIdp(this.state.member, "GitHub")}
+                {this.renderIdp(this.state.member, "Google")}
+                {this.renderIdp(this.state.member, "WeChat")}
+                {this.renderIdp(this.state.member, "QQ")}
+              </div>
+              {!isSelf ? (
+                <div
+                  style={{
+                    borderTop: "1px solid #f2f2f2",
+                    textAlign: "center",
+                    marginTop: "15px",
+                    paddingTop: "15px",
+                    display: "flex",
+                  }}
+                >
                   <div
-                    className="fr"
-                    style={{ display: showWatch ? "" : "none" }}
+                    class="col-sm-4 followers"
+                    style={{ flex: "0 0 33.33%", maxWidth: "33.33%" }}
+                  >
+                    <a
+                      class="counter"
+                      href="/my/topics"
+                      style={{ fontSize: "32px", color: "#404040" }}
+                    >
+                      {`${this.state.topicFavoriteNum}`}
+                    </a>
+                    <a
+                      href="/my/topics"
+                      style={{ color: "#999", display: "block" }}
+                    >
+                      {i18next.t("bar:Topics")}
+                    </a>
+                  </div>
+                  <div
+                    class="col-sm-4 following"
+                    style={{ flex: "0 0 33.33%", maxWidth: "33.33%" }}
+                  >
+                    <a
+                      class="counter"
+                      href="/my/nodes"
+                      style={{ fontSize: "32px", color: "#404040" }}
+                    >
+                      {`${this.state.nodeFavoriteNum}`}
+                    </a>
+                    <a
+                      href="/my/nodes"
+                      style={{ color: "#999", display: "block" }}
+                    >
+                      {i18next.t("bar:Nodes")}
+                    </a>
+                  </div>
+                  <div
+                    class="col-sm-4 stars"
+                    style={{ flex: "0 0 33.33%", maxWidth: "33.33%" }}
+                  >
+                    <a
+                      class="counter"
+                      href="/my/following"
+                      style={{ fontSize: "32px", color: "#404040" }}
+                    >
+                      {`${this.state.followingNum}`}
+                    </a>
+                    <a
+                      href="/my/following"
+                      style={{ color: "#999", display: "block" }}
+                    >
+                      {i18next.t("bar:Watch")}
+                    </a>
+                  </div>
+                </div>
+              ) : null}
+              {isSelf ? (
+                <div
+                  class="buttons row"
+                  style={{
+                    display: "flex",
+                    borderTop: "1px solid #f2f2f2",
+                    marginTop: "15px",
+                    paddingTop: "15px",
+                  }}
+                >
+                  <div
+                    style={{
+                      flex: "0 0 50%",
+                      maxWidth: "50%",
+                      position: "relative",
+                      textAlign: "center",
+                      padding: "0 15px",
+                    }}
                   >
                     {this.state.favoritesStatus ? (
-                      <input
-                        type="button"
-                        value={i18next.t("member:Cancel Following")}
+                      <Button
+                        type="primary"
+                        danger
+                        block={true}
+                        size="large"
                         onClick={() =>
                           this.deleteFavorite(this.state.member?.name)
                         }
-                        className="super inverse button"
-                      />
+                      >
+                        <i class="fa fa-user"></i>{" "}
+                        <span>{i18next.t("member:Cancel Following")}</span>
+                      </Button>
                     ) : (
-                      <input
-                        type="button"
-                        value={i18next.t("member:Watch")}
+                      <Button
+                        type="primary"
+                        block={true}
+                        size="large"
                         onClick={() =>
                           this.addFavorite(this.state.member?.name)
                         }
-                        className="super special button"
-                      />
+                      >
+                        <i class="fa fa-user"></i>{" "}
+                        <span>{i18next.t("member:Watch")}</span>
+                      </Button>
                     )}
-                    <div className="sep10" />
-                    <input
-                      type="button"
-                      value="Block"
+                  </div>
+                  <div
+                    style={{
+                      flex: "0 0 50%",
+                      maxWidth: "50%",
+                      position: "relative",
+                      textAlign: "center",
+                      padding: "0 15px",
+                    }}
+                  >
+                    <Button
                       onClick={this.block(this.state.memberId)}
-                      className="super normal button"
-                    />
+                      block={true}
+                      size="large"
+                    >
+                      <i class="fa fa-eye-slash"></i>{" "}
+                      <span>{i18next.t("member:Block")}</span>
+                    </Button>
                   </div>
-                  <h1 style={{ marginBottom: "5px" }}>
-                    {this.state.member?.name}
-                  </h1>
-                  <span className="bigger">{this.state.member?.tagline}</span>
-                  <div className="sep10" />
-                  {this.state.member?.affiliation?.length !== 0 ||
-                  this.state.member?.title?.length !== 0 ? (
-                    <span>
-                      🏢&nbsp; <strong>{this.state.member?.affiliation}</strong>{" "}
-                      / {this.state.member?.title}
-                    </span>
-                  ) : null}
-                  <div className={Setting.PcBrowser ? "sep10" : "sep5"} />
-                  <span className="gray">
-                    {Setting.getForumName()} {i18next.t("member:No.")}{" "}
-                    {this.state.member?.ranking}{" "}
-                    {i18next.t("member:member, joined on")}{" "}
-                    {Setting.getFormattedDate(this.state.member?.createdTime)}
-                    {/*{Setting.PcBrowser ? (*/}
-                    {/*  <span>*/}
-                    {/*    <div className="sep5" />*/}
-                    {/*    {i18next.t("member:Today's ranking")}{" "}*/}
-                    {/*    <Link to="/top/dau">{this.state.member?.ranking}</Link>*/}
-                    {/*  </span>*/}
-                    {/*) : null}*/}
-                    <div className="sep5" />
-                    {this.state.member?.isModerator ? (
-                      <img
-                        src={Setting.getStatic("/img/mod@2x.png")}
-                        height="14px"
-                        align="absmiddle"
-                      />
-                    ) : null}{" "}
-                    {this.state.member?.isModerator
-                      ? i18next.t("member:authorized to manage the community")
-                      : null}
-                  </span>
-                  <div className="sep10" />
-                  <div className="balance_area">
-                    {goldCount}{" "}
-                    <img
-                      src={Setting.getStatic("/img/gold@2x.png")}
-                      height="16"
-                      alt="G"
-                      border="0"
-                    />{" "}
-                    {silverCount}{" "}
-                    <img
-                      src={Setting.getStatic("/img/silver@2x.png")}
-                      height="16"
-                      alt="S"
-                      border="0"
-                    />{" "}
-                    {bronzeCount}{" "}
-                    <img
-                      src={Setting.getStatic("/img/bronze@2x.png")}
-                      height="16"
-                      alt="B"
-                      border="0"
-                    />
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <div className="sep5" />
+                </div>
+              ) : null}
+              <div
+                style={{
+                  color: "#999",
+                  borderTop: "1px solid #f2f2f2",
+                  marginTop: "10px",
+                  padding: "10px 10px 0",
+                  display: "flex",
+                  flexWrap: "wrap",
+                }}
+              >
+                {this.state.member.bio}
+              </div>
+            </div>
+          </Card>
         </div>
-        <div className="widgets">
-          {this.state.member?.homepage?.length !== 0 ? (
-            <a
-              href={this.state.member?.homepage}
-              className="social_label"
-              target="_blank"
-              rel="nofollow noopener noreferrer"
-            >
-              <img
-                src={Setting.getStatic("/img/social_home.png")}
-                width="24"
-                alt="Website"
-                align="absmiddle"
-              />{" "}
-              &nbsp;{this.state.member?.homepage}
-            </a>
-          ) : null}
-          {this.state.member?.location?.length !== 0 ? (
-            <a
-              href={`http://www.google.com/maps?q=${this.state.member?.location}`}
-              className="social_label"
-              target="_blank"
-              rel="nofollow noopener noreferrer"
-            >
-              <img
-                src={Setting.getStatic("/img/social_geo.png")}
-                width="24"
-                alt="Geo"
-                align="absmiddle"
-              />{" "}
-              &nbsp;{this.state.member?.location}
-            </a>
-          ) : null}
-          {this.renderIdp(this.state.member, "GitHub")}
-          {this.renderIdp(this.state.member, "Google")}
-          {this.renderIdp(this.state.member, "WeChat")}
-          {this.renderIdp(this.state.member, "QQ")}
-        </div>
-        {this.state.member?.bio !== "" ? (
-          <div className="cell">{this.state.member?.bio}</div>
-        ) : null}
       </div>
     );
   }
@@ -394,105 +520,48 @@ class MemberBox extends React.Component {
 
     return (
       <a
-        href={profileUrl}
-        className="social_label"
-        target="_blank"
+        class={`${providerType}`}
         rel="nofollow noopener noreferrer"
+        href={profileUrl}
+        style={{ color: "#333" }}
       >
-        <img src={avatarUrl} width="24" alt={providerType} align="absmiddle" />{" "}
-        &nbsp;{name}
+        <i class={`fab fa-${providerType}`}></i>{" "}
       </a>
     );
   }
 
-  renderMemberFavorites() {
-    this.getFavoriteNum();
-
-    return (
-      <div className="box">
-        <div className="sep5" />
-        <table cellPadding="0" cellSpacing="0" border="0" width="100%">
-          <tbody>
-            <tr>
-              <td width="33%" valign="center" align="center">
-                <Link
-                  to="/my/nodes"
-                  className="dark"
-                  style={{ display: "block" }}
-                >
-                  <span className="bigger">{this.state.nodeFavoriteNum}</span>
-                  <div className="sep3" />
-                  <span className="fade small">{i18next.t("bar:Nodes")}</span>
-                </Link>
-              </td>
-              <td
-                width="33%"
-                valign="center"
-                align="center"
-                style={{ borderLeft: "1px solid rgba(100, 100, 100, 0.25)" }}
-              >
-                <Link
-                  to="/my/topics"
-                  className="dark"
-                  style={{ display: "block" }}
-                >
-                  <span className="bigger">{this.state.topicFavoriteNum}</span>
-                  <div className="sep3" />
-                  <span className="fade small">{i18next.t("bar:Topics")}</span>
-                </Link>
-              </td>
-              <td
-                width="33%"
-                valign="center"
-                align="center"
-                style={{ borderLeft: "1px solid rgba(100, 100, 100, 0.25)" }}
-              >
-                <Link
-                  to="/my/following"
-                  className="dark"
-                  style={{ display: "block" }}
-                >
-                  <span className="bigger">{this.state.followingNum}</span>
-                  <div className="sep3" />
-                  <span className="fade small">{i18next.t("bar:Watch")}</span>
-                </Link>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <div className="sep5" />
-      </div>
-    );
-  }
-
   render() {
+    console.log(this.state.member);
     return (
-      <span>
-        {Setting.PcBrowser ? (
-          <div className="sep20" />
-        ) : (
-          <div className="sep5" />
-        )}
-        {this.renderMember()}
-        {!Setting.PcBrowser &&
-        this.props.account?.name === this.state.memberId ? (
-          <div className="sep5" />
-        ) : null}
-        {!Setting.PcBrowser && this.props.account?.name === this.state.memberId
-          ? this.renderMemberFavorites()
-          : null}
-        {Setting.PcBrowser ? (
-          <div className="sep20" />
-        ) : (
-          <div className="sep5" />
-        )}
-        <AllCreatedTopicsBox member={this.state.member} />
-        {Setting.PcBrowser ? (
-          <div className="sep20" />
-        ) : (
-          <div className="sep5" />
-        )}
-      </span>
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <Container BreakpointStage={this.props.BreakpointStage}>
+          <div
+            className={`${this.props.BreakpointStage}-container`}
+            style={{ display: "flex" }}
+          >
+            {Setting.PcBrowser ? (
+              <div className="sep20" />
+            ) : (
+              <div className="sep5" />
+            )}
+            {this.renderMember()}
+            {Setting.PcBrowser ? (
+              <div className="sep20" />
+            ) : (
+              <div className="sep5" />
+            )}
+            <AllCreatedTopicsBox
+              BreakpointStage={this.props.BreakpointStage}
+              member={this.state.member}
+            />
+            {Setting.PcBrowser ? (
+              <div className="sep20" />
+            ) : (
+              <div className="sep5" />
+            )}
+          </div>
+        </Container>
+      </div>
     );
   }
 }

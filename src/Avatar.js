@@ -29,7 +29,7 @@ class Avatar extends React.Component {
     if (this.props.size === "small") {
       style = { width: "24px", height: "24px", borderRadius: "24px" };
     } else if (this.props.size === "large") {
-      style = { width: "73px", height: "73px", borderRadius: "73px" };
+      style = { width: "64px", height: "64px", borderRadius: "64px" };
     } else if (this.props.size === "middle") {
       style = { width: "36px", height: "36px", borderRadius: "36px" };
     } else {
@@ -37,7 +37,7 @@ class Avatar extends React.Component {
     }
 
     let src;
-    if (this.props.avatar !== "") {
+    if (this.props.avatar !== "" && this.state.avatar !== undefined) {
       src = this.props.avatar;
     } else {
       src = Setting.getUserAvatar(this.props.username);

@@ -197,15 +197,14 @@ class App extends Component {
           />
         </Route>
         <Route exact path="/signout">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <SignoutBox
-                account={this.state.account}
-                onSignout={this.onSignout.bind(this)}
-              />
-            </LazyLoad>
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <LazyLoad>
+            <SignoutBox
+              account={this.state.account}
+              onSignout={this.onSignout.bind(this)}
+              BreakpointStage={this.state.BreakpointStage}
+            />
+          </LazyLoad>
         </Route>
         <Route exact path="/t/:topicId/:event">
           <div id={pcBrowser ? "Main" : ""}>
@@ -232,22 +231,14 @@ class App extends Component {
           </div>
         </Route>
         <Route exact path="/member/:memberId">
-          <div id={pcBrowser ? "Main" : ""}>
-            <LazyLoad>
-              <MemberBox
-                account={this.state.account}
-                refreshFavorites={this.getFavoriteNum.bind(this)}
-              />
-            </LazyLoad>
-          </div>
-        </Route>
-        <Route exact path="/member/:memberId/:tab">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <AllCreatedTopicsBox />
-            </LazyLoad>
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <LazyLoad>
+            <MemberBox
+              account={this.state.account}
+              refreshFavorites={this.getFavoriteNum.bind(this)}
+              BreakpointStage={this.state.BreakpointStage}
+            />
+          </LazyLoad>
         </Route>
         <Route exact path="/new">
           <div id={pcBrowser ? "Main" : ""}>
@@ -305,12 +296,10 @@ class App extends Component {
           </LazyLoad>
         </Route>
         <Route exact path="/my/:favorites">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <FavoritesBox />
-            </LazyLoad>
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <LazyLoad>
+            <FavoritesBox BreakpointStage={this.state.BreakpointStage} />
+          </LazyLoad>
         </Route>
         <Route exact path="/recent">
           <div id={pcBrowser ? "Main" : ""}>
@@ -323,14 +312,12 @@ class App extends Component {
         <Route exact path="/select/language">
           <LazyLoad>
             {pcBrowser ? <div className="sep20" /> : null}
-
             <SelectLanguageBox BreakpointStage={this.state.BreakpointStage} />
           </LazyLoad>
         </Route>
         <Route exact path="/select/editorType">
           <LazyLoad>
             {pcBrowser ? <div className="sep20" /> : null}
-
             <SelectEditorTypeBox BreakpointStage={this.state.BreakpointStage} />
           </LazyLoad>
         </Route>
@@ -717,11 +704,11 @@ class App extends Component {
         />
         <div
           id="Wrapper"
-          // style={{
-          //   backgroundColor: `${this.state.nodeBackgroundColor}`,
-          //   backgroundImage: `url(${this.state.nodeBackgroundImage}), url(https://cdn.jsdelivr.net/gh/casbin/static/img/shadow_light.png)`,
-          //   backgroundRepeat: `${this.state.nodeBackgroundRepeat}, repeat-x`,
-          // }}
+          style={{
+            backgroundColor: `${this.state.nodeBackgroundColor}`,
+            backgroundImage: `url(${this.state.nodeBackgroundImage}), url(https://cdn.jsdelivr.net/gh/casbin/static/img/shadow_light.png)`,
+            backgroundRepeat: `${this.state.nodeBackgroundRepeat}, repeat-x`,
+          }}
           className={this.state.nodeId}
           onClick={() => this.changeMenuStatus(false)}
         >

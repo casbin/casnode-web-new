@@ -72,7 +72,7 @@ class TopicList extends React.Component {
 
   renderTopic(topic) {
     const pcBrowser = Setting.PcBrowser;
-
+    console.log(this.props.topics);
     return (
       <Link
         to={`/t/${topic?.id}`}
@@ -87,7 +87,6 @@ class TopicList extends React.Component {
               size={Setting.PcBrowser ? "" : "medium"}
             />
           </div>
-
           <div className="content">
             <div className="title">
               <span className="node">
