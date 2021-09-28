@@ -19,7 +19,8 @@ import { withRouter, Link } from "react-router-dom";
 import PageColumn from "./PageColumn";
 import i18next from "i18next";
 import TopicList from "./TopicList";
-
+import Container from "../components/container";
+import { Card } from "antd";
 class SearchTag extends React.Component {
   constructor(props) {
     super(props);
@@ -65,25 +66,41 @@ class SearchTag extends React.Component {
 
   renderTag() {
     return (
-      <div className={`box ${this.state.tagId}`}>
-        <div className="cell" align="center" style={{ border: 0 }}>
-          <div className="header">
-            <Link to="/">{Setting.getForumName()}</Link>{" "}
-            <span className="chevron">&nbsp;›&nbsp;</span>
-            <span className="chevron">{this.state.tagId}</span>{" "}
-            <span className="gray" style={{ float: "right" }}>
-              {`${i18next.t("node:all")} ${this.state.topicNum} ${i18next.t(
-                "node:topics"
-              )}`}
-            </span>
+      <div align="center">
+        <Container BreakpointStage={this.props.BreakpointStage}>
+          <div style={{ flex: "auto" }}>
+            <Card
+              title={
+                <div>
+                  #{this.state.tagId}
+                  <div
+                    className="fr f12"
+                    style={{ paddingTop: "5px", paddingRight: "10px" }}
+                  >
+                    <span className="gray">
+                      {`${i18next.t("node:all")} ${
+                        this.state.topicNum
+                      } ${i18next.t("node:topics")}`}
+                    </span>
+                  </div>
+                </div>
+              }
+              style={{
+                flex: "auto",
+                display: "flex",
+                flexDirection: "column",
+                textAlign: "left",
+              }}
+            >
+              <TopicList
+                topics={this.state.topics}
+                showNodeName={false}
+                showAvatar={true}
+              />
+              {this.showPageColumn()}
+            </Card>
           </div>
-        </div>
-        <TopicList
-          topics={this.state.topics}
-          showNodeName={false}
-          showAvatar={true}
-        />
-        {this.showPageColumn()}
+        </Container>
       </div>
     );
   }

@@ -19,6 +19,8 @@ import * as TopicBackend from "../backend/TopicBackend";
 import TopicList from "./TopicList";
 import PageColumn from "./PageColumn";
 import i18next from "i18next";
+import Container from "../components/container";
+import { Card } from "antd";
 
 class RecentTopicsBox extends React.Component {
   constructor(props) {
@@ -99,24 +101,41 @@ class RecentTopicsBox extends React.Component {
 
   render() {
     return (
-      <div className="box">
-        <div className="header">
-          <div className="fr f12">
-            <span className="fade">{`${i18next.t("topic:Total Topics")} ${
-              this.state.topicsNum
-            }`}</span>
+      <div align="center">
+        <Container BreakpointStage={this.props.BreakpointStage}>
+          <div style={{ flex: "auto" }}>
+            <Card
+              title={
+                <div>
+                  {i18next.t("topic:Recent Topics")}
+                  <div
+                    className="fr f12"
+                    style={{ paddingTop: "5px", paddingRight: "10px" }}
+                  >
+                    <span className="snow">
+                      {i18next.t("topic:Total Topics")} &nbsp;
+                    </span>
+                    <strong className="gray">{this.state.topicsNum}</strong>
+                  </div>
+                </div>
+              }
+              style={{
+                flex: "auto",
+                display: "flex",
+                flexDirection: "column",
+                textAlign: "left",
+              }}
+            >
+              {Setting.PcBrowser ? this.showPageColumn() : null}
+              <TopicList
+                topics={this.state.topics}
+                showNodeName={true}
+                showAvatar={true}
+              />
+              {this.showPageColumn()}
+            </Card>
           </div>
-          <Link to="/">{Setting.getForumName()}</Link>
-          <span className="chevron">&nbsp;›&nbsp;</span>{" "}
-          {i18next.t("topic:Recent Topics")}
-        </div>
-        {Setting.PcBrowser ? this.showPageColumn() : null}
-        <TopicList
-          topics={this.state.topics}
-          showNodeName={true}
-          showAvatar={true}
-        />
-        {this.showPageColumn()}
+        </Container>
       </div>
     );
   }

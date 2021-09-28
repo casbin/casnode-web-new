@@ -251,10 +251,8 @@ class App extends Component {
           </div>
         </Route>
         <Route exact path="/tag/:tagId">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <SearchTag />
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <SearchTag BreakpointStage={this.state.BreakpointStage} />
         </Route>
         <Route exact path="/new/:nodeId">
           <div id={pcBrowser ? "Main" : ""}>
@@ -302,12 +300,10 @@ class App extends Component {
           </LazyLoad>
         </Route>
         <Route exact path="/recent">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <RecentTopicsBox />
-            </LazyLoad>
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <LazyLoad>
+            <RecentTopicsBox BreakpointStage={this.state.BreakpointStage} />
+          </LazyLoad>
         </Route>
         <Route exact path="/select/language">
           <LazyLoad>
@@ -322,12 +318,10 @@ class App extends Component {
           </LazyLoad>
         </Route>
         <Route exact path="/notifications">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <NotificationBox />
-            </LazyLoad>
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <LazyLoad>
+            <NotificationBox BreakpointStage={this.state.BreakpointStage} />
+          </LazyLoad>
         </Route>
         <Route exact path="/planes">
           <div id={pcBrowser ? "Main" : ""}>
