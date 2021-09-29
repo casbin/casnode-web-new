@@ -17,6 +17,8 @@ import * as Setting from "../Setting";
 import * as BalanceBackend from "../backend/BalanceBackend";
 import { withRouter, Link } from "react-router-dom";
 import i18next from "i18next";
+import Container from "../components/container";
+import { Card, Button, Alert } from "antd";
 
 class CheckinBonusBox extends React.Component {
   constructor(props) {
@@ -64,58 +66,99 @@ class CheckinBonusBox extends React.Component {
   render() {
     if (this.state.checkinBonusStatus) {
       return (
-        <div className="box">
-          <div className="cell">
-            <Link to="/">{Setting.getForumName()}</Link>{" "}
-            <span className="chevron">&nbsp;›&nbsp;</span>{" "}
-            {i18next.t("mission:Daily tasks")}
-          </div>
-          {this.state.showSuccess ? (
-            <div className="message" onClick={() => this.changeSuccessStatus()}>
-              <li className="fa fa-exclamation-triangle"></li>
-              &nbsp;{" "}
-              {i18next.t("mission:Successfully received daily checkin bonus")}
+        <div align="center">
+          <Container BreakpointStage={this.props.BreakpointStage}>
+            <div style={{ flex: "auto" }}>
+              <Card
+                style={{
+                  flex: "auto",
+                  display: "flex",
+                  flexDirection: "column",
+                  textAlign: "left",
+                }}
+              >
+                <div className="title" style={{ marginBottom: "25px" }}>
+                  <span style={{ fontSize: "18px" }}>
+                    {i18next.t("mission:Daily tasks")}&nbsp;
+                  </span>
+                </div>
+                <div>
+                  {this.state.showSuccess ? (
+                    <Alert
+                      message={i18next.t(
+                        "mission:Successfully received daily checkin bonus"
+                      )}
+                      type="error"
+                      onClick={() => this.changeSuccessStatus()}
+                      closable
+                      style={{
+                        marginBottom: "10px",
+                        alignItems: "center",
+                        cursor: "pointer",
+                      }}
+                    />
+                  ) : null}
+                  <div className="cell">
+                    <Alert
+                      message={i18next.t(
+                        "mission:Daily checkin bonus has been received"
+                      )}
+                      type="info"
+                      closable
+                      style={{
+                        marginBottom: "10px",
+                        alignItems: "center",
+                        cursor: "pointer",
+                      }}
+                    />
+
+                    <div className="sep10"></div>
+                    <Button
+                      type="primary"
+                      onClick={() => (window.location.href = "/balance")}
+                    >
+                      {i18next.t("mission:Check my account balance")}
+                    </Button>
+                  </div>
+                </div>
+              </Card>
             </div>
-          ) : null}
-          <div className="cell">
-            <span className="gray">
-              <li className="fa fa-ok-sign" style={{ color: "#0c0" }}></li>{" "}
-              &nbsp;
-              {i18next.t("mission:Daily checkin bonus has been received")}
-            </span>
-            <div className="sep10"></div>
-            <input
-              type="button"
-              className="super normal button"
-              value={i18next.t("mission:Check my account balance")}
-              onClick={() => (window.location.href = "/balance")}
-            />
-          </div>
+          </Container>
         </div>
       );
     }
     return (
-      <div className="box">
-        <div className="cell">
-          <Link to="/">{Setting.getForumName()}</Link>{" "}
-          <span className="chevron">&nbsp;›&nbsp;</span>{" "}
-          {i18next.t("mission:Daily tasks")}
-        </div>
-        <div className="cell">
-          <h1>
-            {i18next.t("mission:Daily checkin bonus")} {this.state.date}
-          </h1>
-          <input
-            type="button"
-            className="super normal button"
-            value={i18next.t("mission:Receive X copper coins")}
-            onClick={() => this.getDailyCheckinBonus()}
-          />
-        </div>
-        <div className="cell">
-          {i18next.t("mission:Logged in continuously")} 1{" "}
-          {i18next.t("mission:Successfully received daily checkin bonus")}
-        </div>
+      <div align="center">
+        <Container BreakpointStage={this.props.BreakpointStage}>
+          <div style={{ flex: "auto" }}>
+            <Card
+              style={{
+                flex: "auto",
+                display: "flex",
+                flexDirection: "column",
+                textAlign: "left",
+              }}
+            >
+              <div className="title" style={{ marginBottom: "25px" }}>
+                <span style={{ fontSize: "18px" }}>
+                  {i18next.t("mission:Daily tasks")}&nbsp;
+                </span>
+              </div>
+              <div className="cell">
+                <Button
+                  type="primary"
+                  onClick={() => this.getDailyCheckinBonus()}
+                >
+                  {i18next.t("mission:Receive X copper coins")}
+                </Button>
+              </div>
+              <div className="cell">
+                {i18next.t("mission:Logged in continuously")}{" "}
+                {i18next.t("mission:Successfully received daily checkin bonus")}
+              </div>
+            </Card>
+          </div>
+        </Container>
       </div>
     );
   }

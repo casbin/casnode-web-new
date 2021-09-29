@@ -330,20 +330,19 @@ class App extends Component {
           </LazyLoad>
         </Route>
         <Route exact path="/balance">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <BalanceBox account={this.state.account} />
-            </LazyLoad>
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <LazyLoad>
+            <BalanceBox
+              account={this.state.account}
+              BreakpointStage={this.state.BreakpointStage}
+            />
+          </LazyLoad>
         </Route>
         <Route exact path="/mission/daily">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <CheckinBonusBox />
-            </LazyLoad>
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <LazyLoad>
+            <CheckinBonusBox BreakpointStage={this.state.BreakpointStage} />
+          </LazyLoad>
         </Route>
         <Route exact path="/move/topic/:id">
           {pcBrowser ? <div className="sep20" /> : null}

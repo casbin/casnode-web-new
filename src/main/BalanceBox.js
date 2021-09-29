@@ -19,6 +19,8 @@ import PageColumn from "./PageColumn";
 import { withRouter, Link } from "react-router-dom";
 import i18next from "i18next";
 import { scoreConverter } from "./Tools";
+import Container from "../components/container";
+import { Card } from "antd";
 
 const pangu = require("pangu");
 
@@ -430,111 +432,162 @@ class BalanceBox extends React.Component {
     );
 
     return (
-      <div className="box">
-        <div className="cell">
-          <div className="fr" style={{ margin: "-3px -8px 0px 0px" }}>
-            <Link to="/top/rich" className="tab">
-              {i18next.t("balance:Wealth ranking")}
-            </Link>
-            <Link to="/top/player" className="tab">
-              {i18next.t("balance:Consumption ranking")}
-            </Link>
-            <Link to="/balance/add/alipay" className="tab">
-              {i18next.t("balance:Recharge")}
-            </Link>
-          </div>
-          <Link to="/">{Setting.getForumName()}</Link>{" "}
-          <span className="chevron">&nbsp;›&nbsp;</span>{" "}
-          {i18next.t("balance:Account balance")}
-        </div>
-        <div className="cell">
-          <table cellPadding="10" cellSpacing="0" border="0" width="100%">
-            <tbody>
-              <tr>
-                <td width="200">
-                  <span className="gray">
-                    {i18next.t("balance:Current account balance")}
+      <div align="center">
+        <Container BreakpointStage={this.props.BreakpointStage}>
+          <div style={{ flex: "auto" }}>
+            <Card
+              style={{
+                flex: "auto",
+                display: "flex",
+                flexDirection: "column",
+                textAlign: "left",
+              }}
+            >
+              <div>
+                <div className="title" style={{ marginBottom: "20px" }}>
+                  <span style={{ fontSize: "18px" }}>
+                    {i18next.t("balance:Account balance")}
                   </span>
-                  <div className="sep10"></div>
-                  <div className="sep5"></div>
-                  <div
-                    className="balance_area bigger"
-                    style={{ fontSize: "24px", lineHeight: "24px" }}
-                  >
-                    {goldCount !== 0 ? (
-                      <span>
-                        {" "}
-                        {goldCount}{" "}
-                        <img
-                          src={Setting.getStatic("/img/gold@2x.png")}
-                          height="16"
-                          alt="G"
-                          border="0"
-                        />
-                      </span>
-                    ) : null}{" "}
-                    {silverCount}{" "}
-                    <img
-                      src={Setting.getStatic("/img/silver@2x.png")}
-                      height="16"
-                      alt="S"
-                      border="0"
-                    />{" "}
-                    {bronzeCount}{" "}
-                    <img
-                      src={Setting.getStatic("/img/bronze@2x.png")}
-                      height="16"
-                      alt="B"
-                      border="0"
-                    />
+                  <div className="fr" style={{ margin: "-3px -8px 0px 0px" }}>
+                    <Link to="/top/rich" className="tab">
+                      {i18next.t("balance:Wealth ranking")}
+                    </Link>
+                    <Link to="/top/player" className="tab">
+                      {i18next.t("balance:Consumption ranking")}
+                    </Link>
+                    <Link to="/balance/add/alipay" className="tab">
+                      {i18next.t("balance:Recharge")}
+                    </Link>
                   </div>
-                  <div className="sep10"></div>
-                  <div className="sep5"></div>
-                  <li className="fa fa-question-circle gray"></li>
-                  <Link to="/help/currency">
-                    {i18next.t(
-                      "balance:Documentation on the virtual currency system"
-                    )}
-                  </Link>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div>
-          <table
-            cellPadding="5"
-            cellSpacing="0"
-            border="0"
-            width="100%"
-            className="data"
-          >
-            <tbody>
-              <tr>
-                <td width="130" className="h">
-                  {i18next.t("balance:Time")}
-                </td>
-                <td width="100" className="h">
-                  {i18next.t("balance:Type")}
-                </td>
-                <td width="60" className="h">
-                  {i18next.t("balance:Amount")}
-                </td>
-                <td width="60" className="h">
-                  {i18next.t("balance:Balance")}
-                </td>
-                <td width="auto" className="h" style={{ borderRight: "none" }}>
-                  {i18next.t("balance:Description")}
-                </td>
-              </tr>
-              {Setting.PcBrowser ? this.showPageColumn() : null}
-              {this.state.records.map((record) => {
-                return this.renderRecord(record);
-              })}
-              {this.showPageColumn()}
-            </tbody>
-          </table>
-        </div>
+                </div>
+                <div
+                  className="fr f12"
+                  style={{
+                    paddingTop: "5px",
+                    paddingRight: "10px",
+                    float: "left",
+                  }}
+                >
+                  <div className="cell">
+                    <span className="gray">
+                      {i18next.t("balance:Current account balance")}
+                    </span>
+                    <div className="sep10"></div>
+                    <div className="sep5"></div>
+                    <div
+                      className="balance_area bigger"
+                      style={{ fontSize: "24px", lineHeight: "24px" }}
+                    >
+                      {goldCount !== 0 ? (
+                        <span>
+                          {" "}
+                          {goldCount}{" "}
+                          <img
+                            src={Setting.getStatic("/img/gold@2x.png")}
+                            height="16"
+                            alt="G"
+                            border="0"
+                          />
+                        </span>
+                      ) : null}{" "}
+                      {silverCount}{" "}
+                      <img
+                        src={Setting.getStatic("/img/silver@2x.png")}
+                        height="16"
+                        alt="S"
+                        border="0"
+                      />{" "}
+                      {bronzeCount}{" "}
+                      <img
+                        src={Setting.getStatic("/img/bronze@2x.png")}
+                        height="16"
+                        alt="B"
+                        border="0"
+                      />
+                    </div>
+                    <div className="sep10"></div>
+                    <div className="sep5"></div>
+                    <li className="fa fa-question-circle gray"></li>
+                    <Link to="/help/currency">
+                      {i18next.t(
+                        "balance:Documentation on the virtual currency system"
+                      )}
+                    </Link>
+                  </div>
+                </div>
+                <div>
+                  <table
+                    cellPadding="5"
+                    cellSpacing="0"
+                    border="0"
+                    width="100%"
+                    className="data"
+                  >
+                    <tbody>
+                      <tr>
+                        <td
+                          width="130"
+                          style={{
+                            background: "#f5f5f5",
+                            textShadow: "0 1px 0 #fff",
+                            fontWeight: "700",
+                          }}
+                        >
+                          {i18next.t("balance:Time")}
+                        </td>
+                        <td
+                          width="100"
+                          style={{
+                            background: "#f5f5f5",
+                            textShadow: "0 1px 0 #fff",
+                            fontWeight: "700",
+                          }}
+                        >
+                          {i18next.t("balance:Type")}
+                        </td>
+                        <td
+                          width="60"
+                          style={{
+                            background: "#f5f5f5",
+                            textShadow: "0 1px 0 #fff",
+                            fontWeight: "700",
+                          }}
+                        >
+                          {i18next.t("balance:Amount")}
+                        </td>
+                        <td
+                          width="60"
+                          style={{
+                            background: "#f5f5f5",
+                            textShadow: "0 1px 0 #fff",
+                            fontWeight: "700",
+                          }}
+                        >
+                          {i18next.t("balance:Balance")}
+                        </td>
+                        <td
+                          width="auto"
+                          style={{
+                            background: "#f5f5f5",
+                            textShadow: "0 1px 0 #fff",
+                            fontWeight: "700",
+                          }}
+                        >
+                          {i18next.t("balance:Description")}
+                        </td>
+                      </tr>
+                      {Setting.PcBrowser ? this.showPageColumn() : null}
+                      {this.state.records.map((record) => {
+                        return this.renderRecord(record);
+                      })}
+                      {this.showPageColumn()}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </Card>
+          </div>
+        </Container>
       </div>
     );
   }
