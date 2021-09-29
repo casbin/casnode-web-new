@@ -103,7 +103,7 @@ class HomePage extends React.Component {
           </div>
         </Container>
         <Container BreakpointStage={this.props.BreakpointStage}>
-          <div className={`${this.props.BreakpointStage}-topic`}>
+          <div className={`${this.props.BreakpointStage}-topics`}>
             <TopicList
               topics={this.state.topics}
               showNodeName={true}
