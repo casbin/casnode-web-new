@@ -79,58 +79,64 @@ class TopicList extends React.Component {
         onClick={() => this.addTopicHitCount(topic?.id)}
         className={`${this.props.nodeId}`}
       >
-        <div key={topic?.id} className="listBox">
-          <div className="avatar">
-            <Avatar
-              username={topic?.author}
-              avatar={topic?.avatar}
-              size={Setting.PcBrowser ? "" : "medium"}
-            />
-          </div>
-          <div className="content">
-            <div className="title">
-              <span className="node">
-                <Link to={`/go/${encodeURIComponent(topic.nodeId)}`}>
-                  {topic.nodeName}
-                </Link>
-              </span>
-              {pangu.spacing(topic.title)}
+        <div
+          key={topic?.id}
+          className="listBox"
+          style={{ justifyContent: "space-between" }}
+        >
+          <div style={{ display: "flex" }}>
+            <div className="avatar">
+              <Avatar
+                username={topic?.author}
+                avatar={topic?.avatar}
+                size={Setting.PcBrowser ? "" : "medium"}
+              />
             </div>
-
-            <div className="info">
-              <span className="user">
-                <Link
-                  to={`/member/${topic.author}`}
-                  className={`${this.props.nodeId} member`}
-                >
-                  {topic.author}
-                </Link>
-              </span>{" "}
-              {pcBrowser ? (
-                <span>
-                  &nbsp;•&nbsp;{" "}
-                  <span className="time">
-                    {topic.lastReplyTime === "" ||
-                    this.props.timeStandard === "createdTime"
-                      ? Setting.getPrettyDate(topic.createdTime)
-                      : Setting.getPrettyDate(topic.lastReplyTime)}
-                  </span>
-                  {topic.lastReplyUser === "" ? null : (
-                    <div style={{ display: "inline" }}>
-                      {" "}
-                      &nbsp;•&nbsp; {i18next.t("topic:last reply from")}{" "}
-                      <span className="user">
-                        <Link
-                          to={`/member/${topic.lastReplyUser}`}
-                          className={`${this.props.nodeId} member`}
-                        >
-                          {topic.lastReplyUser}
-                        </Link>
-                      </span>
-                    </div>
-                  )}
+            <div>
+              <div className="title" style={{ textAlign: "initial" }}>
+                <span className="node">
+                  <Link to={`/go/${encodeURIComponent(topic.nodeId)}`}>
+                    {topic.nodeName}
+                  </Link>
                 </span>
-              ) : null}
+                {pangu.spacing(topic.title)}
+              </div>
+
+              <div className="info" style={{ textAlign: "initial" }}>
+                <span className="user">
+                  <Link
+                    to={`/member/${topic.author}`}
+                    className={`${this.props.nodeId} member`}
+                  >
+                    {topic.author}
+                  </Link>
+                </span>{" "}
+                {pcBrowser ? (
+                  <span>
+                    &nbsp;•&nbsp;{" "}
+                    <span className="time">
+                      {topic.lastReplyTime === "" ||
+                      this.props.timeStandard === "createdTime"
+                        ? Setting.getPrettyDate(topic.createdTime)
+                        : Setting.getPrettyDate(topic.lastReplyTime)}
+                    </span>
+                    {topic.lastReplyUser === "" ? null : (
+                      <div style={{ display: "inline" }}>
+                        {" "}
+                        &nbsp;•&nbsp; {i18next.t("topic:last reply from")}{" "}
+                        <span className="user">
+                          <Link
+                            to={`/member/${topic.lastReplyUser}`}
+                            className={`${this.props.nodeId} member`}
+                          >
+                            {topic.lastReplyUser}
+                          </Link>
+                        </span>
+                      </div>
+                    )}
+                  </span>
+                ) : null}
+              </div>
             </div>
           </div>
           <div className="count">
