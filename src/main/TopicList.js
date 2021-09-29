@@ -72,7 +72,6 @@ class TopicList extends React.Component {
 
   renderTopic(topic) {
     const pcBrowser = Setting.PcBrowser;
-    console.log(this.props.topics);
     return (
       <Link
         to={`/t/${topic?.id}`}

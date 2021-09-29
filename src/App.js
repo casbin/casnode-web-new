@@ -187,7 +187,6 @@ class App extends Component {
       <Switch>
         <Route exact path="/">
           {pcBrowser ? <div className="sep20" /> : null}
-
           <HomePage BreakpointStage={this.state.BreakpointStage} />
         </Route>
         <Route exact path="/callback" component={AuthCallback} />
