@@ -1,0 +1,35 @@
+.editBox {
+  display: block;
+  width: 100%;
+  height: calc(1.5em + 0.75rem + 2px);
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #495057;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.editBox:focus-within {
+  background-color: #fff;
+  border-color: #ced4da;
+  color: #404040;
+  box-shadow: 0 0 0 0.2rem rgb(34 117 218 / 8%);
+  outline: none;
+}
+
+.react-tagsinput {
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+}
+
+.react-tagsinput--focused {
+  background-color: #fff;
+  border-color: #ced4da;
+  color: #404040;
+  box-shadow: 0 0 0 0.2rem rgb(34 117 218 / 8%);
+  outline: none;
+}

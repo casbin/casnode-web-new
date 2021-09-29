@@ -15,6 +15,7 @@
 import React, { Component } from "react";
 import "./App.css";
 import { BackTop } from "antd";
+import "codemirror/lib/codemirror.css";
 import * as Setting from "./Setting";
 import { Switch, Route } from "react-router-dom";
 import TopicPage from "./TopicPage";
@@ -351,20 +352,19 @@ class App extends Component {
           </LazyLoad>
         </Route>
         <Route exact path="/edit/:editType/:id">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <EditBox account={this.state.account} />
-            </LazyLoad>
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <LazyLoad>
+            <EditBox
+              BreakpointStage={this.state.BreakpointStage}
+              account={this.state.account}
+            />
+          </LazyLoad>
         </Route>
         <Route exact path="/i">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <FilesBox account={this.state.account} />
-            </LazyLoad>
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <LazyLoad>
+            <FilesBox account={this.state.account} />
+          </LazyLoad>
         </Route>
         <Route exact path="/i/:event">
           <div id={pcBrowser ? "Main" : ""}>
