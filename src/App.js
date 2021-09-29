@@ -241,14 +241,13 @@ class App extends Component {
           </LazyLoad>
         </Route>
         <Route exact path="/new">
-          <div id={pcBrowser ? "Main" : ""}>
-            <LazyLoad>
-              <NewBox
-                BreakpointStage={this.state.BreakpointStage}
-                account={this.state.account}
-              />
-            </LazyLoad>
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <LazyLoad>
+            <NewBox
+              BreakpointStage={this.state.BreakpointStage}
+              account={this.state.account}
+            />
+          </LazyLoad>
         </Route>
         <Route exact path="/tag/:tagId">
           {pcBrowser ? <div className="sep20" /> : null}

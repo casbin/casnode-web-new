@@ -33,3 +33,22 @@
   box-shadow: 0 0 0 0.2rem rgb(34 117 218 / 8%);
   outline: none;
 }
+
+.editContainer {
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  color: #404040;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.editContainer:focus-within {
+  background-color: #fff;
+  border-color: #ced4da;
+  color: #404040;
+  box-shadow: 0 0 0 0.2rem rgb(34 117 218 / 8%);
+  outline: none;
+}
+
+.tagsInput-m input {
+  width: 360px;
+}

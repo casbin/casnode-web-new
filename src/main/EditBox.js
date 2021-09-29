@@ -410,6 +410,9 @@ class EditBox extends React.Component {
                         maxTags="4"
                         value={this.state.tags}
                         onChange={this.handleChange.bind(this)}
+                        className={
+                          Setting.PcBrowser ? "tagsInput-pc" : "tagsInput-m"
+                        }
                       />
                       <td
                         style={{

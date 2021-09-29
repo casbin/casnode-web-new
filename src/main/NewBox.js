@@ -28,6 +28,10 @@ import { Controlled as CodeMirror } from "react-codemirror2";
 import Editor from "./richTextEditor";
 import * as Conf from "../Conf";
 import TagsInput from "react-tagsinput";
+import Container from "../components/container";
+import { Card, Button, Alert } from "antd";
+import "../admin/AdminTranslation.css";
+import "./edit.css";
 import "../tagsInput.css";
 require("codemirror/mode/markdown/markdown");
 
@@ -213,18 +217,35 @@ class NewBox extends React.Component {
     }
 
     return (
-      <div className="problem" onClick={() => this.clearMessage()}>
-        {i18next.t(
-          "error:Please resolve the following issues before creating a new topic"
-        )}
-        <ul>
-          {problems.map((problem, i) => {
-            return <li>{problem}</li>;
-          })}
-          {this.state.message !== "" ? (
-            <li>{i18next.t(`error:${this.state.message}`)}</li>
-          ) : null}
-        </ul>
+      <div>
+        <Alert
+          message={i18next.t(
+            "error:Please resolve the following issues before creating a new topic"
+          )}
+          type="error"
+          onClick={() => this.clearMessage()}
+          closable
+          style={{
+            marginBottom: "10px",
+            alignItems: "center",
+            cursor: "pointer",
+          }}
+        />
+        {problems.map((problem) => {
+          return (
+            <Alert
+              message={problem}
+              type="error"
+              onClick={() => this.clearMessage()}
+              closable
+              style={{
+                marginBottom: "10px",
+                alignItems: "center",
+                cursor: "pointer",
+              }}
+            />
+          );
+        })}
       </div>
     );
   }
@@ -245,191 +266,213 @@ class NewBox extends React.Component {
     }
 
     return (
-      <div className="box" id="box">
-        <Header item={i18next.t("new:New Topic")} />
-        {this.renderProblem()}
-        <form method="post" action="/new" id="compose">
-          <div className="cell">
-            <div className="fr fade" id="title_remaining">
-              {120 - this.countField("title")}
-            </div>
-            {i18next.t("new:Topic Title")}
-          </div>
-          <div className="cell" style={{ padding: "0px" }}>
-            <textarea
-              onChange={(event) => {
-                this.updateFormField("title", event.target.value);
-              }}
-              className="msl"
-              rows="1"
-              maxLength="120"
-              id="topic_title"
-              name="title"
-              autoFocus="autofocus"
-              placeholder={i18next.t(
-                "new:Please input the topic title. The body can be empty if the title expresses the full idea"
-              )}
-            >
-              {this.state.form.title}
-            </textarea>
-          </div>
-          <div className="cell">
-            <div className="fr fade" id="content_remaining">
-              {20000 - this.countField("body")}
-            </div>
-            {i18next.t("new:Body")}
-          </div>
-          <div>
-            {/* markdown editor */}
-            {!this.state.form.editorType ||
-            this.state.form.editorType === "markdown" ? (
-              <div
-                style={{
-                  textAlign: "left",
-                  borderBottom: "1px solid #e2e2e2",
-                  fontSize: "14px",
-                  lineHeight: "120%",
-                }}
-              >
-                <textarea
-                  style={{ visibility: "hidden", display: "none" }}
-                  maxLength="20000"
-                  id="editor"
-                  name="content"
-                />
-                <div className={`cm-long-content`}>
-                  <CodeMirror
-                    editorDidMount={(editor) => Tools.attachEditor(editor)}
-                    onPaste={() => Tools.uploadMdFile()}
-                    value={this.state.form.body}
-                    onDrop={() => Tools.uploadMdFile()}
-                    options={{
-                      mode: "markdown",
-                      lineNumbers: true,
-                      lineWrapping: true,
-                    }}
-                    onBeforeChange={(editor, data, value) => {
-                      this.updateFormField("body", value);
-                    }}
-                    onChange={(editor, data, value) => {}}
-                  />
-                </div>
-              </div>
-            ) : (
-              <div style={{ display: "block", height: "100%" }}>
-                <Editor
-                  language={i18next.language}
-                  height="400px"
-                  id="richTextEditor"
-                  onBeforeChange={(value) => {
-                    this.updateFormField("body", value);
-                  }}
-                />
-              </div>
-            )}
-          </div>
-          {/* select node */}
-          <div
-            className="cell"
-            style={{ display: "flex", justifyContent: "space-between" }}
-          >
-            <Select2
-              value={this.getIndexFromNodeId(this.state.form.nodeId)}
+      <div align="center">
+        {Setting.PcBrowser ? <div className="sep20" /> : null}
+        <Container BreakpointStage={this.props.BreakpointStage}>
+          <div style={{ flex: "auto" }}>
+            <Card
               style={{
-                width: Setting.PcBrowser ? "300px" : "200px",
-                fontSize: "14px",
+                flex: "auto",
+                display: "flex",
+                flexDirection: "column",
+                textAlign: "left",
               }}
-              data={this.state.nodes.map((node, i) => {
-                return { text: `${node.name} / ${node.id}`, id: i };
-              })}
-              onSelect={(event) => {
-                const s = event.target.value;
-                if (s === null) {
-                  return;
-                }
+            >
+              <div className="title" style={{ marginBottom: "25px" }}>
+                <span style={{ fontSize: "18px" }}>
+                  {i18next.t("new:New Topic")}&nbsp;
+                </span>
+              </div>
 
-                const index = parseInt(s);
-                const nodeId = this.state.nodes[index].id;
-                const nodeName = this.state.nodes[index].name;
-                this.updateFormField("nodeId", nodeId);
-                this.updateFormField("nodeName", nodeName);
-              }}
-              options={{
-                placeholder: i18next.t("new:Please select a node"),
-              }}
-            />
-            {this.renderEditorSelect()}
-          </div>
-          <div className="cell" style={{ lineHeight: "190%" }}>
-            {i18next.t("new:Hottest Nodes")} &nbsp;{" "}
-            {this.state.nodes.map((node, i) => {
-              return (
-                <div key={node.name} style={{ display: "inline" }}>
-                  <a
-                    href="#"
-                    onClick={() => {
-                      this.updateFormField("nodeId", node.id);
-                      this.updateFormField("nodeName", node.name);
-                    }}
-                    className="node"
-                  >
-                    {node.name}
-                  </a>{" "}
-                  &nbsp;
+              {this.renderProblem()}
+              <form method="post" action="/new" id="compose">
+                <div className="cell">
+                  <div className="fr fade" id="title_remaining">
+                    {120 - this.countField("title")}
+                  </div>
+                  {i18next.t("new:Topic Title")}
                 </div>
-              );
-            })}
-          </div>
-        </form>
-        <div style={{}}>
-          <div style={{ height: 1, borderTop: "1px solid black" }}></div>
-          <div style={{ height: 3 }}></div>
-          <TagsInput
-            inputProps={{
-              maxLength: "8",
-              placeholder:
-                "After adding tags press Enter,only add up to four tags,the length of each tag is up to 8",
-            }}
-            maxTags="4"
-            value={this.state.tags}
-            onChange={this.handleChange.bind(this)}
-          />
-        </div>
-        <div className="cell">
-          <div className="fr">
-            <span id="error_message" /> &nbsp;
-            <button
-              type="button"
-              className="super normal button"
-              onClick={this.publishTopic.bind(this)}
-            >
-              <li className="fa fa-paper-plane" />
-              &nbsp;{i18next.t("new:Publish")}
-            </button>
-          </div>
-          <div>
-            <button
-              className="super normal button"
-              onClick={this.enablePreview.bind(this)}
-            >
-              <li className="fa fa-eye" />
-              &nbsp;{i18next.t("new:Preview")}
-            </button>
-          </div>
-        </div>
-        <div className="inner" id="topic_preview">
-          <div className="topic_content">
-            {/* preview in markdown */}
-            <div className="markdown_body">
-              {!this.state.isPreviewEnabled ? null : (
-                <ReactMarkdown
-                  source={this.state.form.body}
-                  escapeHtml={false}
+                <div className="cell" style={{ padding: "0px" }}>
+                  <textarea
+                    onChange={(event) => {
+                      this.updateFormField("title", event.target.value);
+                    }}
+                    className=" editBox"
+                    rows="1"
+                    maxLength="120"
+                    id="topic_title"
+                    name="title"
+                    autoFocus="autofocus"
+                    placeholder={i18next.t(
+                      "new:Please input the topic title. The body can be empty if the title expresses the full idea"
+                    )}
+                  >
+                    {this.state.form.title}
+                  </textarea>
+                </div>
+                <div className="cell" style={{ borderBottom: "none" }}>
+                  <div className="fr fade" id="content_remaining">
+                    {20000 - this.countField("body")}
+                  </div>
+                  {i18next.t("new:Body")}
+                </div>
+                <div>
+                  {/* markdown editor */}
+                  {!this.state.form.editorType ||
+                  this.state.form.editorType === "markdown" ? (
+                    <div
+                      style={{
+                        textAlign: "left",
+                        fontSize: "14px",
+                        lineHeight: "120%",
+                      }}
+                      className="editContainer"
+                    >
+                      <textarea
+                        style={{ visibility: "hidden", display: "none" }}
+                        maxLength="20000"
+                        id="editor"
+                        name="content"
+                        className="editBox"
+                      />
+                      <div className={`cm-long-content`}>
+                        <CodeMirror
+                          editorDidMount={(editor) =>
+                            Tools.attachEditor(editor)
+                          }
+                          onPaste={() => Tools.uploadMdFile()}
+                          value={this.state.form.body}
+                          onDrop={() => Tools.uploadMdFile()}
+                          options={{
+                            mode: "markdown",
+                            lineNumbers: false,
+                            lineWrapping: true,
+                          }}
+                          onBeforeChange={(editor, data, value) => {
+                            this.updateFormField("body", value);
+                          }}
+                          onChange={(editor, data, value) => {}}
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div
+                      className="editContainer"
+                      style={{ display: "block", height: "100%" }}
+                    >
+                      <Editor
+                        language={i18next.language}
+                        height="400px"
+                        id="richTextEditor"
+                        onBeforeChange={(value) => {
+                          this.updateFormField("body", value);
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+                {/* select node */}
+                <div
+                  className="cell"
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <Select2
+                    value={this.getIndexFromNodeId(this.state.form.nodeId)}
+                    style={{
+                      width: Setting.PcBrowser ? "300px" : "200px",
+                      fontSize: "14px",
+                    }}
+                    data={this.state.nodes.map((node, i) => {
+                      return { text: `${node.name} / ${node.id}`, id: i };
+                    })}
+                    onSelect={(event) => {
+                      const s = event.target.value;
+                      if (s === null) {
+                        return;
+                      }
+
+                      const index = parseInt(s);
+                      const nodeId = this.state.nodes[index].id;
+                      const nodeName = this.state.nodes[index].name;
+                      this.updateFormField("nodeId", nodeId);
+                      this.updateFormField("nodeName", nodeName);
+                    }}
+                    options={{
+                      placeholder: i18next.t("new:Please select a node"),
+                    }}
+                  />
+                  {this.renderEditorSelect()}
+                </div>
+                <div className="cell" style={{ lineHeight: "190%" }}>
+                  {i18next.t("new:Hottest Nodes")} &nbsp;{" "}
+                  {this.state.nodes.map((node, i) => {
+                    return (
+                      <div key={node.name} style={{ display: "inline" }}>
+                        <a
+                          href="#"
+                          onClick={() => {
+                            this.updateFormField("nodeId", node.id);
+                            this.updateFormField("nodeName", node.name);
+                          }}
+                          className="node"
+                        >
+                          {node.name}
+                        </a>{" "}
+                        &nbsp;
+                      </div>
+                    );
+                  })}
+                </div>
+              </form>
+              <div style={{}}>
+                <div style={{ height: 1, borderTop: "1px solid black" }}></div>
+                <div style={{ height: 3 }}></div>
+                <TagsInput
+                  inputProps={{
+                    maxLength: "8",
+                    placeholder:
+                      "After adding tags press Enter,only add up to four tags,the length of each tag is up to 8",
+                  }}
+                  maxTags="4"
+                  value={this.state.tags}
+                  onChange={this.handleChange.bind(this)}
+                  className={Setting.PcBrowser ? "tagsInput-pc" : "tagsInput-m"}
                 />
-              )}
-            </div>
+              </div>
+              <div className="cell">
+                <div className="fr">
+                  <span id="error_message" /> &nbsp;
+                  <Button type="primary" onClick={this.publishTopic.bind(this)}>
+                    <li className="fa fa-paper-plane" />
+                    &nbsp;{i18next.t("new:Publish")}
+                  </Button>
+                </div>
+                <div>
+                  <Button
+                    type="primary"
+                    onClick={this.enablePreview.bind(this)}
+                  >
+                    <li className="fa fa-eye" />
+                    &nbsp;{i18next.t("new:Preview")}
+                  </Button>
+                </div>
+              </div>
+              <div className="inner" id="topic_preview">
+                <div className="topic_content">
+                  {/* preview in markdown */}
+                  <div className="markdown_body">
+                    {!this.state.isPreviewEnabled ? null : (
+                      <ReactMarkdown
+                        source={this.state.form.body}
+                        escapeHtml={false}
+                      />
+                    )}
+                  </div>
+                </div>
+              </div>
+            </Card>
           </div>
-        </div>
+        </Container>
       </div>
     );
   }
