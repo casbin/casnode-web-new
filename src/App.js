@@ -359,24 +359,30 @@ class App extends Component {
         <Route exact path="/i">
           {pcBrowser ? <div className="sep20" /> : null}
           <LazyLoad>
-            <FilesBox account={this.state.account} />
+            <FilesBox
+              BreakpointStage={this.state.BreakpointStage}
+              account={this.state.account}
+            />
           </LazyLoad>
         </Route>
         <Route exact path="/i/:event">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <FilesBox account={this.state.account} />
-            </LazyLoad>
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <LazyLoad>
+            <FilesBox
+              BreakpointStage={this.state.BreakpointStage}
+              account={this.state.account}
+            />
+          </LazyLoad>
         </Route>
         <Route exact path="/i/edit/:event">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <FilesBox account={this.state.account} edit={true} />
-            </LazyLoad>
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <LazyLoad>
+            <FilesBox
+              BreakpointStage={this.state.BreakpointStage}
+              account={this.state.account}
+              edit={true}
+            />
+          </LazyLoad>
         </Route>
         <Route exact path="/top/rich">
           <div id={pcBrowser ? "Main" : ""}>

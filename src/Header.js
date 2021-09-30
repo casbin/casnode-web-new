@@ -87,7 +87,7 @@ class PageHeader extends React.Component {
       this.setState({ selectedMenuKey: 4 });
     } else if (uri.includes("records")) {
       this.setState({ selectedMenuKey: 5 });
-    } else if (uri.includes("notes")) {
+    } else if (uri.includes("i")) {
       this.setState({ selectedMenuKey: 6 });
     } else if (uri.includes("t")) {
       this.setState({ selectedMenuKey: 7 });
@@ -209,8 +209,8 @@ class PageHeader extends React.Component {
           </a>
         </Menu.Item>
         <Menu.Item>
-          <Link to="/notes" className="top">
-            {i18next.t("general:Note")}
+          <Link to="/i" className="top">
+            {i18next.t("bar:File library")}
           </Link>
         </Menu.Item>
         <Menu.Item>
