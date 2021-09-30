@@ -207,28 +207,26 @@ class App extends Component {
           </LazyLoad>
         </Route>
         <Route exact path="/t/:topicId/:event">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <TopicBox
-                account={this.state.account}
-                getNodeBackground={this.getNodeBackground}
-                refreshFavorites={this.getFavoriteNum.bind(this)}
-              />
-            </LazyLoad>
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <LazyLoad>
+            <TopicBox
+              account={this.state.account}
+              getNodeBackground={this.getNodeBackground}
+              refreshFavorites={this.getFavoriteNum.bind(this)}
+              BreakpointStage={this.state.BreakpointStage}
+            />
+          </LazyLoad>
         </Route>
         <Route exact path="/t/:topicId">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <TopicBox
-                account={this.state.account}
-                getNodeBackground={this.getNodeBackground}
-                refreshFavorites={this.getFavoriteNum.bind(this)}
-              />
-            </LazyLoad>
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <LazyLoad>
+            <TopicBox
+              account={this.state.account}
+              getNodeBackground={this.getNodeBackground}
+              refreshFavorites={this.getFavoriteNum.bind(this)}
+              BreakpointStage={this.state.BreakpointStage}
+            />
+          </LazyLoad>
         </Route>
         <Route exact path="/member/:memberId">
           {pcBrowser ? <div className="sep20" /> : null}

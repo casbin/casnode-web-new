@@ -364,15 +364,35 @@ class AdminNode extends React.Component {
     }
 
     return (
-      <div className="problem" onClick={() => this.clearErrorMessage()}>
-        {i18next.t(
-          "error:Please resolve the following issues before submitting"
-        )}
-        <ul>
-          {problems.map((problem, i) => {
-            return <li>{problem}</li>;
-          })}
-        </ul>
+      <div>
+        <Alert
+          message={i18next.t(
+            "error:Please resolve the following issues before submitting"
+          )}
+          type="error"
+          onClick={() => this.clearErrorMessage()}
+          closable
+          style={{
+            marginBottom: "10px",
+            alignItems: "center",
+            cursor: "pointer",
+          }}
+        />
+        {problems.map((problem) => {
+          return (
+            <Alert
+              message={problem}
+              type="error"
+              onClick={() => this.clearErrorMessage()}
+              closable
+              style={{
+                marginBottom: "10px",
+                alignItems: "center",
+                cursor: "pointer",
+              }}
+            />
+          );
+        })}
       </div>
     );
   }

@@ -24,6 +24,7 @@ import PageColumn from "./PageColumn";
 import ReactMarkdown from "react-markdown";
 import Zmage from "react-zmage";
 import i18next from "i18next";
+import { Card } from "antd";
 
 // const pangu = require("pangu");
 const maxReplyDepth = Setting.PcBrowser
@@ -342,24 +343,15 @@ class ReplyBox extends React.Component {
                       onClick={() => this.thanksReply(reply.id, reply.author)}
                       className="thank link-btn"
                     >
-                      {Setting.PcBrowser ? (
-                        i18next.t("reply:thank")
-                      ) : (
-                        <img
-                          src={Setting.getStatic("/img/heart_neue.png")}
-                          width="16"
-                          style={{ verticalAlign: "bottom" }}
-                          alt={i18next.t("reply:thank")}
-                        />
-                      )}
+                      <i class="fas fa-heart"></i>
                     </a>
                   </div>
                 ) : (
-                  <div
-                    id={`thank_area__${reply.id}`}
-                    className="thank_area thanked"
-                  >
-                    {i18next.t("reply:thanked")}
+                  <div id={`thank_area__${reply.id}`} className="thank_area">
+                    <i
+                      class="fas fa-heart"
+                      style={{ color: "#eb5424", marginRight: "10px" }}
+                    ></i>
                   </div>
                 )
               ) : null}
@@ -370,14 +362,13 @@ class ReplyBox extends React.Component {
                   style={{ marginRight: "10px" }}
                 >
                   <a
-                    className="delete link-btn"
                     style={{ marginRight: "10px" }}
                     onClick={() => this.deleteReply(reply.id)}
                   >
-                    {i18next.t("reply:Delete")}
+                    <i class="fas fa-trash" style={{ color: "#eb5424" }}></i>
                   </a>
-                  <a href={`/edit/reply/${reply.id}`} className="edit link-btn">
-                    {i18next.t("reply:Edit")}
+                  <a href={`/edit/reply/${reply.id}`}>
+                    <i class="fas fa-edit"></i>
                   </a>
                 </div>
               ) : null}
@@ -392,26 +383,24 @@ class ReplyBox extends React.Component {
                   }}
                   style={{ marginRight: "10px" }}
                 >
-                  <img
-                    src={Setting.getStatic("/img/reply_neue.png")}
-                    align="absmiddle"
-                    border="0"
-                    alt="Reply"
-                    width="20"
-                  />
+                  <i class="fas fa-reply" style={{ color: "#404040" }}></i>
                 </a>
               ) : null}
-              {isChild ? null : (
+              {/* {isChild ? null : (
                 <span className={`no ${this.props.topic.nodeId}`}>
                   {no + 1}
                 </span>
-              )}
+              )} */}
             </div>
             <strong>
               <Link to={`/member/${reply.author}`} className="dark">
                 {reply.author}
               </Link>
             </strong>
+            {isChild ? null : (
+              <span style={{ color: "#7aa87a" }}> #{no + 1}</span>
+            )}
+            {" · "}
             <Link
               className="ago"
               to={`#r_${reply.id}`}
@@ -422,7 +411,8 @@ class ReplyBox extends React.Component {
             >
               {Setting.getPrettyDate(reply.createdTime)}
             </Link>
-            {reply?.thanksNum !== 0 ? (
+
+            {/* {reply?.thanksNum !== 0 ? (
               <span className="small fade">
                 <img
                   src={Setting.getStatic("/img/heart_neue_red.png")}
@@ -432,7 +422,7 @@ class ReplyBox extends React.Component {
                 />
                 {reply?.thanksNum}
               </span>
-            ) : null}
+            ) : null} */}
             <div className={`reply_content ${this.props.topic.nodeId}`}>
               {reply.deleted ? (
                 <span style={{ color: "#ccc" }}>
@@ -478,7 +468,7 @@ class ReplyBox extends React.Component {
 
   renderReply() {
     return (
-      <div className={`box ${this.props.topic.nodeId}`}>
+      <div className={` ${this.props.topic.nodeId} replies`}>
         <div className={`cell ${this.props.topic.nodeId}`}>
           <div className="fr" style={{ margin: "-3px -5px 0px 0px" }}>
             {this.props.topic?.tags?.map((tag, i) => {
@@ -522,31 +512,32 @@ class ReplyBox extends React.Component {
 
     return (
       <div>
-        {this.state.replies.length === 0 ? (
-          <div id="no-comments-yet">{i18next.t("reply:No reply yet")}</div>
-        ) : (
-          this.renderReply()
-        )}
-        <div className={Setting.PcBrowser ? "sep20" : "sep5"} />
-        {this.state.replies.length === 0 ? (
-          <div>
-            <div className="inner" style={{ backgroundColor: "white" }}>
-              {this.props.topic?.tags?.map((tag) => {
-                return (
-                  <Link
-                    key={tag}
-                    to={`/tag/${tag}`}
-                    className={`tag ${this.props.topic.nodeId}`}
-                  >
-                    <li className="fa fa-tag" />
-                    {tag}
-                  </Link>
-                );
-              })}
+        <Card style={{ paddingBottom: "0", marginBottom: "20px" }}>
+          {this.state.replies.length === 0 ? (
+            <div id="no-comments-yet">{i18next.t("reply:No reply yet")}</div>
+          ) : (
+            this.renderReply()
+          )}
+          {this.state.replies.length === 0 ? (
+            <div>
+              <div style={{ backgroundColor: "white" }}>
+                {this.props.topic?.tags?.map((tag) => {
+                  return (
+                    <Link
+                      key={tag}
+                      to={`/tag/${tag}`}
+                      className={`tag ${this.props.topic.nodeId}`}
+                    >
+                      <li className="fa fa-tag" />
+                      {tag}
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
-            <div className="sep20" />
-          </div>
-        ) : null}
+          ) : null}
+        </Card>
+
         <NewReplyBox
           account={this.props.account}
           isEmbedded={this.props.isEmbedded}
