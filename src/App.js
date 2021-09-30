@@ -385,12 +385,10 @@ class App extends Component {
           </LazyLoad>
         </Route>
         <Route exact path="/top/rich">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <RankingRichBox />
-            </LazyLoad>
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <LazyLoad>
+            <RankingRichBox BreakpointStage={this.state.BreakpointStage} />
+          </LazyLoad>
         </Route>
         {/*BACKSTAGE*/}
         <Route exact path="/admin">
@@ -556,12 +554,10 @@ class App extends Component {
           </LazyLoad>
         </Route>
         <Route path="*">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <NoMatch />
-            </LazyLoad>
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <LazyLoad>
+            <NoMatch BreakpointStage={this.state.BreakpointStage} />
+          </LazyLoad>
         </Route>
       </Switch>
     );

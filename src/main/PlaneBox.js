@@ -68,7 +68,7 @@ class PlaneBox extends React.Component {
     return (
       <span key={plane?.id}>
         <div className="sep20"></div>
-        <div className="box">
+        <div>
           <div
             className="header"
             style={{

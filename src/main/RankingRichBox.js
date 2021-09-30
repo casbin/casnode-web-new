@@ -18,6 +18,8 @@ import * as Setting from "../Setting";
 import Avatar from "../Avatar";
 import * as MemberBackend from "../backend/MemberBackend";
 import { scoreConverter } from "./Tools";
+import Container from "../components/container";
+import { Card } from "antd";
 
 class RankingRichBox extends React.Component {
   constructor(props) {
@@ -69,64 +71,90 @@ class RankingRichBox extends React.Component {
 
   render() {
     return (
-      <div className="box">
-        {/* header */}
-        <div className="cell">
-          <div className="fr" style={{ margin: "-3px -8px 0px 0px" }}>
-            <Link to="/top/rich" className="tab">
-              {i18next.t("balance:Wealth ranking")}
-            </Link>
-            <Link to="/top/player" className="tab">
-              {i18next.t("balance:Consumption ranking")}
-            </Link>
-            <Link to="/balance/add/alipay" className="tab">
-              {i18next.t("balance:Recharge")}
-            </Link>
+      <div align="center">
+        <Container BreakpointStage={this.props.BreakpointStage}>
+          <div style={{ flex: "auto" }}>
+            <Card
+              style={{
+                flex: "auto",
+                display: "flex",
+                flexDirection: "column",
+                textAlign: "left",
+              }}
+            >
+              <div>
+                <div className="title" style={{ marginBottom: "20px" }}>
+                  <span style={{ fontSize: "18px" }}>
+                    {i18next.t("balance:Rich ranking")}
+                  </span>
+                  <div className="fr" style={{ margin: "-3px -8px 0px 0px" }}>
+                    <Link to="/top/rich" className="tab">
+                      {i18next.t("balance:Wealth ranking")}
+                    </Link>
+                    <Link to="/top/player" className="tab">
+                      {i18next.t("balance:Consumption ranking")}
+                    </Link>
+                    <Link to="/balance/add/alipay" className="tab">
+                      {i18next.t("balance:Recharge")}
+                    </Link>
+                  </div>
+                </div>
+                {/* richList */}
+                <div className="inner">
+                  <table
+                    cellPadding="10"
+                    cellSpacing="0"
+                    border="0"
+                    width="100%"
+                  >
+                    {this.state.richList
+                      ? this.state.richList.data.map((member, key) => (
+                          <tr>
+                            <td
+                              width={Setting.PcBrowser ? "73" : "36"}
+                              valign="top"
+                              align="center"
+                              key={key}
+                            >
+                              <Avatar
+                                username={member.id}
+                                avatar={member.avatar}
+                                key={key}
+                              />
+                            </td>
+                            <td width="auto" align="left">
+                              <h2
+                                style={{
+                                  marginBottom: "10px",
+                                  marginTop: "0px",
+                                }}
+                              >
+                                <span class="gray">{key + 1}.</span>{" "}
+                                <a href={`/member/${member.id}`}>{member.id}</a>
+                              </h2>
+                              <span className="gray f12"> {member.tag} </span>
+                              <div className="sep5"></div>
+                              <span className="gray f12">
+                                {" "}
+                                <a href={member.homepage}>
+                                  {member.homepage}
+                                </a>{" "}
+                              </span>
+                              <div className="sep5"></div>
+                              {/* <span className="fade">第 n 名会员</span> */}
+                            </td>
+                            <td width="140" align="center">
+                              <div>{this.renderRichBox(member.score)}</div>
+                            </td>
+                          </tr>
+                        ))
+                      : null}
+                  </table>
+                </div>
+              </div>
+            </Card>
           </div>
-          <Link to="/">{Setting.getForumName()}</Link>{" "}
-          <span className="chevron">&nbsp;›&nbsp;</span>{" "}
-          {i18next.t("balance:Rich ranking")}
-        </div>
-        {/* richList */}
-        <div className="inner">
-          <table cellPadding="10" cellSpacing="0" border="0" width="100%">
-            {this.state.richList
-              ? this.state.richList.data.map((member, key) => (
-                  <tr>
-                    <td
-                      width={Setting.PcBrowser ? "73" : "36"}
-                      valign="top"
-                      align="center"
-                      key={key}
-                    >
-                      <Avatar
-                        username={member.id}
-                        avatar={member.avatar}
-                        key={key}
-                      />
-                    </td>
-                    <td width="auto" align="left">
-                      <h2 style={{ marginBottom: "10px", marginTop: "0px" }}>
-                        <span class="gray">{key + 1}.</span>{" "}
-                        <a href={`/member/${member.id}`}>{member.id}</a>
-                      </h2>
-                      <span className="gray f12"> {member.tag} </span>
-                      <div className="sep5"></div>
-                      <span className="gray f12">
-                        {" "}
-                        <a href={member.homepage}>{member.homepage}</a>{" "}
-                      </span>
-                      <div className="sep5"></div>
-                      {/* <span className="fade">第 n 名会员</span> */}
-                    </td>
-                    <td width="140" align="center">
-                      <div>{this.renderRichBox(member.score)}</div>
-                    </td>
-                  </tr>
-                ))
-              : null}
-          </table>
-        </div>
+        </Container>
       </div>
     );
   }
