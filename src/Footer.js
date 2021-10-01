@@ -144,7 +144,7 @@ class PageFooter extends React.Component {
           {/*    <div className="footer-logo" />*/}
           {/*  </a>*/}
           {/*</div>*/}
-          <div style={{ flex: "1", alignItems: "center", fontSize: "18px" }}>
+          <div style={{ flex: "1", alignItems: "center", fontSize: "16px" }}>
             <div style={{ textAlign: "center" }}>
               <Link to="/about" target="_self" className="titles">
                 {i18next.t("footer:About")}

@@ -23,7 +23,7 @@ import * as MemberBackend from "../backend/MemberBackend";
 import i18next from "i18next";
 
 import { Card, Tabs } from "antd";
-
+import "./member.css";
 import "./AllCreatedTopicsBox.css";
 const { TabPane } = Tabs;
 
@@ -153,130 +153,59 @@ class AllCreatedTopicsBox extends React.Component {
     };
   }
 
-  renderMobileTab() {
-    return (
-      <div className="fr">
-        <label className="f14" htmlFor="switch-topics">
-          {i18next.t("member:Switch topic list")}
-          <select
-            id="switch-topics"
-            defaultValue={this.state.tab === undefined ? "all" : this.state.tab}
-            onChange={(event) => {
-              if (event.target.value === "all") {
-                this.props.history.push(`/member/${this.state.memberId}/`);
-              } else {
-                this.props.history.push(
-                  `/member/${this.state.memberId}/${event.target.value}`
-                );
-              }
+  renderProfileItems(item) {
+    if (this.props.member[item] !== "" && this.props.member[item] !== null) {
+      return (
+        <div style={{ padding: "5px 0", textAlign: "justify" }}>
+          <label
+            style={{
+              color: "#666",
+              display: "inline-block",
+              width: "100px",
+              marginRight: "10px",
             }}
           >
-            <option value="all">
-              {this.state.memberId}
-              {i18next.t("member:'s all topics")}
-            </option>
-            {this.state.TAB_LIST.map((tab) => {
-              return (
-                <option key={tab.value} value={tab.value}>
-                  {tab.label}
-                </option>
-              );
-            })}
-          </select>
-        </label>
-      </div>
-    );
-  }
-
-  showPageColumn(url) {
-    if (this.state.topicsNum < this.state.limit) {
-      return;
+            {item}
+          </label>
+          <span>{this.props.member[item]}</span>
+        </div>
+      );
     }
-
-    return (
-      <PageColumn
-        page={this.state.page}
-        total={this.state.topicsNum}
-        url={url}
-        defaultPageNum={this.state.limit}
-      />
-    );
   }
 
   renderPersonalProfile() {}
   render() {
-    const pcBrowser = Setting.PcBrowser;
-
     if (this.props.member === null) {
       return null;
     }
 
-    if (this.state.tab === "replies") {
-      if (this.state.member === null) {
-        this.props.history.push(`/member/${this.state.memberId}`);
-      }
-      return <LatestReplyBox size={"large"} />;
-    }
-
-    if (this.state.tab === "topics") {
-      if (this.state.member === null) {
-        this.props.history.push(`/member/${this.state.memberId}`);
-      }
-
-      return (
-        <div className="box">
-          <div className="header">
-            <Link to="/">{Setting.getForumName()} </Link>
-            <span className="chevron">&nbsp;›&nbsp;</span>
-            <Link to={`/member/${this.state.memberId}`}>
-              {" "}
-              {this.state.memberId}
-            </Link>{" "}
-            <span className="chevron">&nbsp;›&nbsp;</span>{" "}
-            {i18next.t("member:All Topics")}
-            <div className="fr f12">
-              <span className="snow">
-                {i18next.t("member:Total Topics")}&nbsp;
-              </span>{" "}
-              <strong className="gray">{this.state.topicsNum}</strong>
-            </div>
-          </div>
-          {pcBrowser
-            ? this.showPageColumn(`/member/${this.state.memberId}/topics`)
-            : null}
-          <TopicList
-            topics={this.state.topics}
-            showNodeName={true}
-            showAvatar={false}
-          />
-          {this.showPageColumn(`/member/${this.state.memberId}/topics`)}
-        </div>
-      );
-    }
-
-    let memberAvatar;
-    if (this.state.tab === undefined) {
-      memberAvatar = this.props.member.avatar;
-    } else {
-      memberAvatar = this.state.member.avatar;
-    }
-
     return (
-      <div className="card-container">
+      <div className={`${this.props.BreakpointStage}-right`}>
         <Tabs type="card">
           <TabPane tab={i18next.t("general:Personal Profile")} key="1">
-            <Card></Card>
+            <Card>
+              {this.renderProfileItems("homepage")}
+              {this.renderProfileItems("dingtalk")}
+              {this.renderProfileItems("gitee")}
+              {this.renderProfileItems("github")}
+              {this.renderProfileItems("gitlab")}
+              {this.renderProfileItems("google")}
+              {this.renderProfileItems("region")}
+            </Card>
           </TabPane>
           <TabPane tab={i18next.t("general:Topics")} key="2">
-            <TopicList
-              topics={this.state.topics}
-              showNodeName={true}
-              showAvatar={true}
-              timeStandard={"createdTime"}
-            />
+            <Card>
+              <TopicList
+                topics={this.state.topics}
+                showNodeName={true}
+                showAvatar={true}
+              />
+            </Card>
           </TabPane>
           <TabPane tab={i18next.t("general:Replies")} key="3">
-            <LatestReplyBox member={this.state.member} />
+            <Card>
+              <LatestReplyBox member={this.state.member} />
+            </Card>
           </TabPane>
         </Tabs>
       </div>

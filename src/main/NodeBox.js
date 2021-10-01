@@ -25,8 +25,9 @@ import "../node.css";
 import ReactMarkdown from "react-markdown";
 import i18next from "i18next";
 import Container from "../components/container";
-import { Button } from "antd";
+import { Button, Card, Alert } from "antd";
 
+import "../TopicPage.css";
 import TopicRightBox from "../rightbar/TopicRightBox";
 
 class NodeBox extends React.Component {
@@ -256,61 +257,14 @@ class NodeBox extends React.Component {
     }
 
     return (
-      <div className="problem" onClick={() => this.clearMessage()}>
-        <li>{i18next.t(`error:${this.state.message}`)}</li>
-      </div>
-    );
-  }
-
-  renderMobileHeader() {
-    return (
-      <div className="header">
-        <div className="fr f12">
-          <span className="snow">{i18next.t("node:Total topics")}</span>{" "}
-          <strong className="gray">{this.state.topicNum}</strong>{" "}
-          {this.props.account !== null ? (
-            <span className="snow">&nbsp;•&nbsp;</span>
-          ) : null}{" "}
-          {this.props.account !== null ? (
-            this.state.favoritesStatus ? (
-              <a
-                onClick={() => {
-                  this.deleteFavorite();
-                }}
-                href="javascript:void(0);"
-              >
-                {i18next.t("fav:Cancel favorite")}
-              </a>
-            ) : (
-              <a
-                onClick={() => {
-                  this.addFavorite();
-                }}
-                href="javascript:void(0);"
-              >
-                {i18next.t("fav:Add to favorite")}
-              </a>
-            )
-          ) : null}
-        </div>
-        <Link to="/">{Setting.getForumName()}</Link>{" "}
-        <span className="chevron">&nbsp;›&nbsp;</span>{" "}
-        {this.state.nodeInfo?.name}
-        <div className="sep5"></div>
-        {this.props.account !== null ? (
-          <div align="right">
-            <input
-              type="button"
-              className="super normal button"
-              value={i18next.t("node:new topic")}
-              onClick={() =>
-                this.props.history.push(`/new/${this.state.nodeId}`)
-              }
-              style={{ width: "100%", lineHeight: "20px" }}
-            />
-          </div>
-        ) : null}
-      </div>
+      <Alert
+        style={{ textAlign: "left" }}
+        message={i18next.t(`error:${this.state.message}`)}
+        type="info"
+        showIcon
+        closable
+        onClick={() => this.clearMessage()}
+      />
     );
   }
 
@@ -415,7 +369,7 @@ class NodeBox extends React.Component {
     end = (page - 1) * limit + this.state.topics.length;
 
     return (
-      <div>
+      <div style={{ width: "100%" }}>
         {Setting.PcBrowser ? this.showPageColumn() : null}
         <TopicList
           nodeId={this.state.nodeId}
@@ -471,71 +425,97 @@ class NodeBox extends React.Component {
 
     if (this.state.nodeInfo !== null && this.state.nodeInfo.length === 0) {
       return (
-        <div id={pcBrowser ? "Main" : ""}>
-          <div className="box">
-            <div className="header">
-              <Link to="/">{Setting.getForumName()}</Link>
-              <span className="chevron">&nbsp;›&nbsp;</span>{" "}
-              {i18next.t("loading:Node is loading")}
+        <div align="center">
+          {Setting.PcBrowser ? <div className="sep20" /> : null}
+          <Container BreakpointStage={this.props.BreakpointStage}>
+            <div style={{ flex: "auto" }}>
+              <Card
+                style={{
+                  flex: "auto",
+                  display: "flex",
+                  flexDirection: "column",
+                  textAlign: "left",
+                }}
+              >
+                <div className="title" style={{ marginBottom: "25px" }}>
+                  <span style={{ fontSize: "18px" }}>
+                    {i18next.t("loading:Node is loading")}&nbsp;
+                  </span>
+                </div>
+                <div className="cell">
+                  <span className="gray bigger">
+                    {i18next.t("loading:Please wait patiently...")}
+                  </span>
+                </div>
+              </Card>
             </div>
-            <div className="cell">
-              <span className="gray bigger">
-                {i18next.t("loading:Please wait patiently...")}
-              </span>
-            </div>
-          </div>
+          </Container>
         </div>
       );
     }
 
     if (this.state.nodeInfo === null) {
       return (
-        <div id={pcBrowser ? "Main" : ""}>
-          <div class="sep20"></div>
-          <div class="box">
-            <div class="header">
-              <Link to="/">{Setting.getForumName()}</Link>
-              <span className="chevron">&nbsp;›&nbsp;</span>{" "}
-              {i18next.t("error:Node not found")}
-            </div>
-            <div class="cell">
-              {i18next.t(
-                "error:The node you are trying to view does not exist, there are several possibilities"
-              )}
-              <div class="sep10"></div>
-              <ul>
-                <li>
+        <div align="center">
+          {Setting.PcBrowser ? <div className="sep20" /> : null}
+          <Container BreakpointStage={this.props.BreakpointStage}>
+            <div style={{ flex: "auto" }}>
+              <Card
+                style={{
+                  flex: "auto",
+                  display: "flex",
+                  flexDirection: "column",
+                  textAlign: "left",
+                }}
+              >
+                <div className="title" style={{ marginBottom: "25px" }}>
+                  <span style={{ fontSize: "18px" }}>
+                    {i18next.t("error:Node not found")}&nbsp;
+                  </span>
+                </div>
+
+                <div class="cell">
                   {i18next.t(
-                    "error:You entered a node ID that does not exist."
+                    "error:The node you are trying to view does not exist, there are several possibilities"
                   )}
-                </li>
-                <li>
-                  {i18next.t("error:The node is currently in invisible state.")}
-                </li>
-              </ul>
+                  <div class="sep10"></div>
+                  <ul>
+                    <li>
+                      {i18next.t(
+                        "error:You entered a node ID that does not exist."
+                      )}
+                    </li>
+                    <li>
+                      {i18next.t(
+                        "error:The node is currently in invisible state."
+                      )}
+                    </li>
+                  </ul>
+                </div>
+                <div class="inner">
+                  {this.props.account === null ? (
+                    <span className="gray">
+                      <span className="chevron">‹</span> &nbsp;
+                      {i18next.t("error:Back to")}{" "}
+                      <Link to="/">{i18next.t("error:Home Page")}</Link>
+                    </span>
+                  ) : (
+                    <span className="gray">
+                      <span className="chevron">‹</span> &nbsp;
+                      {i18next.t("error:Back to")}{" "}
+                      <Link to="/">{i18next.t("error:Home Page")}</Link>
+                      <br />
+                      <span className="chevron">‹</span> &nbsp;
+                      {i18next.t("error:Back to")}{" "}
+                      <Link to={`/member/${this.props.account?.name}`}>
+                        {i18next.t("error:My profile")}
+                      </Link>
+                    </span>
+                  )}
+                </div>
+              </Card>
             </div>
-            <div class="inner">
-              {this.props.account === null ? (
-                <span className="gray">
-                  <span className="chevron">‹</span> &nbsp;
-                  {i18next.t("error:Back to")}{" "}
-                  <Link to="/">{i18next.t("error:Home Page")}</Link>
-                </span>
-              ) : (
-                <span className="gray">
-                  <span className="chevron">‹</span> &nbsp;
-                  {i18next.t("error:Back to")}{" "}
-                  <Link to="/">{i18next.t("error:Home Page")}</Link>
-                  <br />
-                  <span className="chevron">‹</span> &nbsp;
-                  {i18next.t("error:Back to")}{" "}
-                  <Link to={`/member/${this.props.account?.name}`}>
-                    {i18next.t("error:My profile")}
-                  </Link>
-                </span>
-              )}
-            </div>
-          </div>
+          </Container>
         </div>
       );
     }
@@ -549,122 +529,147 @@ class NodeBox extends React.Component {
       }
 
       return (
-        <div className={`box ${this.state.nodeId}`}>
-          <div className="header">
-            <Link to="/">{Setting.getForumName()}</Link>
-            <span className="chevron">&nbsp;›&nbsp;</span>{" "}
-            {i18next.t("node:Moderator Management")}
-          </div>
-          {this.renderMessage()}
-          <div className="cell">
-            <table cellPadding="5" cellSpacing="0" border="0" width="100%">
-              <tbody>
-                <tr>
-                  <td width="120" align="right">
-                    {i18next.t("node:Node name")}
-                  </td>
-                  <td width="auto" align="left">
-                    {this.state.nodeInfo?.name}
-                  </td>
-                </tr>
-                {this.state.nodeInfo?.moderators !== null &&
-                this.state.nodeInfo?.moderators.length !== 0 ? (
-                  <tr>
-                    <td width="120" align="right">
-                      {i18next.t("node:Moderators")}
-                    </td>
-                    <td width="auto" align="left">
-                      <Link
-                        to={`/member/${this.state.nodeInfo?.moderators[0]}`}
-                        style={{ fontWeight: "bolder" }}
-                        target="_blank"
-                      >
-                        {this.state.nodeInfo?.moderators[0]}
-                      </Link>
-                    </td>
-                    <td width="auto" align="left">
-                      <a
-                        onClick={() => {
-                          this.deleteNodeModerator(
-                            this.state.nodeInfo?.moderators[0]
-                          );
-                        }}
-                        href="javascript:void(0);"
-                      >
-                        {i18next.t("node:Cancel moderator permissions")}
-                      </a>
-                    </td>
-                  </tr>
-                ) : (
-                  <tr>
-                    <td width="120" align="right">
-                      {i18next.t("node:Moderators")}
-                    </td>
-                    <td width="auto" align="left">
-                      <span class="gray">
-                        {i18next.t("node:No moderators")}
-                      </span>
-                    </td>
-                  </tr>
-                )}
-                {this.state.nodeInfo?.moderators !== null
-                  ? this.state.nodeInfo?.moderators
-                      .slice(1)
-                      .map((moderators) =>
-                        this.renderNodeModerators(moderators)
-                      )
-                  : null}
-              </tbody>
-            </table>
-          </div>
-          <div className="cell">
-            <table cellPadding="5" cellSpacing="0" border="0" width="100%">
-              <tbody>
-                <tr>
-                  <td width="120" align="right">
-                    {i18next.t("node:Add moderator")}
-                  </td>
-                  <td width="auto" align="left">
-                    <input
-                      type="text"
-                      className="sl"
-                      name="title"
-                      maxLength="64"
-                      value={this.state.newModerator}
-                      onChange={(event) =>
-                        this.inputNewModerator(event.target.value)
-                      }
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <td width="120" align="right"></td>
-                  <td width="auto" align="left">
-                    <input
-                      type="submit"
-                      className="super normal button"
-                      value={i18next.t("node:Add")}
-                      onClick={() =>
-                        this.addNodeModerator(this.state.newModerator)
-                      }
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+        <div align="center">
+          {Setting.PcBrowser ? <div className="sep20" /> : null}
+          <Container BreakpointStage={this.props.BreakpointStage}>
+            <div style={{ flex: "auto" }}>
+              <Card
+                style={{
+                  flex: "auto",
+                  display: "flex",
+                  flexDirection: "column",
+                  textAlign: "left",
+                }}
+              >
+                <div className="title" style={{ marginBottom: "25px" }}>
+                  <span style={{ fontSize: "18px" }}>
+                    {i18next.t("node:Moderator Management")}&nbsp;
+                  </span>
+                </div>
+                {this.renderMessage()}
+                <div className="cell">
+                  <table
+                    cellPadding="5"
+                    cellSpacing="0"
+                    border="0"
+                    width="100%"
+                  >
+                    <tbody>
+                      <tr>
+                        <td width="120" align="right">
+                          {i18next.t("node:Node name")}
+                        </td>
+                        <td width="auto" align="left">
+                          {this.state.nodeInfo?.name}
+                        </td>
+                      </tr>
+                      {this.state.nodeInfo?.moderators !== null &&
+                      this.state.nodeInfo?.moderators.length !== 0 ? (
+                        <tr>
+                          <td width="120" align="right">
+                            {i18next.t("node:Moderators")}
+                          </td>
+                          <td width="auto" align="left">
+                            <Link
+                              to={`/member/${this.state.nodeInfo?.moderators[0]}`}
+                              style={{ fontWeight: "bolder" }}
+                              target="_blank"
+                            >
+                              {this.state.nodeInfo?.moderators[0]}
+                            </Link>
+                          </td>
+                          <td width="auto" align="left">
+                            <a
+                              onClick={() => {
+                                this.deleteNodeModerator(
+                                  this.state.nodeInfo?.moderators[0]
+                                );
+                              }}
+                              href="javascript:void(0);"
+                            >
+                              {i18next.t("node:Cancel moderator permissions")}
+                            </a>
+                          </td>
+                        </tr>
+                      ) : (
+                        <tr>
+                          <td width="120" align="right">
+                            {i18next.t("node:Moderators")}
+                          </td>
+                          <td width="auto" align="left">
+                            <span class="gray">
+                              {i18next.t("node:No moderators")}
+                            </span>
+                          </td>
+                        </tr>
+                      )}
+                      {this.state.nodeInfo?.moderators !== null
+                        ? this.state.nodeInfo?.moderators
+                            .slice(1)
+                            .map((moderators) =>
+                              this.renderNodeModerators(moderators)
+                            )
+                        : null}
+                    </tbody>
+                  </table>
+                </div>
+                <div className="cell">
+                  <table
+                    cellPadding="5"
+                    cellSpacing="0"
+                    border="0"
+                    width="100%"
+                  >
+                    <tbody>
+                      <tr>
+                        <td width="120" align="right">
+                          {i18next.t("node:Add moderator")}
+                        </td>
+                        <td width="auto" align="left">
+                          <input
+                            type="text"
+                            className="sl"
+                            name="title"
+                            maxLength="64"
+                            value={this.state.newModerator}
+                            onChange={(event) =>
+                              this.inputNewModerator(event.target.value)
+                            }
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td width="120" align="right"></td>
+                        <td width="auto" align="left">
+                          <Button
+                            type="primary"
+                            onClick={() =>
+                              this.addNodeModerator(this.state.newModerator)
+                            }
+                          >
+                            {i18next.t("node:Add")}
+                          </Button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </Card>
+            </div>
+          </Container>
         </div>
       );
     }
 
     return (
       <React.Fragment>
-        {/* {Setting.PcBrowser
-          ? this.renderDesktopHeader()
-          : this.renderMobileHeader()} */}
         {this.renderDesktopHeader()}
+        {Setting.PcBrowser ? <div className="sep20" /> : null}
         <Container BreakpointStage={this.props.BreakpointStage}>
-          <div style={{ display: "flex", marginTop: "30px" }}>
+          <div
+            style={{ display: "flex" }}
+            className={`${this.props.BreakpointStage}-container`}
+          >
             <div
               style={{
                 display: "flex",
@@ -672,20 +677,14 @@ class NodeBox extends React.Component {
                 width: "100%",
                 alignItems: "center",
               }}
+              className={`${this.props.BreakpointStage}-topic`}
             >
               {this.renderNode()}
               {pcBrowser ? <div className="sep20" /> : null}
-              {this.props.account !== undefined &&
-              this.props.account !== null &&
-              pcBrowser ? (
-                <NewNodeTopicBox
-                  nodeId={this.state.nodeId}
-                  account={this.props.account}
-                  size={"small"}
-                />
-              ) : null}
             </div>
-            <TopicRightBox />
+            <div className={`${this.props.BreakpointStage}-rightBox`}>
+              <TopicRightBox />
+            </div>
           </div>
         </Container>
       </React.Fragment>

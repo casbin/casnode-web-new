@@ -21,6 +21,7 @@ export default class Container extends React.Component {
           justifyContent: "center",
           position: "relative",
           display: "flex",
+          flexDirection: "row",
           fontFamily: "PingFang SC,Noto Sans,Roboto,Microsoft Yahei,sans-serif",
           letterSpacing: ".03em",
           width:

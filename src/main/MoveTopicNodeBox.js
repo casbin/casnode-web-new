@@ -19,6 +19,10 @@ import * as NodeBackend from "../backend/NodeBackend";
 import * as TopicBackend from "../backend/TopicBackend";
 import Select2 from "react-select2-wrapper";
 import i18next from "i18next";
+import { Card, Button } from "antd";
+import Container from "../components/container";
+
+import "../admin/AdminTranslation.css";
 
 const pangu = require("pangu");
 
@@ -132,100 +136,108 @@ class MoveTopicNodeBox extends React.Component {
     }
 
     return (
-      <div className="box">
-        <div className="header">
-          <Link to="/">{Setting.getForumName()}</Link>{" "}
-          <span className="chevron">&nbsp;›&nbsp;</span>
-          <Link to={`/go/${encodeURIComponent(this.state.topic?.nodeId)}`}>
-            {this.state.topic?.nodeName}
-          </Link>{" "}
-          <span className="chevron">&nbsp;›&nbsp;</span>{" "}
-          <Link to={`/t/${this.state.topic?.id}`}>
-            {pangu.spacing(this.state.topic?.title)}
-          </Link>{" "}
-          <span className="chevron">&nbsp;›&nbsp;</span>{" "}
-          {i18next.t("move:Move topic")}
-        </div>
-        <div className="inner">
-          <table cellPadding="5" cellSpacing="0" border="0" width="100%">
-            <tbody>
-              <tr>
-                <td width="120" align="right">
-                  {i18next.t("move:Topic")} ID
-                </td>
-                <td width="auto" align="left">
-                  {this.state.topic?.id}
-                </td>
-              </tr>
-              <tr>
-                <td width="120" align="right">
-                  {i18next.t("move:Title")}
-                </td>
-                <td width="auto" align="left">
-                  <Link to={`/t/${this.state.topic?.id}`} target="_blank">
-                    {pangu.spacing(this.state.topic?.title)}
-                  </Link>
-                </td>
-              </tr>
-              <tr>
-                <td width="120" align="right">
-                  {i18next.t("move:Current node")}
-                </td>
-                <td width="auto" align="left">
-                  <Link
-                    to={`/go/${encodeURIComponent(this.state.topic?.nodeId)}`}
-                    target="_blank"
-                  >
-                    {this.state.topic?.nodeName}
-                  </Link>
-                </td>
-              </tr>
-              <tr>
-                <td width="120" align="right">
-                  {i18next.t("move:Target node")}
-                </td>
-                <td width="auto" align="left">
-                  <Select2
-                    value={this.getIndexFromNodeId(this.state.form.nodeId)}
-                    style={{
-                      width: Setting.PcBrowser ? "300px" : "200px",
-                      fontSize: "14px",
-                    }}
-                    data={this.state.nodes.map((node, i) => {
-                      return { text: `${node.name} / ${node.id}`, id: i };
-                    })}
-                    onSelect={(event) => {
-                      const s = event.target.value;
-                      if (s === null) {
-                        return;
-                      }
+      <div align="center">
+        <Container
+          BreakpointStage={this.props.BreakpointStage}
+          className="translation"
+        >
+          <div style={{ flex: "auto" }}>
+            <Card
+              title={i18next.t("move:Move topic")}
+              style={{
+                flex: "auto",
+                display: "flex",
+                flexDirection: "column",
+                textAlign: "left",
+              }}
+            >
+              <div className="inner">
+                <table cellPadding="8" cellSpacing="0" border="0" width="100%">
+                  <tbody>
+                    <tr>
+                      <td width="120" align="right">
+                        {i18next.t("move:Topic")} ID
+                      </td>
+                      <td width="auto" align="left">
+                        {this.state.topic?.id}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td width="120" align="right">
+                        {i18next.t("move:Title")}
+                      </td>
+                      <td width="auto" align="left">
+                        <Link to={`/t/${this.state.topic?.id}`} target="_blank">
+                          {pangu.spacing(this.state.topic?.title)}
+                        </Link>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td width="120" align="right">
+                        {i18next.t("move:Current node")}
+                      </td>
+                      <td width="auto" align="left">
+                        <Link
+                          to={`/go/${encodeURIComponent(
+                            this.state.topic?.nodeId
+                          )}`}
+                          target="_blank"
+                        >
+                          {this.state.topic?.nodeName}
+                        </Link>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td width="120" align="right">
+                        {i18next.t("move:Target node")}
+                      </td>
+                      <td width="auto" align="left">
+                        <Select2
+                          value={this.getIndexFromNodeId(
+                            this.state.form.nodeId
+                          )}
+                          style={{
+                            width: Setting.PcBrowser ? "300px" : "200px",
+                            fontSize: "14px",
+                          }}
+                          data={this.state.nodes.map((node, i) => {
+                            return { text: `${node.name} / ${node.id}`, id: i };
+                          })}
+                          onSelect={(event) => {
+                            const s = event.target.value;
+                            if (s === null) {
+                              return;
+                            }
 
-                      const index = parseInt(s);
-                      const nodeId = this.state.nodes[index].id;
-                      const nodeName = this.state.nodes[index].name;
-                      this.updateFormField("nodeId", nodeId);
-                      this.updateFormField("nodeName", nodeName);
-                    }}
-                    options={{
-                      placeholder: i18next.t("new:Please select a node"),
-                    }}
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td width="120" align="right"></td>
-                <td width="auto" align="left">
-                  <input
-                    type="submit"
-                    className="super normal button"
-                    value={i18next.t("move:Move")}
-                    onClick={() => this.moveTopicNode()}
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+                            const index = parseInt(s);
+                            const nodeId = this.state.nodes[index].id;
+                            const nodeName = this.state.nodes[index].name;
+                            this.updateFormField("nodeId", nodeId);
+                            this.updateFormField("nodeName", nodeName);
+                          }}
+                          options={{
+                            placeholder: i18next.t("new:Please select a node"),
+                          }}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td width="120" align="right"></td>
+                      <td width="auto" align="left">
+                        <Button
+                          type="primary"
+                          onClick={() => this.moveTopicNode()}
+                        >
+                          {i18next.t("move:Move")}
+                        </Button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+          </div>
+        </Container>
       </div>
     );
   }

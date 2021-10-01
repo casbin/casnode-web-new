@@ -15,6 +15,7 @@
 import React, { Component } from "react";
 import "./App.css";
 import { BackTop } from "antd";
+import "codemirror/lib/codemirror.css";
 import * as Setting from "./Setting";
 import { Switch, Route } from "react-router-dom";
 import TopicPage from "./TopicPage";
@@ -185,6 +186,7 @@ class App extends Component {
     return (
       <Switch>
         <Route exact path="/">
+          {pcBrowser ? <div className="sep20" /> : null}
           <HomePage BreakpointStage={this.state.BreakpointStage} />
         </Route>
         <Route exact path="/callback" component={AuthCallback} />
@@ -195,73 +197,59 @@ class App extends Component {
           />
         </Route>
         <Route exact path="/signout">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <SignoutBox
-                account={this.state.account}
-                onSignout={this.onSignout.bind(this)}
-              />
-            </LazyLoad>
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <LazyLoad>
+            <SignoutBox
+              account={this.state.account}
+              onSignout={this.onSignout.bind(this)}
+              BreakpointStage={this.state.BreakpointStage}
+            />
+          </LazyLoad>
         </Route>
         <Route exact path="/t/:topicId/:event">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <TopicBox
-                account={this.state.account}
-                getNodeBackground={this.getNodeBackground}
-                refreshFavorites={this.getFavoriteNum.bind(this)}
-              />
-            </LazyLoad>
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <LazyLoad>
+            <TopicBox
+              account={this.state.account}
+              getNodeBackground={this.getNodeBackground}
+              refreshFavorites={this.getFavoriteNum.bind(this)}
+              BreakpointStage={this.state.BreakpointStage}
+            />
+          </LazyLoad>
         </Route>
         <Route exact path="/t/:topicId">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <TopicBox
-                account={this.state.account}
-                getNodeBackground={this.getNodeBackground}
-                refreshFavorites={this.getFavoriteNum.bind(this)}
-              />
-            </LazyLoad>
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <LazyLoad>
+            <TopicBox
+              account={this.state.account}
+              getNodeBackground={this.getNodeBackground}
+              refreshFavorites={this.getFavoriteNum.bind(this)}
+              BreakpointStage={this.state.BreakpointStage}
+            />
+          </LazyLoad>
         </Route>
         <Route exact path="/member/:memberId">
-          <div id={pcBrowser ? "Main" : ""}>
-            <LazyLoad>
-              <MemberBox
-                account={this.state.account}
-                refreshFavorites={this.getFavoriteNum.bind(this)}
-              />
-            </LazyLoad>
-          </div>
-        </Route>
-        <Route exact path="/member/:memberId/:tab">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <AllCreatedTopicsBox />
-            </LazyLoad>
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <LazyLoad>
+            <MemberBox
+              account={this.state.account}
+              refreshFavorites={this.getFavoriteNum.bind(this)}
+              BreakpointStage={this.state.BreakpointStage}
+            />
+          </LazyLoad>
         </Route>
         <Route exact path="/new">
-          <div id={pcBrowser ? "Main" : ""}>
-            <LazyLoad>
-              <NewBox
-                BreakpointStage={this.state.BreakpointStage}
-                account={this.state.account}
-              />
-            </LazyLoad>
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <LazyLoad>
+            <NewBox
+              BreakpointStage={this.state.BreakpointStage}
+              account={this.state.account}
+            />
+          </LazyLoad>
         </Route>
         <Route exact path="/tag/:tagId">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <SearchTag />
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <SearchTag BreakpointStage={this.state.BreakpointStage} />
         </Route>
         <Route exact path="/new/:nodeId">
           <div id={pcBrowser ? "Main" : ""}>
@@ -303,110 +291,104 @@ class App extends Component {
           </LazyLoad>
         </Route>
         <Route exact path="/my/:favorites">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <FavoritesBox />
-            </LazyLoad>
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <LazyLoad>
+            <FavoritesBox BreakpointStage={this.state.BreakpointStage} />
+          </LazyLoad>
         </Route>
         <Route exact path="/recent">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <RecentTopicsBox />
-            </LazyLoad>
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <LazyLoad>
+            <RecentTopicsBox BreakpointStage={this.state.BreakpointStage} />
+          </LazyLoad>
         </Route>
         <Route exact path="/select/language">
           <LazyLoad>
+            {pcBrowser ? <div className="sep20" /> : null}
             <SelectLanguageBox BreakpointStage={this.state.BreakpointStage} />
           </LazyLoad>
         </Route>
         <Route exact path="/select/editorType">
           <LazyLoad>
+            {pcBrowser ? <div className="sep20" /> : null}
             <SelectEditorTypeBox BreakpointStage={this.state.BreakpointStage} />
           </LazyLoad>
         </Route>
         <Route exact path="/notifications">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <NotificationBox />
-            </LazyLoad>
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <LazyLoad>
+            <NotificationBox BreakpointStage={this.state.BreakpointStage} />
+          </LazyLoad>
         </Route>
         <Route exact path="/planes">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <PlaneBox />
-            </LazyLoad>
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <LazyLoad>
+            <PlaneBox BreakpointStage={this.state.BreakpointStage} />
+          </LazyLoad>
         </Route>
         <Route exact path="/balance">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <BalanceBox account={this.state.account} />
-            </LazyLoad>
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <LazyLoad>
+            <BalanceBox
+              account={this.state.account}
+              BreakpointStage={this.state.BreakpointStage}
+            />
+          </LazyLoad>
         </Route>
         <Route exact path="/mission/daily">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <CheckinBonusBox />
-            </LazyLoad>
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <LazyLoad>
+            <CheckinBonusBox BreakpointStage={this.state.BreakpointStage} />
+          </LazyLoad>
         </Route>
         <Route exact path="/move/topic/:id">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <MoveTopicNodeBox />
-            </LazyLoad>
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <LazyLoad>
+            <MoveTopicNodeBox BreakpointStage={this.state.BreakpointStage} />
+          </LazyLoad>
         </Route>
         <Route exact path="/edit/:editType/:id">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <EditBox account={this.state.account} />
-            </LazyLoad>
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <LazyLoad>
+            <EditBox
+              BreakpointStage={this.state.BreakpointStage}
+              account={this.state.account}
+            />
+          </LazyLoad>
         </Route>
         <Route exact path="/i">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <FilesBox account={this.state.account} />
-            </LazyLoad>
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <LazyLoad>
+            <FilesBox
+              BreakpointStage={this.state.BreakpointStage}
+              account={this.state.account}
+            />
+          </LazyLoad>
         </Route>
         <Route exact path="/i/:event">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <FilesBox account={this.state.account} />
-            </LazyLoad>
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <LazyLoad>
+            <FilesBox
+              BreakpointStage={this.state.BreakpointStage}
+              account={this.state.account}
+            />
+          </LazyLoad>
         </Route>
         <Route exact path="/i/edit/:event">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <FilesBox account={this.state.account} edit={true} />
-            </LazyLoad>
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <LazyLoad>
+            <FilesBox
+              BreakpointStage={this.state.BreakpointStage}
+              account={this.state.account}
+              edit={true}
+            />
+          </LazyLoad>
         </Route>
         <Route exact path="/top/rich">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <RankingRichBox />
-            </LazyLoad>
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <LazyLoad>
+            <RankingRichBox BreakpointStage={this.state.BreakpointStage} />
+          </LazyLoad>
         </Route>
         {/*BACKSTAGE*/}
         <Route exact path="/admin">
@@ -561,14 +543,6 @@ class App extends Component {
             />
           </LazyLoad>
         </Route>
-        <Route exact path="/admin/frontconf">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <AdminFrontConf account={this.state.account} />
-            </LazyLoad>
-          </div>
-        </Route>
         <Route exact path="/about">
           <LazyLoad>
             <AboutForum BreakpointStage={this.state.BreakpointStage} />
@@ -580,20 +554,10 @@ class App extends Component {
           </LazyLoad>
         </Route>
         <Route path="*">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <NoMatch />
-            </LazyLoad>
-          </div>
-        </Route>
-        <Route path="*">
-          <div id={pcBrowser ? "Main" : ""}>
-            {pcBrowser ? <div className="sep20" /> : null}
-            <LazyLoad>
-              <NoMatch />
-            </LazyLoad>
-          </div>
+          {pcBrowser ? <div className="sep20" /> : null}
+          <LazyLoad>
+            <NoMatch BreakpointStage={this.state.BreakpointStage} />
+          </LazyLoad>
         </Route>
       </Switch>
     );
@@ -729,11 +693,11 @@ class App extends Component {
         />
         <div
           id="Wrapper"
-          // style={{
-          //   backgroundColor: `${this.state.nodeBackgroundColor}`,
-          //   backgroundImage: `url(${this.state.nodeBackgroundImage}), url(https://cdn.jsdelivr.net/gh/casbin/static/img/shadow_light.png)`,
-          //   backgroundRepeat: `${this.state.nodeBackgroundRepeat}, repeat-x`,
-          // }}
+          style={{
+            backgroundColor: `${this.state.nodeBackgroundColor}`,
+            backgroundImage: `url(${this.state.nodeBackgroundImage}), url(https://cdn.jsdelivr.net/gh/casbin/static/img/shadow_light.png)`,
+            backgroundRepeat: `${this.state.nodeBackgroundRepeat}, repeat-x`,
+          }}
           className={this.state.nodeId}
           onClick={() => this.changeMenuStatus(false)}
         >

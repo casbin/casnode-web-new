@@ -18,6 +18,8 @@ import { Link } from "react-router-dom";
 import i18next from "i18next";
 import Container from "../components/container";
 import { Card } from "antd";
+
+import "./AllCreatedTopicsBox.css";
 class SelectLanguageBox extends React.Component {
   constructor(props) {
     super(props);

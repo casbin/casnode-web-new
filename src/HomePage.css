@@ -81,15 +81,15 @@
   font-size: 16px;
 }
 
-.stage1-topic,
-.stage2-topic,
-.stage3-topic {
+.stage1-topics,
+.stage2-topics,
+.stage3-topics {
   display: flex;
   width: 100%;
 }
 
-.stage4-topic,
-.stage5-topic {
+.stage4-topics,
+.stage5-topics {
   width: 100%;
 }
 

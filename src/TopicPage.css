@@ -67,6 +67,7 @@
   right: 0;
   z-index: 20;
   margin: auto;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.07);
 }
 
 .ant-card-bordered {
@@ -74,7 +75,7 @@
 }
 
 .stage1-topic {
-  width: 930px;
+  width: 930px !important;
 }
 
 .stage2-topic,
@@ -92,10 +93,12 @@
 
 .stage1-rightBox {
   width: 300px;
+  margin-left: 20px;
 }
 
 .stage2-rightBox {
   width: 250px;
+  margin-left: 20px;
 }
 
 .stage2-rightBox img {
@@ -103,8 +106,20 @@
   width: 200px;
 }
 
-.stage3-rightBox,
-.stage4-rightBox,
+.stage3-rightBox {
+  width: 790px;
+}
+
+.stage4-rightBox {
+  width: 560px;
+}
+
 .stage5-rightBox {
-  display: none;
+  width: 100%;
+}
+
+.stage3-container,
+.stage4-container,
+.stage5-container {
+  flex-direction: column;
 }

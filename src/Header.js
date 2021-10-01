@@ -15,6 +15,7 @@
 import React from "react";
 import * as AccountBackend from "./backend/AccountBackend";
 import * as NodeBackend from "./backend/NodeBackend";
+import * as NotificationBackend from "./backend/NotificationBackend";
 import * as Setting from "./Setting";
 import * as Conf from "./Conf";
 import { withRouter, Link } from "react-router-dom";
@@ -29,7 +30,7 @@ import Container from "./components/container";
 
 const { Header } = Layout;
 const IconFont = createFromIconfontCN({
-  scriptUrl: "//at.alicdn.com/t/font_2717339_hu7ls0q10p.js",
+  scriptUrl: "//at.alicdn.com/t/font_2717339_r6fp7ddokf.js",
 });
 class PageHeader extends React.Component {
   constructor(props) {
@@ -45,6 +46,7 @@ class PageHeader extends React.Component {
 
   componentDidMount() {
     this.getNodes();
+    this.getNotifications();
   }
 
   componentDidUpdate() {
@@ -53,6 +55,18 @@ class PageHeader extends React.Component {
     if (this.state.uri !== uri) {
       this.updateMenuKey();
     }
+  }
+
+  getNotifications() {
+    NotificationBackend.getNotifications(
+      this.state.limit,
+      this.state.page
+    ).then((res) => {
+      this.setState({
+        notifications: res?.data,
+        notificationNum: res?.data2,
+      });
+    });
   }
 
   updateMenuKey() {
@@ -73,7 +87,7 @@ class PageHeader extends React.Component {
       this.setState({ selectedMenuKey: 4 });
     } else if (uri.includes("records")) {
       this.setState({ selectedMenuKey: 5 });
-    } else if (uri.includes("notes")) {
+    } else if (uri.includes("i")) {
       this.setState({ selectedMenuKey: 6 });
     } else if (uri.includes("t")) {
       this.setState({ selectedMenuKey: 7 });
@@ -195,8 +209,8 @@ class PageHeader extends React.Component {
           </a>
         </Menu.Item>
         <Menu.Item>
-          <Link to="/notes" className="top">
-            {i18next.t("general:Note")}
+          <Link to="/i" className="top">
+            {i18next.t("bar:File library")}
           </Link>
         </Menu.Item>
         <Menu.Item>
@@ -232,7 +246,14 @@ class PageHeader extends React.Component {
       <ul className="nav dropdown">
         <li>
           <Link to="/notifications" style={{ padding: "0 0 0 5px" }}>
-            <IconFont type="icon-notification" style={{ fontSize: "21px" }} />
+            <IconFont
+              type={
+                this.state.notificationNum == 0
+                  ? "icon-notification"
+                  : "icon-notifications_on"
+              }
+              style={{ fontSize: "21px" }}
+            />
           </Link>
         </li>
         <li>
@@ -290,203 +311,6 @@ class PageHeader extends React.Component {
         />
       </Dropdown>
     );
-  }
-
-  renderMobileHeader() {
-    const isSignedIn =
-      this.props.account !== undefined && this.props.account !== null;
-    const menuStyle = this.props.showMenu
-      ? {
-          "--show-dropdown": "block",
-        }
-      : null;
-
-    if (!isSignedIn) {
-      return (
-        <div id="Top">
-          <div className="content">
-            <div style={{ paddingTop: "6px" }}>
-              <table cellPadding="0" cellSpacing="0" border="0" width="100%">
-                <tbody>
-                  <tr>
-                    <td width="5" align="left"></td>
-                    <td width="80" align="left" style={{ paddingTop: "4px" }}>
-                      <Link to="/" name="top">
-                        <div id="logoMobile"></div>
-                      </Link>
-                    </td>
-                    <td
-                      width="auto"
-                      align="right"
-                      style={{ paddingTop: "2px" }}
-                    >
-                      <Link to="/" className="top">
-                        {i18next.t("general:Home")}
-                      </Link>
-                      &nbsp;&nbsp;&nbsp;
-                      <a href={Setting.getSignupUrl()} className="top">
-                        {i18next.t("general:Sign Up")}
-                      </a>
-                      &nbsp;&nbsp;&nbsp;
-                      <a href={Setting.getSigninUrl()} className="top">
-                        {i18next.t("general:Sign In")}
-                      </a>
-                    </td>
-                    <td width="10" align="left"></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      );
-    } else {
-      return (
-        <header className="site-header">
-          <div className="site-header-logo">
-            <div
-              id="logoMobile"
-              style={{
-                backgroundImage: `url(${Conf.FrontConfig.logoImage})`,
-              }}
-              onClick={() => this.props.history.push("/")}
-            />
-          </div>
-          <div className="site-header-menu">
-            {this.renderSearch()}
-            <button id="menu-entry" onClick={() => this.changeShowMenuStatus()}>
-              {this.props.account?.avatar === "" ? (
-                <img
-                  src={Setting.getUserAvatar(this.props.account?.name)}
-                  width={24}
-                  border={0}
-                  style={{ borderRadius: "32px", verticalAlign: "middle" }}
-                  width="32"
-                  height="32"
-                  align="absmiddle"
-                  alt={this.props.account?.name}
-                />
-              ) : (
-                <img
-                  src={this.props.account?.avatar}
-                  width={24}
-                  border={0}
-                  style={{ borderRadius: "32px", verticalAlign: "middle" }}
-                  width="32"
-                  height="32"
-                  align="absmiddle"
-                  alt={this.props.account?.name}
-                />
-              )}
-            </button>
-            <div id="user-menu" style={menuStyle}>
-              <div>
-                <Link
-                  to={`/member/${this.props.account?.name}`}
-                  className="top"
-                >
-                  {i18next.t("general:Homepage")}
-                </Link>
-              </div>
-              <div>
-                <Link to="/my/nodes" className="top">
-                  {i18next.t("bar:Nodes")}
-                </Link>
-              </div>
-              <div>
-                <Link to="/my/topics" className="top">
-                  {i18next.t("bar:Topics")}
-                </Link>
-              </div>
-              <div>
-                <a
-                  target="_blank"
-                  className="top"
-                  href={Setting.getMyProfileUrl(this.state.account)}
-                >
-                  {i18next.t("general:Setting")}
-                </a>
-                {/*<Link to="/settings" className="top">*/}
-                {/*  {i18next.t("general:Setting")}*/}
-                {/*</Link>*/}
-              </div>
-              <div>
-                <Link to="/admin" className="top">
-                  {i18next.t("general:Admin")}
-                </Link>
-              </div>
-              <div className="menu_sep"></div>
-              <div>
-                <Link to="/i" className="top">
-                  <img
-                    src={Setting.getStatic("/img/neue_image.png")}
-                    height="14"
-                    border="0"
-                    align="absmiddle"
-                  />{" "}
-                  &nbsp;{i18next.t("bar:File library")}
-                </Link>
-              </div>
-              <div>
-                <Link to="/notes" className="top">
-                  <img
-                    src={Setting.getStatic("/img/neue_notepad.png")}
-                    height="14"
-                    border="0"
-                    align="absmiddle"
-                  />{" "}
-                  &nbsp;{i18next.t("general:Note")}
-                </Link>
-              </div>
-              <div>
-                <Link to="/t" className="top">
-                  <img
-                    src={Setting.getStatic("/img/neue_comment.png")}
-                    height="14"
-                    border="0"
-                    align="absmiddle"
-                  />{" "}
-                  &nbsp;{i18next.t("general:Timeline")}
-                </Link>
-              </div>
-              <div className="menu_sep"></div>
-              <div>
-                <Link to="/select/language" className="top">
-                  {i18next.t("general:Language")}
-                </Link>
-              </div>
-              <div className="menu_sep"></div>
-              <div>
-                <Link to="/settings/night/toggle" className="top">
-                  <img
-                    src={Setting.getStatic("/img/toggle-light.png")}
-                    align="absmiddle"
-                    height="10"
-                    alt="Light"
-                    style={{ verticalAlign: "middle" }}
-                  />
-                </Link>
-              </div>
-              <div className="menu_sep"></div>
-              <div style={{ padding: "10px" }}>
-                <div className="member-activity-bar">
-                  <div
-                    className="member-activity-start"
-                    style={{ width: "5%" }}
-                  ></div>
-                </div>
-              </div>
-              <div className="menu_sep"></div>
-              <div>
-                <Link to="/signout" className="top">
-                  {i18next.t("general:Sign Out")}
-                </Link>
-              </div>
-            </div>
-          </div>
-        </header>
-      );
-    }
   }
 
   renderSearchEngine() {
@@ -615,10 +439,6 @@ class PageHeader extends React.Component {
   }
 
   render() {
-    if (!Setting.PcBrowser) {
-      return this.renderMobileHeader();
-    }
-
     return (
       <Header
         style={{

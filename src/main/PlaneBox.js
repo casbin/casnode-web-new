@@ -18,6 +18,8 @@ import * as NodeBackend from "../backend/NodeBackend";
 import * as Setting from "../Setting";
 import { Link } from "react-router-dom";
 import i18next from "i18next";
+import Container from "../components/container";
+import { Card } from "antd";
 
 class PlaneBox extends React.Component {
   constructor(props) {
@@ -66,7 +68,7 @@ class PlaneBox extends React.Component {
     return (
       <span key={plane?.id}>
         <div className="sep20"></div>
-        <div className="box">
+        <div>
           <div
             className="header"
             style={{
@@ -96,37 +98,35 @@ class PlaneBox extends React.Component {
 
   render() {
     return (
-      <span>
-        <div className="box">
-          <div className="cell" style={{ padding: "0px" }}>
-            <table cellPadding="10" cellSpacing="0" border="0" width="100%">
-              <tbody>
-                <tr>
-                  <td width="64">
-                    <img
-                      src={Setting.getStatic("/img/network.png")}
-                      width="64"
-                      alt="Nodes"
-                    />
-                  </td>
-                  <td>
-                    <span className="item_title">
-                      {Setting.getForumName()} {i18next.t("plane:Plane list")}
-                    </span>
-                    <div className="sep5"></div>
-                    <span className="fade">
-                      {this.state.nodesNum} nodes now and growing.
-                    </span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+      <div align="center">
+        <Container BreakpointStage={this.props.BreakpointStage}>
+          <div style={{ flex: "auto" }}>
+            <Card
+              style={{
+                flex: "auto",
+                display: "flex",
+                flexDirection: "column",
+                textAlign: "left",
+              }}
+            >
+              <div className="title" style={{ marginBottom: "25px" }}>
+                <span style={{ fontSize: "18px" }}>
+                  {i18next.t("plane:Plane list")}&nbsp;
+                </span>
+                <span style={{ marginLeft: "5px", fontSize: "15px" }}>
+                  {this.state.nodesNum} nodes now and growing.
+                </span>
+              </div>
+
+              <span>
+                {this.state.planes?.map((plane) => {
+                  return this.renderPlane(plane);
+                })}
+              </span>
+            </Card>
           </div>
-        </div>
-        {this.state.planes?.map((plane) => {
-          return this.renderPlane(plane);
-        })}
-      </span>
+        </Container>
+      </div>
     );
   }
 }

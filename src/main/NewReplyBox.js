@@ -30,6 +30,7 @@ import i18next from "i18next";
 import Editor from "./richTextEditor";
 import Select2 from "react-select2-wrapper";
 import * as Conf from "../Conf";
+import { Card, Button, Alert } from "antd";
 
 class NewReplyBox extends React.Component {
   constructor(props) {
@@ -113,15 +114,33 @@ class NewReplyBox extends React.Component {
     }
 
     return (
-      <div className="problem">
-        {i18next.t(
-          "reply:Please resolve the following issues before submitting"
-        )}
-        <ul>
-          {problems.map((problem, i) => {
-            return <li>{problem}</li>;
-          })}
-        </ul>
+      <div>
+        <Alert
+          message={i18next.t(
+            "reply:Please resolve the following issues before submitting"
+          )}
+          type="error"
+          closable
+          style={{
+            marginBottom: "10px",
+            alignItems: "center",
+            cursor: "pointer",
+          }}
+        />
+        {problems.map((problem) => {
+          return (
+            <Alert
+              message={problem}
+              type="error"
+              closable
+              style={{
+                marginBottom: "10px",
+                alignItems: "center",
+                cursor: "pointer",
+              }}
+            />
+          );
+        })}
       </div>
     );
   }
@@ -373,97 +392,97 @@ class NewReplyBox extends React.Component {
     return (
       <div
         className={[
-          "box",
           this.props.sticky ? "sticky" : "",
           `${this.props.nodeId}`,
         ].join(" ")}
         id="reply-box"
       >
-        <div style={blurStyle} className={`cell ${this.props.nodeId}`}>
-          <div className="fr">
-            {this.props.parent?.id > 0 ? (
+        <Card style={{ paddingTop: "0" }}>
+          <div style={blurStyle} className={` ${this.props.nodeId}`}>
+            <div className="fr">
+              {this.props.parent?.id > 0 ? (
+                <a
+                  onClick={this.props.cancelReply.bind(this)}
+                  style={{ display: this.props.sticky ? "" : "none" }}
+                  id="cancel-button"
+                  className={`${this.props.nodeId}`}
+                >
+                  {i18next
+                    .t("reply:Cancel reply to {username}")
+                    .replace("{username}", this.props.parent.username)}
+                </a>
+              ) : null}{" "}
+              &nbsp; &nbsp;{" "}
               <a
-                onClick={this.props.cancelReply.bind(this)}
+                onClick={this.undockBox.bind(this)}
                 style={{ display: this.props.sticky ? "" : "none" }}
-                id="cancel-button"
+                id="undock-button"
                 className={`${this.props.nodeId}`}
               >
-                {i18next
-                  .t("reply:Cancel reply to {username}")
-                  .replace("{username}", this.props.parent.username)}
+                {i18next.t("reply:Undock")}
+              </a>{" "}
+              &nbsp; &nbsp;{" "}
+              <a
+                href="#"
+                onClick={this.backToTop.bind(this)}
+                className={`${this.props.nodeId}`}
+                style={blurStyle}
+              >
+                {i18next.t("reply:Back to Top")}
               </a>
-            ) : null}{" "}
-            &nbsp; &nbsp;{" "}
-            <a
-              onClick={this.undockBox.bind(this)}
-              style={{ display: this.props.sticky ? "" : "none" }}
-              id="undock-button"
-              className={`${this.props.nodeId}`}
-            >
-              {i18next.t("reply:Undock")}
-            </a>{" "}
-            &nbsp; &nbsp;{" "}
-            <a
-              href="#"
-              onClick={this.backToTop.bind(this)}
-              className={`${this.props.nodeId}`}
-              style={blurStyle}
-            >
-              {i18next.t("reply:Back to Top")}
-            </a>
-          </div>
-          {i18next.t("reply:Add a New Comment")}
-        </div>
-        {this.renderProblem()}
-        <div className={`cell ${this.props.nodeId}`}>
-          <div
-            style={{
-              overflow: "hidden",
-            }}
-          >
-            {this.renderEditor(needLogin)}
-          </div>
-          <div className="sep10" />
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-            }}
-          >
-            <input
-              style={blurStyle}
-              onClick={this.publishReply.bind(this)}
-              type="submit"
-              value={i18next.t("reply:Reply")}
-              className="super normal button"
-            />
-            {this.renderEditorSelect(blurStyle)}
-          </div>
-
-          <div
-            style={{
-              overflow: "hidden",
-            }}
-          >
-            <div style={blurStyle} className="fr">
-              <div className="sep5" />
-              <span className="gray" style={blurStyle}>
-                {i18next.t(
-                  "reply:Make your comment helpful for others as much as possible"
-                )}
-              </span>
+            </div>
+            <div style={{ fontSize: "18px", textAlign: "left" }}>
+              {i18next.t("reply:Add a New Comment")}
             </div>
           </div>
-        </div>
+          {this.renderProblem()}
+          <div className={`cell comment ${this.props.nodeId}`}>
+            <div
+              style={{
+                overflow: "hidden",
+              }}
+              className="editBox"
+            >
+              {this.renderEditor(needLogin)}
+            </div>
+            <div className="sep10" />
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
+              <Button onClick={this.publishReply.bind(this)} type="primary">
+                {i18next.t("reply:Reply")}
+              </Button>
+              {this.renderEditorSelect(blurStyle)}
+            </div>
 
-        <div className="inner">
-          <div className="fr">
-            <Link style={blurStyle} to="/" className={`${this.props.nodeId}`}>
-              ← {Setting.getForumName()}
-            </Link>
+            <div
+              style={{
+                overflow: "hidden",
+              }}
+            >
+              <div style={blurStyle} className="fr">
+                <div className="sep5" />
+                <span className="gray" style={blurStyle}>
+                  {i18next.t(
+                    "reply:Make your comment helpful for others as much as possible"
+                  )}
+                </span>
+              </div>
+            </div>
           </div>
-          &nbsp;
-        </div>
+
+          <div className="inner">
+            <div className="fr">
+              <Link style={blurStyle} to="/" className={`${this.props.nodeId}`}>
+                ← {Setting.getForumName()}
+              </Link>
+            </div>
+            &nbsp;
+          </div>
+        </Card>
       </div>
     );
   }

@@ -516,11 +516,7 @@ class TopicPage extends React.Component {
               onClick={() => this.setState({ showAllNodesWindow: false })}
             />
           }
-          style={{
-            width: 500,
-            boxShadow: "0 2px 15px rgba(0,0,0,.07)",
-            zIndex: "20",
-          }}
+          style={Setting.PcBrowser ? { width: "400px" } : { width: "auto" }}
           headStyle={{ borderBottom: "0", textAlign: "left", fontSize: "17px" }}
           bodyStyle={{ padding: "10px" }}
         >
@@ -530,8 +526,12 @@ class TopicPage extends React.Component {
           onClick={() => this.setState({ showAllNodesWindow: false })}
           className={this.state.showAllNodesWindow ? "mask-show" : "mask-hide"}
         ></div>
+        {Setting.PcBrowser ? <div className="sep20" /> : null}
         <Container BreakpointStage={this.props.BreakpointStage}>
-          <div style={{ marginTop: "30px", display: "flex", width: "100%" }}>
+          <div
+            style={{ display: "flex" }}
+            className={`${this.props.BreakpointStage}-container`}
+          >
             <div className={`${this.props.BreakpointStage}-topic`}>
               <TopicList
                 topics={this.state.topics}
@@ -540,10 +540,7 @@ class TopicPage extends React.Component {
                 topType={topType}
               />
             </div>
-            <div
-              style={{ marginLeft: "20px" }}
-              className={`${this.props.BreakpointStage}-rightBox`}
-            >
+            <div className={`${this.props.BreakpointStage}-rightBox`}>
               <TopicRightBox />
             </div>
           </div>

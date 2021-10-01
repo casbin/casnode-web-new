@@ -1,0 +1,14 @@
+.fa-map-marked:before {
+  content: "\f0e0";
+  color: #aaa !important;
+}
+
+.fa-company:before {
+  content: "\f0b1";
+  color: #aaa !important;
+}
+
+.fa {
+  margin-right: 8px;
+  display: inline-block;
+}

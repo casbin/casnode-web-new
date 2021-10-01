@@ -19,6 +19,8 @@ import * as FavoritesBackend from "../backend/FavoritesBackend";
 import TopicList from "./TopicList";
 import PageColumn from "./PageColumn";
 import i18next from "i18next";
+import Container from "../components/container";
+import { Card } from "antd";
 
 class FavoritesBox extends React.Component {
   constructor(props) {
@@ -103,7 +105,7 @@ class FavoritesBox extends React.Component {
     }
 
     return (
-      <Link className="grid_item" to={`/go/${node?.nodeInfo.id}`}>
+      <Link to={`/go/${node?.nodeInfo.id}`}>
         <div
           style={{
             display: "table",
@@ -151,67 +153,121 @@ class FavoritesBox extends React.Component {
     switch (this.state.favoritesType) {
       case "nodes":
         return (
-          <div className="box">
-            <div className="header">
-              <Link to="/">{Setting.getForumName()}</Link>
-              <span className="chevron">&nbsp;›&nbsp;</span>{" "}
-              {i18next.t("fav:My Favorite Nodes")}
-              <div className="fr f12">
-                <span className="snow">
-                  {i18next.t("fav:Total nodes")} &nbsp;
-                </span>
-                <strong className="gray">{this.state.favoritesNum}</strong>
+          <div align="center">
+            <Container BreakpointStage={this.props.BreakpointStage}>
+              <div style={{ flex: "auto" }}>
+                <Card
+                  title={
+                    <div>
+                      {i18next.t("fav:My Favorite Nodes")}
+                      <div
+                        className="fr f12"
+                        style={{ paddingTop: "5px", paddingRight: "10px" }}
+                      >
+                        <span className="snow">
+                          {i18next.t("fav:Total nodes")} &nbsp;
+                        </span>
+                        <strong className="gray">
+                          {this.state.favoritesNum}
+                        </strong>
+                      </div>
+                    </div>
+                  }
+                  style={{
+                    flex: "auto",
+                    display: "flex",
+                    flexDirection: "column",
+                    textAlign: "left",
+                  }}
+                >
+                  <div id="my-nodes">
+                    {this.state.favorites.map((node) => {
+                      return this.renderNodes(node);
+                    })}
+                  </div>
+                </Card>
               </div>
-            </div>
-            <div id="my-nodes">
-              {this.state.favorites.map((node) => {
-                return this.renderNodes(node);
-              })}
-            </div>
+            </Container>
           </div>
         );
       case "topics":
         return (
-          <div className="box">
-            <div className="header">
-              <Link to="/">{Setting.getForumName()}</Link>
-              <span className="chevron">&nbsp;›&nbsp;</span>{" "}
-              {i18next.t("fav:My favorite topics")}
-              <div className="fr f12">
-                <span className="snow">
-                  {i18next.t("fav:Total topics")} &nbsp;
-                </span>
-                <strong className="gray">{this.state.favoritesNum}</strong>
+          <div align="center">
+            <Container BreakpointStage={this.props.BreakpointStage}>
+              <div style={{ flex: "auto" }}>
+                <Card
+                  title={
+                    <div>
+                      {i18next.t("fav:My favorite topics")}
+                      <div
+                        className="fr f12"
+                        style={{ paddingTop: "5px", paddingRight: "10px" }}
+                      >
+                        <span className="snow">
+                          {i18next.t("fav:Total topics")} &nbsp;
+                        </span>
+                        <strong className="gray">
+                          {this.state.favoritesNum}
+                        </strong>
+                      </div>
+                    </div>
+                  }
+                  style={{
+                    flex: "auto",
+                    display: "flex",
+                    flexDirection: "column",
+                    textAlign: "left",
+                  }}
+                >
+                  <TopicList
+                    topics={this.state.favorites}
+                    showNodeName={true}
+                    showAvatar={true}
+                  />
+                </Card>
               </div>
-            </div>
-            <TopicList
-              topics={this.state.favorites}
-              showNodeName={true}
-              showAvatar={true}
-            />
+            </Container>
           </div>
         );
       case "following":
         return (
-          <div className="box">
-            <div className="header">
-              <Link to="/">{Setting.getForumName()}</Link>
-              <span className="chevron">&nbsp;›&nbsp;</span>{" "}
-              {i18next.t("fav:Latest topics from people I followed")}
-              <div className="fr f12">
-                <span className="snow">
-                  {i18next.t("fav:Total topics")} &nbsp;
-                </span>
-                <strong className="gray">{this.state.favoritesNum}</strong>
+          <div align="center">
+            <Container BreakpointStage={this.props.BreakpointStage}>
+              <div style={{ flex: "auto" }}>
+                <Card
+                  title={
+                    <div>
+                      {i18next.t("fav:Latest topics from people I followed")}
+                      <div
+                        className="fr f12"
+                        style={{ paddingTop: "5px", paddingRight: "10px" }}
+                      >
+                        <span className="snow">
+                          {i18next.t("fav:Total topics")} &nbsp;
+                        </span>
+                        <strong className="gray">
+                          {this.state.favoritesNum}
+                        </strong>
+                      </div>
+                    </div>
+                  }
+                  style={{
+                    flex: "auto",
+                    display: "flex",
+                    flexDirection: "column",
+                    textAlign: "left",
+                  }}
+                >
+                  {Setting.PcBrowser ? this.showPageColumn() : null}
+                  <TopicList
+                    topics={this.state.favorites}
+                    showNodeName={true}
+                    showAvatar={true}
+                  />
+                  {this.showPageColumn()}
+                </Card>
               </div>
-            </div>
-            {Setting.PcBrowser ? this.showPageColumn() : null}
-            <TopicList
-              topics={this.state.favorites}
-              showNodeName={true}
-              showAvatar={true}
-            />
-            {this.showPageColumn()}
+            </Container>
           </div>
         );
     }
