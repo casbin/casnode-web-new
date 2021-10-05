@@ -38,8 +38,10 @@ export const StaticBaseUrl = "https://cdn.casbin.org";
 
 export function initServerUrl() {
   const hostname = window.location.hostname;
-  if (hostname === "localhost") {
+  if (hostname !== "localhost") {
     ServerUrl = `http://${hostname}:7000`;
+  } else {
+    ServerUrl = `http://localhost:7000`;
   }
 }
 
