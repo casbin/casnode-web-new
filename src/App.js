@@ -666,7 +666,6 @@ class App extends Component {
   }
 
   render() {
-    console.log(window.innerWidth);
     if (window.location.pathname.startsWith("/embedded-replies")) {
       return (
         <LazyLoad>

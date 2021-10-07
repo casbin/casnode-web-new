@@ -248,9 +248,10 @@ class PageHeader extends React.Component {
           <Link to="/notifications" style={{ padding: "0 0 0 5px" }}>
             <IconFont
               type={
-                this.state.notificationNum == 0
-                  ? "icon-notification"
-                  : "icon-notifications_on"
+                this.state.notificationNum != 0 &&
+                this.state.notificationNum != undefined
+                  ? "icon-notifications_on"
+                  : "icon-notification"
               }
               style={{ fontSize: "21px" }}
             />
